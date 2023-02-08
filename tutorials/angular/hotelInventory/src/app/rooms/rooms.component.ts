@@ -65,14 +65,28 @@ export class RoomsComponent {
     }
   ]
 
+  addRoom(){
+    const room: RoomList = 
+      {
+        roomNumber:10,
+        roomType: "new Deluxe Room",
+        amenities: "Air Conditioner, Free Wifi",
+        price: 400,
+        photos:"https://images.unsplash.com/photo-1615874959474-d609969a20ed?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8M3x8YmVkcm9vbXxlbnwwfHwwfHw%3D&w=1000&q=80",
+        checkInTime: new Date('11-Feb-2023'),
+        checkOutTime: new Date('18-Feb-2023')
+      }
+      
+      // this.roomsList.push(room)  //mutating room list
+      this.roomsList = [...this.roomsList, room]
+  }
 
-  // ------- Data from child------------------
+  // ------- Receive data from child------------------
   selectedJson!: RoomList
-
-  selectRoom (room:RoomList){
+  
+  selectParentRoom (room:RoomList){
     // console.log(room)
     this.selectedJson = room
   }
-
-
+  
 }

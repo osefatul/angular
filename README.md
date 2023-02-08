@@ -523,7 +523,6 @@ export class RoomsListComponent {
 
 
 //parentComponent: rooms.components.html
-
 <div *ngIf="rooms.availableRooms >0 ">
     Room List:
     <app-rooms-list [rooms]="roomsList"></app-rooms-list>>
@@ -586,9 +585,6 @@ export class RoomsListComponent {
                 >
                 Select Room
             </button>
-
-
-
         </td>
     </tr>
 </table>
@@ -626,14 +622,13 @@ A child component can `emit` an event by calling the `emit` method on its instan
 
 
 
-
 # Lifecycle Hooks
 during the lifecycle of a component or directive. These hooks are called at specific times during the creation, update, and destruction of a component. They allow you to run custom logic or perform operations at key points in the lifecycle of a component.
 
 Here's a list of some of the common lifecycle hooks in Angular:
 
 - `ngOnChanges`: called when an input or output binding value changes.
-- `ngOnInit`: called once, after the first ngOnChanges hook.
+- `ngOnInit`: called once, after the first ngOnChanges hook. 
 - `ngDoCheck`: called during every change detection cycle.
 - `ngAfterContentInit`: called after a component's content has been fully initialized.
 - `ngAfterContentChecked`: called after a component's content has been checked by Angular.
@@ -642,7 +637,7 @@ Here's a list of some of the common lifecycle hooks in Angular:
 - `ngOnDestroy`: called just before a component is destroyed.
 
 
-You can implement any of these hooks in your component or directive class by defining a method with the same name as the hook. For example, you can implement the ngOnInit hook like this:
+You can implement any of these hooks in your component or directive class by defining a method with the same name as the hook. For example, you can implement the `ngOnInit` hook like this:
 
 
 ```javascript
@@ -660,3 +655,74 @@ export class MyComponent implements OnInit {
 ```
 
 In this example, the `MyComponent` class `implements` the `OnInit` interface and defines an ngOnInit method. This method will be called by Angular once, after the first ngOnChanges hook, and can be used to perform any initialization logic for the component.
+
+
+
+## Change Detection
+Before I explain what change detection is, I wanted to say that in React, the equivalent of change detection is called re-rendering or updating component tree.
+Change detection in Angular is the mechanism that Angular uses to detect and update the component views when the data changes. Angular provides two change detection strategies:
+
+### Default change detection: 
+Angular uses this strategy for most applications. It runs change detection for the entire component tree(from app-root to the last component) every time something changes. It's fast, efficient, and easy to understand, but can lead to performance issues for larger applications.
+
+### OnPush change detection: 
+This strategy only runs change detection for a component and its children when the component's inputs change. To use this strategy, you need to set the changeDetection property of the component's @Component decorator to `ChangeDetectionStrategy.OnPush`. This strategy is more performant than the default strategy, but requires more setup and can lead to unexpected behavior if not used correctly.
+
+The change detection process involves checking the component's inputs and template expressions to see if they have changed. If they have, Angular updates the component's view to reflect the changes. If they haven't changed, Angular skips the component and its children.
+
+By understanding change detection and choosing the right strategy, developers can improve the performance and scalability of their Angular applications.
+
+
+### Example
+
+let's add a button in the rooms.component.html
+
+```javascript
+<div>
+    <button
+    (click)="addRoom()"
+    >
+        add new room
+    </button>
+</div>
+```
+
+now add the method in the rooms.component.ts
+
+```javascript
+  addRoom(){
+    const room: RoomList = 
+      {
+        roomNumber:10,
+        roomType: "new Deluxe Room",
+        amenities: "Air Conditioner, Free Wifi",
+        price: 400,
+        photos:"https://images.unsplash.com/photo-1615874959474-d609969a20ed?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8M3x8YmVkcm9vbXxlbnwwfHwwfHw%3D&w=1000&q=80",
+        checkInTime: new Date('11-Feb-2023'),
+        checkOutTime: new Date('18-Feb-2023')
+      }
+      
+      this.roomsList.push(room);
+  }
+```
+Now when we click on the button, new row is added.
+
+
+**let's use `ChangeDetectionStrategy` to room.list.component**
+
+```javascript
+@Component({
+  selector: 'app-rooms-list',
+  templateUrl: './rooms-list.component.html',
+  styleUrls: ['./rooms-list.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
+})
+```
+
+and when we click on the button. it won't work (adding new room) why? It is because when we set `changeDetection: ChangeDetectionStrategy.OnPush` in the child component, while the data is coming from outside, it won't let the data get **mutated**. As we can see in the above example we were mutating the `roomsList` with `this.roomsList.push(room)`, which we shouldn't. so to solve this issue, we need to use immutability concept using:
+
+```javascript
+this.roomsList = [...this.roomsList, room]
+```
+
+now it will work

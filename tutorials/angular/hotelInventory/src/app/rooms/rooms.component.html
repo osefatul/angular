@@ -5,9 +5,8 @@
 
 <div [hidden]= "hideRooms">
     Number of Rooms
-    <div 
-    [innerText]="numberOfRooms"
-    >
+    <div [innerText]="numberOfRooms">
+        <!-- {{numberOfRooms}} -->
     </div>
 </div>
 
@@ -18,11 +17,22 @@
 <!-- Using trinary operation in Angular -->
 {{rooms.availableRooms && "rooms are available" }}
 
+
+<div>
+    <button
+    (click)="addRoom()"
+    >
+        add new room
+    </button>
+</div>
+
+
+
 <div *ngIf="rooms.availableRooms >0 ">
     Room List:
     <app-rooms-list 
     [rooms]="roomsList"
-    (selectedRoom)="selectRoom($event)"
+    (selectedRoom)="selectParentRoom($event)"
     ></app-rooms-list>
 </div>
 

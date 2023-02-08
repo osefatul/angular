@@ -11,19 +11,26 @@
     </div>
 </div>
 
+<div *ngIf="selectedJson">
+    {{selectedJson | json}}
+</div>
+
 <!-- Using trinary operation in Angular -->
 {{rooms.availableRooms && "rooms are available" }}
 
 <div *ngIf="rooms.availableRooms >0 ">
     Room List:
-    <ul *ngFor="let room of roomList">
-        <li>
-            {{room.roomType}}
-        </li>
-    </ul>
+    <app-rooms-list 
+    [rooms]="roomsList"
+    (selectedRoom)="selectRoom($event)"
+    ></app-rooms-list>
 </div>
+
 
 
 <button (click)="toggle()">
     Toggle
 </button>
+
+
+

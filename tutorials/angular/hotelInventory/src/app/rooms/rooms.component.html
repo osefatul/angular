@@ -12,11 +12,17 @@
 </div>
 
 <!-- Using trinary operation in Angular -->
-{{rooms.availableRooms? "rooms are available": "rooms are not available" }}
+{{rooms.availableRooms && "rooms are available" }}
 
 <div *ngIf="rooms.availableRooms >0 ">
-    Room List
+    Room List:
+    <ul *ngFor="let room of roomList">
+        <li>
+            {{room.roomType}}
+        </li>
+    </ul>
 </div>
+
 
 <button (click)="toggle()">
     Toggle

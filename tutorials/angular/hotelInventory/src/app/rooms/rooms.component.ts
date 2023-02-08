@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Room } from './rooms';
+import { Room, RoomList } from './rooms';
 
 @Component({
   selector: 'app-rooms',
@@ -21,6 +21,33 @@ export class RoomsComponent {
     bookedRooms: 23,
     totalRooms: 50,
   }
+
+  roomList: RoomList[] = [
+    {
+      roomType: "Deluxe Room",
+      amenities: "Air Conditioner, Free Wifi",
+      price: 400,
+      photos:"https://images.unsplash.com/photo-1615874959474-d609969a20ed?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8M3x8YmVkcm9vbXxlbnwwfHwwfHw%3D&w=1000&q=80",
+      checkInTime: new Date('11-Feb-2023'),
+      checkOutTime: new Date('18-Feb-2023')
+    },
+    {
+      roomType: "King size bed",
+      amenities: "Air Conditioner, Free Wifi",
+      price: 300,
+      photos:"https://images.unsplash.com/photo-1615874959474-d609969a20ed?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8M3x8YmVkcm9vbXxlbnwwfHwwfHw%3D&w=1000&q=80",
+      checkInTime: new Date('11-Feb-2023'),
+      checkOutTime: new Date('18-Feb-2023')
+    },
+    {
+      roomType: "Deluxe Queen size bed",
+      amenities: "Air Conditioner, Free Wifi",
+      price: 400,
+      photos:"https://images.unsplash.com/photo-1615874959474-d609969a20ed?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8M3x8YmVkcm9vbXxlbnwwfHwwfHw%3D&w=1000&q=80",
+      checkInTime: new Date('11-Feb-2023'),
+      checkOutTime: new Date('18-Feb-2023')
+    }
+  ]
   
 
   toggle(){

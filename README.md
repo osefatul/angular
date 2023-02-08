@@ -1,6 +1,27 @@
-# Angular
-- A UI, component-based framework for building scalable applications.
-- Provided collection of libraries to cover features like Routing, Forms.
+
+<style>
+.heading1 {
+    font-weight:700;
+    font-size: 70px!important;
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    border-bottom: 1px solid green !important;}
+.logo{
+    width: 90px;
+}
+
+
+</style>
+
+
+<h1 id="identifier" class="heading1">
+    <img class="logo" src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/cf/Angular_full_color_logo.svg/2048px-Angular_full_color_logo.svg.png">
+    Angular
+</h1>
+
+- A UI component-based framework for building scalable applications.
+- Provided collection of libraries to cover features like Routing and forms.
 
 ## Features of Angular
 - Template
@@ -11,7 +32,9 @@
 - PWA
 
 
-## Typescript
+
+# Typescript
+Angular uses typescript, which is javascript with types.
 - Install node
 - `npm init` to create a package.json
 - install typescript `npm i typescript`
@@ -21,7 +44,10 @@
 - In the `tsconfig.ts` file uncomment the `outDir` property. it will enable to compile all ts files into the `outDir` directory.
 - after enabling `outDir` property now if you compile all ts files. all those files will be stored in the `outDir` directory.
 
-## SPA
+# SPA
+Angular main purpose is to build SPA(single page applications) and PWA(progressive web applications).
+
+What is SPA?
 - SPA doesn't make request to server for every URL request.
 - Angular has routing functionalities to create SPA.
 - Angular also offers SSR(server side rendering) which supports SPA.
@@ -112,7 +138,7 @@ The AppComponent class is decorated with the @Component decorator, which adds me
 
 
 
-## Template syntax
+# Template syntax
 ### Create a Component
 Create a component: ng generate/g component/c component-name
 ```javascript
@@ -120,12 +146,12 @@ ng g c rooms
 ```
 
 
-### Binding Syntax
+## Binding Syntax
 First, what is binding?
 
 In programming, "binding" refers to the process of connecting a value to a variable or a reference to an object, so that the variable or reference can be used to access and manipulate the value or object. This is typically done through assignment statements, where a value or reference is assigned to a variable or reference. Once a value or reference is bound to a variable or reference, the binding is said to be "fixed" or "established".
 
-- **Interpolation**
+- ## Interpolation
 ```javascript
 
 //rooms.components.ts
@@ -145,8 +171,8 @@ export class RoomsComponent {
     hello world, welcome to {{hotelName}}
 </h1>
 ```
-- **Property binding**
-assignment to a property of html element.
+- ## Property binding
+Assignment to a property of html element.
 ```javascript
 export class RoomsComponent {
 
@@ -158,7 +184,7 @@ export class RoomsComponent {
 <h1 class="content" role="main">
     hello world, welcome to {{hotelName}}
 </h1>
-    
+
 
 Number of Rooms
 <div 
@@ -166,8 +192,8 @@ Number of Rooms
 >
 </div>
 ```
+- ## Event binding
 
-- **Event binding**
 Hide div
 
 ```javascript
@@ -214,3 +240,86 @@ export class RoomsComponent {
 </button>
 
 ```
+<hr style="background-color: gold"/>
+
+# Directives
+
+## Intro
+- Directives are use to change the behavior and appearance of DOM element.
+- Directives can implement all lifecycle hooks.
+- Directives can not have template.
+
+
+## Types
+### 1. Structural Directives
+Structural directives are directives that shape or reshape the DOM's structure by adding, removing, and manipulating elements. They are prefixed with an asterisk (*) in the template. Examples of structural directives are `*ngIf`, `*ngFor`, `*ngSwitch`, `ngClass` and `ngStyle`. These directives allow you to conditionally render elements or repeat them based on some conditions, making the DOM dynamic and adaptable to changing data.
+
+#### Example: *ngFor
+
+Imagine you have a list of books in your component class like this:
+```javascript
+books = [  
+    { title: 'The Great Gatsby', author: 'F. Scott Fitzgerald' },  
+    { title: 'To Kill a Mockingbird', author: 'Harper Lee' },  
+    { title: 'The Catcher in the Rye', author: 'J.D. Salinger' }
+    ];
+```
+You can use the ngFor directive in your HTML template to loop through the books array and display each book's title and author:
+
+```javascript
+<ul>
+  <li *ngFor="let book of books">{{ book.title }} by {{ book.author }}</li>
+</ul>
+```
+
+The result will be an unordered list with three list items, each displaying the title and author of a book:
+
+```javascript
+- The Great Gatsby by F. Scott Fitzgerald
+- To Kill a Mockingbird by Harper Lee
+- The Catcher in the Rye by J.D. Salinger
+```
+In this example, the ngFor directive is modifying the structure of the DOM by adding a list item for each book in the books array.
+
+#### Example2: *ngIf
+Imagine you have a boolean property `isLoggedIn` in your component class that determines whether the user is logged in or not:
+
+```javascript
+isLoggedIn = false;
+```
+You can use the ngIf directive in your HTML template to show or hide a welcome message based on the value of isLoggedIn:
+
+```javascript
+<div *ngIf="isLoggedIn">
+  Welcome back!
+</div>
+```
+
+If `isLoggedIn` is `false`, the welcome message won't be displayed. But if `isLoggedIn` is `true`, the welcome message will be displayed:
+
+```javascript
+Welcome back!
+```
+
+
+#### Example3: *ngSwitch
+
+Imagine you have a string property color in your component class that holds one of several colors:
+
+```javascript
+color = 'red';
+```
+You can use the `ngSwitch` directive in your HTML template to display a message based on the value of `color`:
+
+```html
+<div [ngSwitch]="color">
+  <div *ngSwitchCase="'red'">You have selected red</div>
+  <div *ngSwitchCase="'blue'">You have selected blue</div>
+  <div *ngSwitchCase="'green'">You have selected green</div>
+  <div *ngSwitchDefault>Invalid color selected</div>
+</div>
+```
+
+In this example, the `ngSwitch` directive is modifying the structure of the DOM by adding or removing elements based on the value of color. If `color` is 'red', the message "You have selected red" will be displayed. If `color` is not 'red', 'blue', or 'green', the message "Invalid color selected" will be displayed.
+
+### 2.  Attribute Directives

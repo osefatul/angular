@@ -11,6 +11,13 @@
     </div>
 </div>
 
+<!-- Using trinary operation in Angular -->
+{{rooms.availableRooms? "rooms are available": "rooms are not available" }}
+
+<div *ngIf="rooms.availableRooms >0 ">
+    Room List
+</div>
+
 <button (click)="toggle()">
     Toggle
 </button>

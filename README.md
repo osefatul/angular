@@ -322,4 +322,25 @@ You can use the `ngSwitch` directive in your HTML template to display a message 
 
 In this example, the `ngSwitch` directive is modifying the structure of the DOM by adding or removing elements based on the value of color. If `color` is 'red', the message "You have selected red" will be displayed. If `color` is not 'red', 'blue', or 'green', the message "Invalid color selected" will be displayed.
 
+
+#### Note: In Angular, you can use the ternary operator to conditionally render a value in the template. The ternary operator is a shorthand for an if statement and is written as condition ? expression1 : expression2.
+
+Here's an example of how you could use the ternary operator in Angular to display a message based on whether the user is logged in or not:
+
+
+```javascript
+<p>{{ isLoggedIn ? 'Welcome back!' : 'Please log in' }}</p>
+```
+### Difference between ternary operator and *ngIf Directive
+The *ngIf directive and the ternary operator are both used to conditionally render elements in an Angular template, but they serve different purposes and have different syntax and behavior.
+
+*ngIf is a structural directive, which means it modifies the structure of the DOM by adding or removing elements based on a condition.
+
+The *ngIf directive is used to conditionally render an element, and the element and its content will only be displayed if the condition is true. If the condition is false, the element and its content will be removed from the DOM.
+
+The ternary operator, on the other hand, is a shorthand for an if statement and is used to conditionally render a value in the template.
+
+
+**In summary, `*ngIf` is used to conditionally render elements, and the `ternary operator` is used to conditionally render values. Both are useful for controlling the display of content based on conditions, but they have different syntax and behavior.**
+
 ### 2.  Attribute Directives

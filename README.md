@@ -656,7 +656,7 @@ export class MyComponent implements OnInit {
 
 In this example, the `MyComponent` class `implements` the `OnInit` interface and defines an ngOnInit method. This method will be called by Angular once, after the first ngOnChanges hook, and can be used to perform any initialization logic for the component.
 
-
+**The concept of `ngOnInit` hook is the same concept of `useEffect` with an empty array in React.**
 
 ## Change Detection
 Before I explain what change detection is, I wanted to say that in React, the equivalent of change detection is called re-rendering or updating component tree.
@@ -719,10 +719,10 @@ Now when we click on the button, new row is added.
 })
 ```
 
-and when we click on the button. it won't work (adding new room) why? It is because when we set `changeDetection: ChangeDetectionStrategy.OnPush` in the child component, while the data is coming from outside, it won't let the data get **mutated**. As we can see in the above example we were mutating the `roomsList` with `this.roomsList.push(room)`, which we shouldn't. so to solve this issue, we need to use immutability concept using:
+and when we click on the button. it won't work (adding new room) why? It is because when we set `changeDetection: ChangeDetectionStrategy.OnPush` in the child component, while the data is coming from outside, it won't let the data get **mutated**. As we can see in the above example we were mutating the `roomsList` with `this.roomsList.push(room)`, which we shouldn't. so to solve this issue, we need to use mutating data using:
 
 ```javascript
 this.roomsList = [...this.roomsList, room]
 ```
 
-now it will work
+Now it will work, why because the we avoid mutating started working. on immutability which is supported by the child component.

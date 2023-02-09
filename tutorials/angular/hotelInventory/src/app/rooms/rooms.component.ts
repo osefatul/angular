@@ -15,6 +15,7 @@ export class RoomsComponent {
   numberOfRooms: number = 50
 
   hideRooms:boolean = false;
+  roomsTitle:string = "Rooms List"
 
   rooms: Room = 
   { availableRooms: 25,
@@ -24,7 +25,10 @@ export class RoomsComponent {
 
   toggle(){
     this.hideRooms = !this.hideRooms; //toggle the value
+    this.roomsTitle = "Rooms List updated";
   }
+
+
 
   roomsList: RoomList[] = [
     {

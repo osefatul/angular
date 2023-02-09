@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DoCheck, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { RoomList } from '../rooms';
 
 
@@ -13,18 +13,25 @@ import { RoomList } from '../rooms';
 })
 
 
-export class RoomsListComponent implements OnInit, OnChanges {
+export class RoomsListComponent implements OnInit, OnChanges, DoCheck {
 
   userData!:{ id: number; name: string; }
 
   // From parents to child
   @Input() rooms: RoomList[] = [];
+  @Input() title: string = '';
 
   // From child to parent
   @Output() selectedRoom = new EventEmitter<RoomList>();
-  
+
+
+
   ngOnChanges(changes: SimpleChanges): void {
     console.log(changes)
+
+    // if(changes['title']){
+    //   this.title = changes['title'].currentValue.toUpperCase()
+    // }
   }
 
 
@@ -33,10 +40,15 @@ export class RoomsListComponent implements OnInit, OnChanges {
     console.log(this.userData) 
   }
 
+  ngDoCheck() {
+    console.log("on Changed is called")
+  }
 
 
-  //buttonHandler in room.list.component.html
+  //buttonHandler in the child(room.list.component.html)
   selectRoom (room: RoomList){
     this.selectedRoom.emit(room)
   }
 }
+
+

@@ -20,8 +20,7 @@
 
 <div>
     <button
-    (click)="addRoom()"
-    >
+    (click)="addRoom()">
         add new room
     </button>
 </div>
@@ -32,6 +31,7 @@
     Room List:
     <app-rooms-list 
     [rooms]="roomsList"
+    [title]="roomsTitle"
     (selectedRoom)="selectParentRoom($event)"
     ></app-rooms-list>
 </div>

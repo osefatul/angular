@@ -726,3 +726,148 @@ this.roomsList = [...this.roomsList, room]
 ```
 
 Now it will work, why because the we avoid mutating started working. on immutability which is supported by the child component.
+
+
+## ngOnInit
+
+The `ngOnInit` method is a lifecycle hook method that is defined in a component class. This method is automatically invoked by Angular after the component and its inputs have been initialized. It can be used to perform any necessary setup or configuration for the component after it has been created. This can include setting default values for component properties, setting up data bindings, or calling an API to fetch data. The goal of configuration is to get the component into a state where it is ready to display data and respond to user interactions. Configuration typically involves initializing component properties, setting up subscriptions to data sources, or performing any other setup that is required for the component to function properly.
+
+Here is an example of how the ngOnInit method might be used to perform configuration for a component:
+
+```javascript
+import { Component, OnInit } from '@angular/core';
+import { DataService } from './data.service';
+
+@Component({
+  selector: 'app-my-component',
+  templateUrl: './my-component.component.html',
+  styleUrls: ['./my-component.component.css']
+})
+export class MyComponentComponent implements OnInit {
+  data: any[];
+
+  constructor(private dataService: DataService) {}
+
+  ngOnInit() {
+    this.dataService.getData().subscribe(data => {
+      this.data = data;
+    });
+  }
+}
+```
+
+#### For React Developers:
+
+`ngOnInit` in Angular is similar to the `useEffect` hook in React with an `empty dependency` array.
+
+
+## ngOnChanges
+
+`ngOnChanges` is a lifecycle hook in Angular that is called whenever changes are made to input properties of a component. This method is called before `ngOnInit` and is used to handle any updates or changes to the component's inputs.
+
+The `ngOnChanges` method receives an object called `SimpleChanges` that contains the current and previous values of the changed inputs. Here's an example:
+
+```javascript
+import { Component, OnChanges, Input } from '@angular/core';
+
+@Component({
+  selector: 'app-example',
+  template: `
+    <p>Previous value: {{ previousValue }}</p>
+    <p>Current value: {{ currentValue }}</p>
+  `
+})
+export class ExampleComponent implements OnChanges {
+  @Input() value: any;
+
+  previousValue: any;
+  currentValue: any;
+
+  ngOnChanges(changes: SimpleChanges) {
+    this.previousValue = changes.value.previousValue;//changes.['value'].previousValue
+    this.currentValue = changes.value.currentValue;//changes.['value'].currentValue
+  }
+}
+```
+
+This example defines a component called `ExampleComponent` that `implements` the `OnChanges` lifecycle hook. The component has an Input property called `value`, which is decorated with the @Input decorator. The `value` property is a data input that can be passed to the component from its parent component.
+
+The component template consists of two paragraphs that display the previous and current values of the value input property. The previous and current values are displayed using interpolation, which is denoted by double curly braces ({{ }}).
+
+The `ngOnChanges` method is defined in the ExampleComponent class and receives a single argument called changes. The changes argument is of type `SimpleChanges`, which is an object that contains the current and previous values of the changed inputs.
+
+The `ngOnChanges` method updates the previousValue and currentValue properties with the values of the value input property. The previousValue property is set to changes.value.previousValue, and the currentValue property is set to changes.value.currentValue.
+
+The `ngOnChanges` method is called by Angular whenever changes are made to input properties of the component. This means that whenever the value of the value input property is updated, the `ngOnChanges` method will be called and the previousValue and currentValue properties will be updated with the new values. The updated values will then be displayed in the template.
+
+#### For React Developers:
+In React, there is no direct equivalent to the `ngOnChanges` lifecycle hook in Angular. However, you can achieve similar functionality in React by using the `useState` and `useEffect` hooks.
+
+The `useState` hook is used to manage the component's state, and the `useEffect` hook is used to perform side effects in response to changes in state or props.
+
+Here's an example of how you could implement the equivalent of ngOnChanges in React:
+
+
+```javascript
+import React, { useState, useEffect } from 'react';
+
+const Example = (props) => {
+  const [previousValue, setPreviousValue] = useState(props.value);
+  const [currentValue, setCurrentValue] = useState(props.value);
+
+  useEffect(() => {
+    setPreviousValue(currentValue);
+    setCurrentValue(props.value);
+  }, [props.value]);
+
+  return (
+    <>
+      <p>Previous value: {previousValue}</p>
+      <p>Current value: {currentValue}</p>
+    </>
+  );
+};
+```
+
+## ngDoCheck
+`ngDoCheck` is a lifecycle hook in Angular that is called during every change detection cycle. It is used to perform custom change detection, which can be useful when the Angular default change detection mechanism is not sufficient for detecting changes in your component or directive.
+
+The `ngDoCheck` hook is called before Angular performs its own internal change detection (`ngOnChange`), and it provides a way for you to check for changes in your component and take action accordingly. For example, you might use it to compare the previous and current values of a property and perform some action if they have changed.
+
+So, basically the difference between `ngDoCheck` and `ngOnChange` is that, `ngDoCheck` will run when whatever event is triggered/raised and it doesn't matter wherever it is located in the entire application, also it doesn't matter if the previous and current values of properties are same, it will still run. This is very costly.
+
+However, `ngOnChange` runs only on @Input detractor, plus the previous and current values of @Input must be different, if they are same, it won't run.
+
+Here is an example of how you could use the ngDoCheck lifecycle hook in an Angular component:
+
+```javascript
+import { Component, OnInit, DoCheck } from '@angular/core';
+
+@Component({
+  selector: 'app-example',
+  template: `
+    {{message}}
+  `
+})
+export class ExampleComponent implements OnInit, DoCheck {
+  message = 'Hello World';
+  previousMessage = '';
+
+  ngOnInit() {
+    this.previousMessage = this.message;
+  }
+
+  ngDoCheck() {
+    if (this.message !== this.previousMessage) {
+      console.log('message has changed');
+      this.previousMessage = this.message;
+    }
+  }
+}
+```
+In this example, the `ngDoCheck` hook is used to detect changes in the message property, and it logs a message to the console if the value has changed.
+
+#### For React Developers:
+There is no alternative to `ngDoCheck` in React, because in react hooks only runs on component lifecycle.
+
+```

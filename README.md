@@ -954,4 +954,10 @@ In this example, the `ngAfterViewChecked` hook is used to update the value of th
 
 ## ng-template
 
-what if I want to render child dynamically, rather than mentioned it in the parent template...
+what if I want to render child dynamically, rather than mentioned it in the parent template.
+
+```javascript
+<div>
+    <ng-template #user></ng-template>
+</div>
+```

@@ -952,4 +952,6 @@ export class MyComponent implements AfterViewChecked {
 In this example, the `ngAfterViewChecked` hook is used to update the value of the message property and to trigger a change detection cycle to update the view.
 
 
-## ng-Template
+## ng-template
+
+what if I want to render child dynamically, rather than mentioned it in the parent template...

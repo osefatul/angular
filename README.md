@@ -901,7 +901,6 @@ import { ChildComponent } from './child.component';
   `
 })
 
-
 export class ParentComponent {
   @ViewChild('childComponent') child: ChildComponent;
 
@@ -952,12 +951,110 @@ export class MyComponent implements AfterViewChecked {
 In this example, the `ngAfterViewChecked` hook is used to update the value of the message property and to trigger a change detection cycle to update the view.
 
 
-## ng-template
+# ng-template
+`ng-template` is an Angular directive that is used to declare a template or a portion of HTML that can be reused across different components or parts of a component. It acts as a placeholder for content that can be dynamically loaded into the view.
+
+The `ng-template` directive doesn't render anything on its own, instead, it is used as a container for holding content that can be rendered to the view using other Angular directives such as `ngIf`, `ngFor`, etc.
+
+
+```javascript
+<ng-template #myTemplate>
+  <p>This is the content of my template</p>
+</ng-template>
+
+<button (click)="show = !show">Toggle Template</button>
+
+<ng-container *ngIf="show; else myTemplate">
+  <p>This text is shown when the button is clicked</p>
+</ng-container>
+```
+
+In the example above, the `ng-template` directive is defined with the `#myTemplate` template reference variable, which can be used to reference the template in other parts of the component. The `ng-container` directive is then used to conditionally render the contents of the template based on the value of the show property.
+
 
 what if I want to render child dynamically, rather than mentioned it in the parent template.
 
-```javascript
+
+#### Example from our Code:
+I want to load `roomsComponent` dynamically.
+
+```html
+<!-- app.component.html -->
+
+
+<!-- <app-rooms></app-rooms> --> 
+
+<!-- I want to load `roomsComponent` dynamically -->
 <div>
     <ng-template #user></ng-template>
 </div>
+
+<app-demo-picker></app-demo-picker>
+
 ```
+
+Now to access the `ng-template` the In the `app.component.ts`, we need to use `@ViewChild` to create an instance, and an object `{read: ViewContainerRef}` to dynamically load the component/directive.
+
+```javascript
+  @ViewChild('user', {read: ViewContainerRef}) vcr!: ViewContainerRef;
+```
+once component is accessible then we need to render the component, with creating a newComponent instance.
+
+```javascript
+import { AfterViewInit, Component, ViewChild, ViewContainerRef } from '@angular/core';
+import { RoomsComponent } from './rooms/rooms.component';
+
+@Component({
+  selector: 'app-root',
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.scss']
+})
+export class AppComponent implements AfterViewInit {
+  title = 'hotelInventory';
+
+  @ViewChild('user', {read: ViewContainerRef}) vcr!: ViewContainerRef;
+
+  ngAfterViewInit(){
+    console.log("rendering rooms")
+    const componentRef = this.vcr.createComponent(RoomsComponent);
+  }
+}
+```
+
+and to access any of the properties or methods of the `RoomsComponent`, just use the `componentRef.instance`. for example lets access `rooms` property of the `RoomsComponent`.
+
+```javascript
+ngAfterViewInit () {
+    const compRef = this.vcr.createComponent(RoomsComponent);
+    compRef.instance.rooms
+}
+```
+
+#### Example: Access HTML element in the Component.
+
+```html
+<h3 #date></h3>
+```
+
+```javascript
+@ViewChild('date', {static: true}) date!: ElementRef;
+
+  ngOnInit() {
+    this.date.nativeElement.innerText = "Choose booking dates"
+  }
+```
+Or Second Solution would be:
+
+```javascript
+@ViewChild('date') date!: ElementRef;
+
+ngAfterViewInit(){
+    this.date.nativeElement.innerText = "Choose booking dates"
+}
+```
+
+The difference here is that: in the first solution we used, `{static: true}` which means, to resolve the reference to the DOM element during the creation of the component's view, rather than after it. This means that when Angular creates the view, it will look for an element with the attribute `#date` and assign it to the date property declared with this decorator. If the `static` option is set to false, Angular will wait until the component's view has been fully rendered and then look for the element, which could potentially result in a delay if the element is not immediately available.
+
+By setting `static: true`, the component can be assured that the reference to the element will be available immediately, allowing it to interact with the element as soon as it is created. and we can load it in the `ngOnInit` lifecycle hook.
+
+`static:true` most of the time has been used when you are sure that loading DOM element is not `asynchronous` meaning that it is not going to take time for initialization. and vice versa.

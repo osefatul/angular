@@ -13,7 +13,7 @@ import { RoomList } from '../rooms';
 })
 
 
-export class RoomsListComponent implements OnInit, OnChanges, DoCheck {
+export class RoomsListComponent implements OnInit, OnChanges {
 
   userData!:{ id: number; name: string; }
 
@@ -27,8 +27,7 @@ export class RoomsListComponent implements OnInit, OnChanges, DoCheck {
 
 
   ngOnChanges(changes: SimpleChanges): void {
-    console.log(changes)
-
+    console.log("ngOnChange:", changes)
     // if(changes['title']){
     //   this.title = changes['title'].currentValue.toUpperCase()
     // }
@@ -37,12 +36,12 @@ export class RoomsListComponent implements OnInit, OnChanges, DoCheck {
 
   ngOnInit(): void {
     this.userData = {id:2, name:"user"}
-    console.log(this.userData) 
+    console.log("OnInit is called" , this.userData) 
   }
 
-  ngDoCheck() {
-    console.log("on Changed is called")
-  }
+  // ngDoCheck() {
+  //   console.log("DoCheck is called")
+  // }
 
 
   //buttonHandler in the child(room.list.component.html)

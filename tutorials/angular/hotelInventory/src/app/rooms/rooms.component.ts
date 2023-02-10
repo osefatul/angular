@@ -93,7 +93,7 @@ export class RoomsComponent {
   }
 
 
-  // ------- Receive data from child------------------
+  // ------- Receive data (props) from child------------------
   selectedJson!: RoomList
   
   selectParentRoom (room:RoomList){

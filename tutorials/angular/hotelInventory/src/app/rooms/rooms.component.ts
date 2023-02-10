@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { Room, RoomList } from './rooms';
+import {HeaderComponent} from "../header/header.component"
 
 @Component({
   selector: 'app-rooms',
@@ -29,6 +30,12 @@ export class RoomsComponent {
   }
 
 
+  //-------Accessing ChildComponent -----------------
+  //create an instance of HeaderComponent
+  @ViewChild('childComponent') child!: HeaderComponent;
+  ngAfterViewInit() {
+    this.child.headerTitle = "Welcome to the best hotel in the world"
+  }
 
   roomsList: RoomList[] = [
     {
@@ -85,6 +92,7 @@ export class RoomsComponent {
       this.roomsList = [...this.roomsList, room]
   }
 
+
   // ------- Receive data from child------------------
   selectedJson!: RoomList
   
@@ -94,3 +102,5 @@ export class RoomsComponent {
   }
   
 }
+
+

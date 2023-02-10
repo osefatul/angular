@@ -619,53 +619,14 @@ In the above example, the `EventEmitter` class is part of the` @angular/core` mo
 A child component can `emit` an event by calling the `emit` method on its instance of `EventEmitter`. The parent component can listen to the event by using the `(eventName)` syntax in the template, where eventName is the name of the event to listen for. In the parent component's class, a method can be specified to handle the event when it occurs.
 
 
-
-
-
-# Lifecycle Hooks
-during the lifecycle of a component or directive. These hooks are called at specific times during the creation, update, and destruction of a component. They allow you to run custom logic or perform operations at key points in the lifecycle of a component.
-
-Here's a list of some of the common lifecycle hooks in Angular:
-
-- `ngOnChanges`: called when an input or output binding value changes.
-- `ngOnInit`: called once, after the first ngOnChanges hook. 
-- `ngDoCheck`: called during every change detection cycle.
-- `ngAfterContentInit`: called after a component's content has been fully initialized.
-- `ngAfterContentChecked`: called after a component's content has been checked by Angular.
-- `ngAfterViewInit`: called after a component's view has been fully initialized.
-- `ngAfterViewChecked`: called after a component's view has been checked by Angular.
-- `ngOnDestroy`: called just before a component is destroyed.
-
-
-You can implement any of these hooks in your component or directive class by defining a method with the same name as the hook. For example, you can implement the `ngOnInit` hook like this:
-
-
-```javascript
-import { Component, OnInit } from '@angular/core';
-
-@Component({
-  selector: 'app-my-component',
-  template: `...`
-})
-export class MyComponent implements OnInit {
-  ngOnInit() {
-    // Your logic here
-  }
-}
-```
-
-In this example, the `MyComponent` class `implements` the `OnInit` interface and defines an ngOnInit method. This method will be called by Angular once, after the first ngOnChanges hook, and can be used to perform any initialization logic for the component.
-
-**The concept of `ngOnInit` hook is the same concept of `useEffect` with an empty array in React.**
-
-## Change Detection
+# Change Detection
 Before I explain what change detection is, I wanted to say that in React, the equivalent of change detection is called re-rendering or updating component tree.
 Change detection in Angular is the mechanism that Angular uses to detect and update the component views when the data changes. Angular provides two change detection strategies:
 
-### Default change detection: 
+## Default change detection: 
 Angular uses this strategy for most applications. It runs change detection for the entire component tree(from app-root to the last component) every time something changes. It's fast, efficient, and easy to understand, but can lead to performance issues for larger applications.
 
-### OnPush change detection: 
+## OnPush change detection: 
 This strategy only runs change detection for a component and its children when the component's inputs change. To use this strategy, you need to set the changeDetection property of the component's @Component decorator to `ChangeDetectionStrategy.OnPush`. This strategy is more performant than the default strategy, but requires more setup and can lead to unexpected behavior if not used correctly.
 
 The change detection process involves checking the component's inputs and template expressions to see if they have changed. If they have, Angular updates the component's view to reflect the changes. If they haven't changed, Angular skips the component and its children.
@@ -728,40 +689,45 @@ this.roomsList = [...this.roomsList, room]
 Now it will work, why because the we avoid mutating started working. on immutability which is supported by the child component.
 
 
-## ngOnInit
 
-The `ngOnInit` method is a lifecycle hook method that is defined in a component class. This method is automatically invoked by Angular after the component and its inputs have been initialized. It can be used to perform any necessary setup or configuration for the component after it has been created. This can include setting default values for component properties, setting up data bindings, or calling an API to fetch data. The goal of configuration is to get the component into a state where it is ready to display data and respond to user interactions. Configuration typically involves initializing component properties, setting up subscriptions to data sources, or performing any other setup that is required for the component to function properly.
+# Lifecycle Hooks
+during the lifecycle of a component or directive. These hooks are called at specific times during the creation, update, and destruction of a component. They allow you to run custom logic or perform operations at key points in the lifecycle of a component.
 
-Here is an example of how the ngOnInit method might be used to perform configuration for a component:
+Here's a list of some of the common lifecycle hooks in Angular:
+
+1. `ngOnChanges`: called when an input or output binding value changes.
+2. `ngOnInit`: called once, after the first ngOnChanges hook. 
+3. `ngDoCheck`: called during every change detection cycle.
+4. `ngAfterContentInit`: called after a component's content has been fully initialized.
+5. `ngAfterContentChecked`: called after a component's content has been checked by Angular.
+6. `ngAfterViewInit`: called after a component's view has been fully initialized.
+7. `ngAfterViewChecked`: called after a component's view has been checked by Angular.
+8. `ngOnDestroy`: called just before a component is destroyed.
+
+
+You can implement any of these hooks in your component or directive class by defining a method with the same name as the hook. For example, you can implement the `ngOnInit` hook like this:
+
 
 ```javascript
 import { Component, OnInit } from '@angular/core';
-import { DataService } from './data.service';
 
 @Component({
   selector: 'app-my-component',
-  templateUrl: './my-component.component.html',
-  styleUrls: ['./my-component.component.css']
+  template: `...`
 })
-export class MyComponentComponent implements OnInit {
-  data: any[];
-
-  constructor(private dataService: DataService) {}
-
+export class MyComponent implements OnInit {
   ngOnInit() {
-    this.dataService.getData().subscribe(data => {
-      this.data = data;
-    });
+    // Your logic here
   }
 }
 ```
 
-#### For React Developers:
-
-`ngOnInit` in Angular is similar to the `useEffect` hook in React with an `empty dependency` array.
+In this example, the `MyComponent` class `implements` the `OnInit` interface and defines an `ngOnInit` method. This method will be called by Angular once, after the first ngOnChanges hook, and can be used to perform any initialization logic for the component.
 
 
-## ngOnChanges
+Now, let's explain each of the hook:
+
+## 1. ngOnChanges
 
 `ngOnChanges` is a lifecycle hook in Angular that is called whenever changes are made to input properties of a component. This method is called before `ngOnInit` and is used to handle any updates or changes to the component's inputs.
 
@@ -829,7 +795,39 @@ const Example = (props) => {
 };
 ```
 
-## ngDoCheck
+## 2. ngOnInit
+The `ngOnInit` method is a lifecycle hook method that is defined in a component class. This method is automatically invoked by Angular after the component and its inputs have been initialized. It can be used to perform any necessary setup or configuration for the component after it has been created. This can include setting default values for component properties, setting up data bindings, or calling an API to fetch data. The goal of configuration is to get the component into a state where it is ready to display data and respond to user interactions. Configuration typically involves initializing component properties, setting up subscriptions to data sources, or performing any other setup that is required for the component to function properly.
+
+Here is an example of how the ngOnInit method might be used to perform configuration for a component:
+
+```javascript
+import { Component, OnInit } from '@angular/core';
+import { DataService } from './data.service';
+
+@Component({
+  selector: 'app-my-component',
+  templateUrl: './my-component.component.html',
+  styleUrls: ['./my-component.component.css']
+})
+export class MyComponentComponent implements OnInit {
+  data: any[];
+
+  constructor(private dataService: DataService) {}
+
+  ngOnInit() {
+    this.dataService.getData().subscribe(data => {
+      this.data = data;
+    });
+  }
+}
+```
+
+#### For React Developers:
+**The concept of `ngOnInit` hook is the same concept of `useEffect` with an empty array in React.**
+
+
+
+## 3. ngDoCheck
 `ngDoCheck` is a lifecycle hook in Angular that is called during every change detection cycle. It is used to perform custom change detection, which can be useful when the Angular default change detection mechanism is not sufficient for detecting changes in your component or directive.
 
 The `ngDoCheck` hook is called before Angular performs its own internal change detection (`ngOnChange`), and it provides a way for you to check for changes in your component and take action accordingly. For example, you might use it to compare the previous and current values of a property and perform some action if they have changed.
@@ -870,4 +868,85 @@ In this example, the `ngDoCheck` hook is used to detect changes in the message p
 #### For React Developers:
 There is no alternative to `ngDoCheck` in React, because in react hooks only runs on component lifecycle.
 
+
+
+## 4. ngAfterViewInit
+Basically, `ngAfterViewInit` lifecycle hook is used to log the `child` component after it has been initialized and its view has been created.
+
+How to access child component...
+
+### @ViewChild
+`ViewChild` is a decorator in Angular that is used to access a child component, directive or a DOM element within the parent component. This decorator allows you to access the properties and methods of the child component and manipulate them as needed.
+
+For example, consider the following template:
+
+```javascript
+<app-child #childComponent></app-child>
 ```
+
+the above line is a template for the parent component. It creates an instance of the ChildComponent and associates it with a template reference variable `#childComponent`.
+
+A template reference variable is a reference to a DOM element or a directive within a template. In this case, the template reference variable `#childComponent` refers to an instance of the ChildComponent. This reference can then be used in the component's class to access the properties and methods of the ChildComponent instance.
+
+You can access the ChildComponent in your parent component's class like this:
+
+```javascript
+import { Component, ViewChild } from '@angular/core';
+import { ChildComponent } from './child.component';
+
+@Component({
+  selector: 'app-parent',
+  template: `
+    <app-child #childComponent></app-child>
+  `
+})
+
+
+export class ParentComponent {
+  @ViewChild('childComponent') child: ChildComponent;
+
+  ngAfterViewInit() {
+    console.log(this.child);
+  }
+}
+```
+
+the `@ViewChild` decorator is used to access the `ChildComponent` instance with the reference name `'childComponent'` and store it in the child property. The `ngAfterViewInit` lifecycle hook is used to log the child component after it has been initialized (all its methods and properties have been executed.) and its view has been created.
+
+Another example:
+
+```javascript
+```
+
+## 5. ngAfterViewChecked
+`ngAfterViewChecked` is a lifecycle hook in Angular that is called after Angular has completed the check of a component's views and child views. This hook is called after every check of the component's views and child views, including the initial check.
+
+This hook can be used to perform any operations that need to be done after the view has been checked and updated. For example, you can use it to trigger an update in the component's logic based on the values of the view or to check if the view has changed and react accordingly.
+
+It is important to note that `ngAfterViewChecked` is called after every change detection cycle, so if you have any operations that are performed frequently, it is recommended to optimize them to avoid unnecessary execution.
+
+Here is an example of how `ngAfterViewChecked` can be used in a component:
+
+
+```javascript
+import { AfterViewChecked, ChangeDetectorRef, Component } from '@angular/core';
+
+@Component({
+  selector: 'app-my-component',
+  template: `
+    <p>{{ message }}</p>
+  `
+})
+export class MyComponent implements AfterViewChecked {
+  message = 'Initial message';
+
+  constructor(private changeDetector: ChangeDetectorRef) {}
+
+  ngAfterViewChecked() {
+    this.message = 'The view has been checked and updated';
+    this.changeDetector.detectChanges();
+  }
+}
+```
+
+In this example, the `ngAfterViewChecked` hook is used to update the value of the message property and to trigger a change detection cycle to update the view.

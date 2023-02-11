@@ -1317,3 +1317,4 @@ In Angular, Dependency Injection (DI) is a powerful mechanism that enables you t
 With DI, you can inject instances of services and other objects into a component's constructor as dependencies, making them available to the component for use. Angular has its own DI system that automatically manages the creation and lifetime of these dependencies. This makes it easier to manage the dependencies throughout the application and reduces the coupling between components.
 
 For example, you might have a service that provides data to multiple components, and you can use DI to make this service available to those components. When a component needs data, it can simply call a method on the injected service, and Angular will handle the creation and lifetime of the service for you.
+

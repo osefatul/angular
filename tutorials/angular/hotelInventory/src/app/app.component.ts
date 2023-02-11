@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, ViewChild, ViewContainerRef, OnInit } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, ViewChild, ViewContainerRef, OnInit, ViewChildren } from '@angular/core';
 import { RoomsComponent } from './rooms/rooms.component';
 
 @Component({
@@ -11,6 +11,8 @@ export class AppComponent implements AfterViewInit {
 
   @ViewChild('user', {read: ViewContainerRef}) vcr!: ViewContainerRef;
   @ViewChild('date', {static: true}) date!: ElementRef;
+
+  // @ViewChildren()
 
   ngOnInit() {
     this.date.nativeElement.innerText = "Choose booking dates"

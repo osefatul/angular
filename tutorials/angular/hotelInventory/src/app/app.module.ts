@@ -9,6 +9,8 @@ import { DemoPickerComponent } from './demo-picker/demo-picker.component';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { RoomsListComponent } from './rooms/rooms-list/rooms-list.component';
 import { HeaderComponent } from './header/header.component';
+import { ContainerComponent } from './container/container.component';
+import { EmployeeComponent } from './employee/employee.component';
 
 @NgModule({
   declarations: [
@@ -16,7 +18,9 @@ import { HeaderComponent } from './header/header.component';
     RoomsComponent,
     DemoPickerComponent,
     RoomsListComponent,
-    HeaderComponent
+    HeaderComponent,
+    ContainerComponent,
+    EmployeeComponent
   ],
   imports: [
     BrowserModule,

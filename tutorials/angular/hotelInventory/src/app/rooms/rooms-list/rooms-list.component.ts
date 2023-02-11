@@ -1,7 +1,5 @@
-import { ChangeDetectionStrategy, Component, DoCheck, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DoCheck, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, OnDestroy } from '@angular/core';
 import { RoomList } from '../rooms';
-
-
 
 
 
@@ -13,7 +11,9 @@ import { RoomList } from '../rooms';
 })
 
 
-export class RoomsListComponent implements OnInit, OnChanges {
+
+
+export class RoomsListComponent implements OnInit, OnChanges, OnDestroy  {
 
   userData!:{ id: number; name: string; }
 
@@ -42,6 +42,10 @@ export class RoomsListComponent implements OnInit, OnChanges {
   // ngDoCheck() {
   //   console.log("DoCheck is called")
   // }
+
+  ngOnDestroy() {
+    console.log("On Destroy is called" )
+  }
 
 
   //buttonHandler in the child(room.list.component.html)

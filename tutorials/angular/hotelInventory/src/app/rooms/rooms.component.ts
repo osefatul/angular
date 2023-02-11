@@ -15,7 +15,7 @@ export class RoomsComponent {
   hotelName: string = "Hilton hotel"
   numberOfRooms: number = 50
 
-  hideRooms:boolean = false;
+  hideRooms:boolean = true;
   roomsTitle:string = "Rooms List"
 
   rooms: Room = 

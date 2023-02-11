@@ -2,8 +2,9 @@
     hello world, welcome to {{hotelName}}
 </h1>
 
-<app-header #childComponent></app-header>>
+<app-header #childComponent></app-header>
     
+
 
 <div [hidden]= "hideRooms">
     Number of Rooms
@@ -12,12 +13,27 @@
     </div>
 </div>
 
+
+<!-- when click on selected room -->
 <div *ngIf="selectedJson">
     {{selectedJson | json}}
 </div>
 
+
+
 <!-- Using trinary operation in Angular -->
-{{rooms.availableRooms && "rooms are available" }}
+<!-- {{rooms.availableRooms && "rooms are available" }} -->
+
+<div>
+{{rooms.availableRooms && hideRooms ? "rooms list are not available" : "rooms are available"}}
+</div>
+
+
+
+<button (click)="toggle()">
+    Toggle
+</button>
+
 
 
 <div>
@@ -29,20 +45,16 @@
 
 
 
-<div *ngIf="rooms.availableRooms >0 ">
+<div *ngIf="rooms.availableRooms >0 && hideRooms ">
     Room List:
     <app-rooms-list 
     [rooms]="roomsList"
     [title]="roomsTitle"
-    (selectedRoom)="selectParentRoom($event)"
-    ></app-rooms-list>
+    (selectedRoom)="selectParentRoom($event)">
+    </app-rooms-list>
 </div>
 
 
-
-<button (click)="toggle()">
-    Toggle
-</button>
 
 
 

@@ -1,9 +1,22 @@
 
+<!-- Static way loading component -->
 <!-- <app-rooms></app-rooms> -->
 
-<div>
-    <ng-template #user></ng-template>
-</div>
 
-<h3 #date></h3>
-<app-demo-picker></app-demo-picker>
+<!-- Dynamically loading component -->
+<!-- <div>
+    <ng-template #user></ng-template>
+</div> -->
+
+
+
+
+<!-- content-projection -->
+<app-container>
+    <app-rooms></app-rooms>
+    <app-employee></app-employee>
+    <h3 #date></h3>
+    <app-demo-picker></app-demo-picker>
+</app-container>
+
+

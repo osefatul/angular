@@ -1,4 +1,4 @@
-
+n
 <style>
 .heading1 {
     font-weight:700;
@@ -951,7 +951,7 @@ export class MyComponent implements AfterViewChecked {
 In this example, the `ngAfterViewChecked` hook is used to update the value of the message property and to trigger a change detection cycle to update the view.
 
 
-# ng-template
+## ng-template
 `ng-template` is an Angular directive that is used to declare a template or a portion of HTML that can be reused across different components or parts of a component. It acts as a placeholder for content that can be dynamically loaded into the view.
 
 The `ng-template` directive doesn't render anything on its own, instead, it is used as a container for holding content that can be rendered to the view using other Angular directives such as `ngIf`, `ngFor`, etc.
@@ -1058,3 +1058,262 @@ The difference here is that: in the first solution we used, `{static: true}` whi
 By setting `static: true`, the component can be assured that the reference to the element will be available immediately, allowing it to interact with the element as soon as it is created. and we can load it in the `ngOnInit` lifecycle hook.
 
 `static:true` most of the time has been used when you are sure that loading DOM element is not `asynchronous` meaning that it is not going to take time for initialization. and vice versa.
+
+## ViewChildren
+in case if we want to reference multiple component. It can be used to query a set of elements that are children of the current component. It returns a query list of elements, which is an observable and can be used to react to changes in the child elements.
+
+For example, you might use @ViewChildren to get references to all of the form controls in a component's template so that you can perform some validation logic. Here's an example:
+
+```javascript
+@Component({
+  selector: 'app-form',
+  template: `
+    <input #input1 type="text">
+    <input #input2 type="text">
+  `
+})
+
+
+export class FormComponent {
+  @ViewChildren('input1, input2') inputs: QueryList<ElementRef>;
+  ngAfterViewInit() {
+    this.inputs.forEach(input => {
+      console.log(input.nativeElement.value);
+    });
+  }
+}
+```
+
+In this example, the `@ViewChildren` decorator is used to query for two input elements in the template, and bind the results to the `inputs` property of the component. The `ngAfterViewInit` lifecycle hook is then used to log the values of the inputs.
+
+Note that the `#input1` and `#input2` are template references, which are used to identify the elements that you want to query.
+
+
+## ngAfterContentInit
+
+Before we jump into the `ngAfterContentInit` lifecycle hook, we need to understand what content project is.
+
+### Content Project
+Content projection, also known as `transclusion` in Angular, is a technique that allows a component to display content that is defined outside of the component. It enables you to pass content from a parent component to a child component through the component's template.
+
+In Angular, you can project content into a component using the `ng-content` selector. The `ng-content` selector is used in the component's template to indicate where the projected content should be placed. For example:
+
+```html
+<!-- parent component template -->
+<app-child>
+  <h1>This is some projected content</h1>
+  <p>It will be displayed inside the child component</p>
+</app-child>
+
+<!-- child component template -->
+<ng-content></ng-content>
+```
+
+In this example, the content between the <app-child> tags is projected into the app-child component and is displayed where the <ng-content> selector is located. This allows you to reuse the child component and display different content within it based on the context in which it is used.
+
+Content projection is a powerful feature in Angular that allows you to create reusable components that can be customized by the users of the components.
+
+#### Use Multiple Component in ng-content
+You can use multiple components inside of the `ng-content` element by wrapping each component in a separate element. This allows you to target specific elements with styles or logic by using the `select` attribute on the `ng-content` directive.
+
+For example, suppose you have two components, ComponentA and ComponentB, that you want to display inside of a parent component. In the parent component's template, you can use the following syntax to include the two components:
+
+```html
+<ng-content select="app-component-a"></ng-content>
+<ng-content select="app-component-b"></ng-content>
+```
+And in the template of the consuming component, you can use the following syntax to include the two components:
+
+```html
+<app-parent-component>
+  <app-component-a></app-component-a>
+  <app-component-b></app-component-b>
+</app-parent-component>
+```
+
+#### use HTML tag between two components
+You can include HTML content between `app-component-a` and `app-component-b` by using the `ng-content` directive without the select attribute. This will create a default content projection that will include any HTML elements that are not matched by any other `ng-content` elements with a select attribute.
+
+```html
+    <ng-content select="app-component-a"></ng-content>
+    <p>This is some HTML content between app-component-a and app-component-b</p>
+    <ng-content select="app-component-b"></ng-content>
+```
+
+And in the consuming component, you can include the two components as well as the HTML content as follows:
+
+```html
+<app-parent-component>
+  <app-component-a></app-component-a>
+  <p>This is some HTML content between app-component-a and app-component-b</p>
+  <app-component-b></app-component-b>
+</app-parent-component>
+```
+
+### Use an HTML tag with reference:
+I want to use `#date` html reference between `app-rooms` and `app-demo-picker` components.
+This only works if `#date` has been used in the `app.component.ts` file.
+
+
+#### Solution1:
+```html
+<!-- in the parent or app.component.html -->
+
+<app-container>
+    <app-rooms></app-rooms>
+    <h3 #date></h3>
+    <app-demo-picker></app-demo-picker>
+</app-container>
+```
+
+
+```html
+<!-- app-container.html -->
+
+<ng-content select="app-rooms" ></ng-content>
+<ng-content></ng-content>
+<ng-content select="app-demo-picker" ></ng-content>
+```
+
+#### Second solution:
+To create instance of reference `#date` in the `container.component.ts` such as below:
+
+
+```html
+<!-- in the parent or app.component.html -->
+<app-container>
+    <app-rooms></app-rooms>
+    <app-demo-picker></app-demo-picker>
+</app-container>
+```
+
+
+```html
+<!-- app-container.html -->
+
+<ng-content select="app-rooms" ></ng-content>
+<h3 #date></h3>
+<ng-content select="app-demo-picker" ></ng-content>
+```
+
+
+
+```javascript
+import { Component, ElementRef, ViewChild, OnInit } from '@angular/core';
+
+@Component({
+  selector: 'app-container',
+  templateUrl: './container.component.html',
+  styleUrls: ['./container.component.scss']
+})
+export class ContainerComponent implements OnInit {
+
+  @ViewChild('date', {static: true}) date!: ElementRef;
+
+  ngOnInit() {
+    this.date.nativeElement.innerText = "Choose booking dates"
+  }
+}
+```
+
+
+### Intro to ngAfterContentInit:
+
+so as we discussed above, that whatever is passed into the component (the one that has `ng-content` in its template) is considered content. for example, `app-rooms` and `app-demo-picker` are considered content.
+
+```html
+<app-container>
+    <app-rooms></app-rooms>
+    <app-demo-picker></app-demo-picker>
+</app-container>
+```
+
+
+`ngAfterContentInit` is a lifecycle hook in Angular that is called after the component's content has been initialized. The hook is executed after the content of a component, which is projected into the component using the `ng-content` selector, has been checked and initialized. This hook is executed once, right after the first check of the component's content.
+
+It is one of the several lifecycle hooks available in Angular that are called at specific moments during the lifecycle of a component. The hooks allow you to perform actions and change the behavior of a component at specific moments during its lifecycle, such as during creation, update, and destruction.
+
+Here is an example of how `ngAfterContentInit` can be used in a component:
+
+```html
+<!-- app.component.html -->
+
+<app-container>
+    <app-rooms></app-rooms>
+    <app-employee></app-employee>
+    <h3 #date></h3>
+    <app-demo-picker></app-demo-picker>
+</app-container>
+```
+
+```html
+<!-- container.component.html -->
+
+<ng-content select="app-rooms" ></ng-content>
+<ng-content select="app-employee" ></ng-content>
+<ng-content ></ng-content>
+<ng-content select="app-demo-picker" ></ng-content>
+```
+
+```javascript
+import { EmployeeComponent } from './../employee/employee.component';
+import { Component, ElementRef, ViewChild, OnInit, AfterContentInit, ContentChild } from '@angular/core';
+
+@Component({
+  selector: 'app-container',
+  templateUrl: './container.component.html',
+  styleUrls: ['./container.component.scss']
+})
+
+
+export class ContainerComponent implements  AfterContentInit {
+  @ContentChild(EmployeeComponent) employee !: EmployeeComponent
+  
+  ngAfterContentInit(): void {
+    console.log(this.employee)
+    this.employee.empName = "Mike";
+  }
+}
+
+```
+
+In this example, the `ngAfterContentInit` hook change the employee name to "Mike" and then log a message to the console once the content of the component has been initialized.
+
+
+## ngOnDestroy
+ It is called just before an Angular component or directive is destroyed, after Angular has finished cleaning up the component and its children. This hook gives the component an opportunity to perform any final clean up work, such as releasing resources or unsubscribing from observables.
+
+Here is an example of what ngOnDestroy might look like in a simple Angular component:
+
+
+if roo.available array is not empty and hideRooms is not false. then show `rooms.list`
+```html
+<!-- room.components.html -->
+
+<div *ngIf="rooms.availableRooms >0 && hideRooms ">
+    Room List:
+    <app-rooms-list 
+    [rooms]="roomsList"
+    [title]="roomsTitle"
+    (selectedRoom)="selectParentRoom($event)"
+    ></app-rooms-list>
+</div>
+```
+
+now destroy the `roomsList` component when the above logic is false.
+
+
+```javascript
+  ngOnDestroy() {
+    console.log("On Destroy is called" )
+  }
+```
+
+<hr/>
+
+# Dependency Injection
+In Angular, Dependency Injection (DI) is a powerful mechanism that enables you to manage and share dependencies across components and services in a modular, maintainable, and testable way. It helps you to decouple components and services from each other, making your application more flexible and scalable.
+
+With DI, you can inject instances of services and other objects into a component's constructor as dependencies, making them available to the component for use. Angular has its own DI system that automatically manages the creation and lifetime of these dependencies. This makes it easier to manage the dependencies throughout the application and reduces the coupling between components.
+
+For example, you might have a service that provides data to multiple components, and you can use DI to make this service available to those components. When a component needs data, it can simply call a method on the injected service, and Angular will handle the creation and lifetime of the service for you.

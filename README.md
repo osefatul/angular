@@ -1681,3 +1681,17 @@ class MyService {
 ```
 
 In this example, `@Optional() @Inject('APP_TITLE')` specifies that the `appTitle` dependency is optional and should not cause an error if not found. The `@Self() @Inject(MyOtherService)` modifier specifies that Angular should only look for the `MyOtherService` dependency within the current injector and not in any parent injectors.
+
+
+
+# Angular HTTP and Observables
+
+## Introduction
+
+## Setting up HttpClient
+## Using HttpClient Service
+## RxJs, Observable and Streams
+## Http methods
+## RxJs Operators
+## Http Interceptors
+## APP_INITIALIZERS

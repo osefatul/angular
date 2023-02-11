@@ -13,3 +13,19 @@ export interface RoomList {
     checkInTime: Date;
     checkOutTime: Date;
 }
+
+export interface hotelList {
+    _id: number;
+    hotelName: string;
+    type: string;
+    city: number;
+    address: string;
+    distance: string;
+    photos: string[];
+    title: string;
+    desc: string;
+    rooms: string[];
+    cheapestPrice: number;
+    featured: boolean;
+    id: string
+}

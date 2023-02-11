@@ -1,3 +1,4 @@
+import { HttpClient } from '@angular/common/http';
 import { AppConfig } from './../../AppConfig/app.config.interface';
 import { APP_SERVICE_CONFIG } from './../../AppConfig/app.config.service';
 import { Inject, Injectable } from '@angular/core';
@@ -8,7 +9,11 @@ import { RoomList } from '../rooms';
 })
 
 export class RoomsService {
-  constructor(@Inject (APP_SERVICE_CONFIG) private config:AppConfig )  {
+
+  constructor(
+    @Inject (APP_SERVICE_CONFIG) private config:AppConfig,
+    private http: HttpClient) 
+    {
     console.log(this.config.apiEndpoint)
     console.log("room service initialized...")
   }
@@ -52,8 +57,14 @@ export class RoomsService {
     }
   ]
 
+
+
   getRoom (){
     return this.roomsList
+  }
+
+  getHotels (){
+    return this.http.get("/v1/hotels")
   }
 
 }

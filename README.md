@@ -1687,10 +1687,86 @@ In this example, `@Optional() @Inject('APP_TITLE')` specifies that the `appTitle
 # Angular HTTP and Observables
 
 ## Introduction
+- In enterprise applications we need to  interact with APIs.
+- like Ajax and Fetch.
+- HttpClient is service provided by Angular to interact with APIs.
+- HttpClient internally uses RxJs.
 
 ## Setting up HttpClient
+- Need to import `HttpClientModule`.
+- Once Module is imported we can inject `HttpClient` service.
+
+```javascript
+import {HttpClientModule } from '@angular/common/http'
+
+@NgModule({
+  declarations: [
+    AppComponent,
+  ],
+  imports: [
+    BrowserModule,
+    AppRoutingModule,
+    HttpClientModule
+  ]
+})
+
+export class AppModule { }
+```
+
 ## Using HttpClient Service
+- [Use this link for more details regarding proxy setup.](https://angular.io/guide/build#proxying-to-a-backend-server)
+- setup `proxy.conf.json` file:
+```javascript
+{
+    "/api": {
+        "target": "http://localhost:5000",
+        "secure": false
+    }
+}
+```
+- In the CLI configuration file, `angular.json`, add the `proxyConfig` option to the `serve` target
+
+```javascript
+"serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "configurations": {
+            "production": {
+              "browserTarget": "hotelInventory:build:production"
+            },
+            "development": {
+              "browserTarget": "hotelInventory:build:development",
+              "proxyConfig": "src/proxy.conf.json"
+            }
+          },
+          "defaultConfiguration": "development"
+        },
+```
+
+- to fetch data using http in the constructor: `private http: HttpClient`
+
+```javascript
+  constructor(
+    @Inject (APP_SERVICE_CONFIG) private config:AppConfig,
+    private http: HttpClient) 
+    {
+    console.log(this.config.apiEndpoint)
+    console.log("room service initialized...")
+  }
+
+    getHotels (){
+    return this.http.get("/v1/hotels")
+  }
+```
+
 ## RxJs, Observable and Streams
+### What is observables:
+an Observable is a way of handling asynchronous data. It is a powerful and widely used feature of Angular that allows you to manage streams of data in a way that makes it easy to build, test, and maintain complex applications.
+
+An Observable is essentially a stream of values that can change over time, and you can subscribe to this stream of values to receive notifications whenever a new value is emitted. This makes it possible to perform actions, such as updating the user interface, whenever new data is available.
+
+Observables are often used in Angular for tasks such as making HTTP requests, handling user interactions, or managing animations. With observables, you can handle data in a declarative way, making it easier to understand and maintain the code, especially in large applications.
+
+
 ## Http methods
 ## RxJs Operators
 ## Http Interceptors

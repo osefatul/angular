@@ -32,6 +32,7 @@ export class RoomsComponent implements OnInit {
 
   ngOnInit(){
     this.roomsList = this.roomsService.getRoom()
+    console.log(this.roomsService.getHotels())
   }
 
 

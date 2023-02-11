@@ -1,6 +1,7 @@
 import { APP_SERVICE_CONFIG, APP_CONFIG } from './AppConfig/app.config.service';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import {HttpClientModule } from '@angular/common/http'
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -28,7 +29,8 @@ import { EmployeeComponent } from './employee/employee.component';
     AppRoutingModule,
     BrowserAnimationsModule,
     TooltipModule.forRoot(),
-    BsDatepickerModule.forRoot()
+    BsDatepickerModule.forRoot(),
+    HttpClientModule
   ],
   providers: [{
     provide: APP_SERVICE_CONFIG,

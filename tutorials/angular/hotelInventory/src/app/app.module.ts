@@ -1,3 +1,4 @@
+import { APP_SERVICE_CONFIG, APP_CONFIG } from './AppConfig/app.config.service';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
@@ -29,7 +30,10 @@ import { EmployeeComponent } from './employee/employee.component';
     TooltipModule.forRoot(),
     BsDatepickerModule.forRoot()
   ],
-  providers: [],
+  providers: [{
+    provide: APP_SERVICE_CONFIG,
+    useValue: APP_CONFIG
+  }],
   bootstrap: [AppComponent]
 })
 

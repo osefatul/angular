@@ -6,18 +6,7 @@
     
 
 
-<div [hidden]= "hideRooms">
-    Number of Rooms
-    <div [innerText]="numberOfRooms">
-        <!-- {{numberOfRooms}} -->
-    </div>
-</div>
 
-
-<!-- when click on selected room -->
-<div *ngIf="selectedJson">
-    {{selectedJson | json}}
-</div>
 
 
 
@@ -25,8 +14,25 @@
 <!-- {{rooms.availableRooms && "rooms are available" }} -->
 
 <div>
-{{rooms.availableRooms && hideRooms ? "rooms list are not available" : "rooms are available"}}
+    {{rooms.availableRooms && hideRooms ?  "rooms are available": "rooms list are not available" }}
 </div>
+
+
+
+<div [hidden]= "!hideRooms">
+    Number of Rooms
+    <div [innerText]="numberOfRooms">
+        <!-- {{numberOfRooms}} -->
+    </div>
+</div>
+
+
+
+<!-- when click on selected room -->
+<div *ngIf="selectedJson">
+    {{selectedJson | json}}
+</div>
+
 
 
 

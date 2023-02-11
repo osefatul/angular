@@ -1312,9 +1312,372 @@ now destroy the `roomsList` component when the above logic is false.
 <hr/>
 
 # Dependency Injection
+
+**Dependencies:** they are services or objects needed by classes to perform some functions.
+
 In Angular, Dependency Injection (DI) is a powerful mechanism that enables you to manage and share dependencies across components and services in a modular, maintainable, and testable way. It helps you to decouple components and services from each other, making your application more flexible and scalable.
 
-With DI, you can inject instances of services and other objects into a component's constructor as dependencies, making them available to the component for use. Angular has its own DI system that automatically manages the creation and lifetime of these dependencies. This makes it easier to manage the dependencies throughout the application and reduces the coupling between components.
+With DI, you can inject instances of services and other objects into a component's constructor as dependencies, making them available to the component for use. which basically means, you don't have to create a service instance but rather inject them through constructor. Angular has its own DI system that automatically manages the creation and lifetime of these dependencies. This makes it easier to manage the dependencies throughout the application and reduces the coupling between components.
 
 For example, you might have a service that provides data to multiple components, and you can use DI to make this service available to those components. When a component needs data, it can simply call a method on the injected service, and Angular will handle the creation and lifetime of the service for you.
 
+#### Example:
+Suppose you have a data service that retrieves data from an API. You want to use this data service in a component called MyComponent. Here's how you could achieve this using dependency injection in Angular:
+
+```javascript
+import { Component } from '@angular/core';
+import { DataService } from './data.service';
+
+@Component({
+  selector: 'app-my-component',
+  template: `
+    <p>{{ data }}</p>
+  `
+})
+
+export class MyComponent {
+  data: any;
+
+  constructor(private dataService: DataService) {
+    this.data = this.dataService.getData();
+  }
+}
+```
+
+In the above code, `DataService` is injected into the `MyComponent` using the constructor. Angular will automatically create an instance of `DataService` and provide it to the component when it's instantiated. You can then use the dataService property within the component to retrieve data from the API.
+
+By using DI in this way, you can make your components more flexible and testable, as they are decoupled from the dependencies they use. You can easily swap out the Data`Service for a different implementation if necessary, without having to modify the component.
+
+
+#### Example:
+
+Let's fetch `roomsList` from a roomService. to create a service `ng g s rooms`
+
+```javascript
+export class RoomsService {
+  roomsList: RoomList[] = [...]
+
+  getRoom (){
+    return this.roomsList
+  }
+  constructor() { }
+}
+```
+
+now let do DI?
+
+```javascript
+//rooms.component.ts
+
+  constructor(private roomsService: RoomsService){}
+
+  ngOnInit(){
+    this.roomsList = this.roomsService.getRoom()
+  }
+```
+
+### Note:
+In Angular, the difference between initializing a property inside the `constructor` and inside the `ngOnInit` lifecycle hook lies in when the initialization takes place during the component's lifecycle.
+
+The constructor is a method that is called when a component is instantiated. When using DI, you can use the constructor to receive dependencies that are injected into the component. When initializing properties inside the constructor, they are set as soon as the component is created, and they are available for use throughout the component's lifetime.
+
+The ngOnInit lifecycle hook, on the other hand, is a method that is called after the component's constructor and after the component's view has been initialized. This means that any properties that are set inside ngOnInit are guaranteed to have their bindings set, and the component's view will be fully rendered. This makes ngOnInit a good place to perform any initialization that requires the component's bindings or the component's view to be set up.
+
+In conclusion, if you want to initialize a property as soon as the component is created, it's best to do so inside the constructor. If you need to perform initialization that requires the component's view or bindings to be set up, it's best to do so inside ngOnInit.
+
+
+## DI Providers
+DI providers are a way of registering a dependency that can be injected into components and services. A provider is essentially a configuration object that tells Angular how to create an instance of a dependency when it's needed. Providers are the way to register a dependency with the Angular DI system.
+
+There are two types of providers in Angular:
+
+1. Class Providers
+2. Value Providers
+
+
+You can register providers at different levels of your application, from the component level to the module level. This allows you to control the scope of the dependency and manage its lifetime in a modular and maintainable way.
+
+For example, you might register a data service as a provider in a module and make it available throughout the module. Or you might register a provider at the component level and make the dependency only available to that component and its children.
+
+By using DI providers, you can manage the dependencies used by your components in a flexible and scalable way, making it easier to maintain and test your application.
+
+
+### 1. Class providers: 
+These are providers that are based on a class. To use a class provider, you simply create an instance of the class and register it as a provider. Angular will then use the class constructor to create an instance of the class whenever it's needed.
+
+#### Example: Singleton Instance used in the Provider.
+
+Suppose you have a data service that retrieves data from an API. Here's the code for the data service:
+
+```javascript
+import { Injectable } from '@angular/core';
+
+@Injectable({
+  providedIn: 'root'
+})
+
+export class DataService {
+  getData() {
+    // code to retrieve data from an API
+  }
+}
+```
+In the code above, the `DataService` is decorated with the `@Injectable` decorator, which makes it possible to use the class as a provider. The `providedIn` property on the `@Injectable `decorator is set to `'root'`, which means that the service will be available throughout the entire application, and only one instance will be available as it will be using `singleton instances design pattern.`
+
+Next, you can use the `DataService` in a component:
+
+```javascript
+import { Component } from '@angular/core';
+import { DataService } from './data.service';
+
+@Component({
+  selector: 'app-my-component',
+  template: `
+    <p>{{ data }}</p>
+  `
+})
+export class MyComponent {
+  data: any;
+
+  constructor(private dataService: DataService) {
+    this.data = this.dataService.getData();
+  }
+}
+```
+In the code above, the `DataService` is injected into the MyComponent using the `constructor`. Angular will automatically create an instance of the `DataService` class and provide it to the component when it's instantiated.
+
+This is an example of how you can use class providers in Angular to manage the dependencies used by your components. By registering a class as a provider, you can create instances of the class whenever they're needed, making it easier to maintain and test your application.
+
+
+#### Example: Same service another instance by different component.
+
+If we don't use Dependency Injection using constructor of a class, and instead we use `providers:[DataService]` 
+
+```javascript
+@Component({
+  selector: 'app-my-component',
+  template: `
+    <p>{{ data }}</p>
+  `,
+  providers: [DataService]
+
+})
+export class MySecondComponent {
+  data: any;
+
+  constructor(private dataService: DataService) {
+    this.data = this.dataService.getData();
+  }
+}
+```
+
+we are actually creating another instance. one that is registered in the `root` of the application and the second instance that is registered in `MySecondComponent`. and we Don't use this most often.
+
+
+### 2. Value providers: 
+These are providers that are based on a value. To use a value provider, you simply provide a value and register it as a provider. Angular will then return the same value whenever it's needed. value providers are a way to provide a constant value as a dependency for a component or a service. The value is specified at the time of configuration and remains unchanged throughout the lifecycle of the application.
+
+#### Example1: 
+```javascript
+import { Injectable } from '@angular/core';
+
+@Injectable({
+  providedIn: 'root',
+  useValue: 'Hello World!'
+})
+export class MyService {
+  constructor(public message: string) {}
+}
+```
+
+In this example, the `MyService` class is marked as a provider using the `@Injectable` decorator, and its scope is defined as the `root` of the application using the `providedIn` property. The value `"Hello World!"` is provided using the useValue property.
+
+In a component that needs an instance of MyService, the string constant can be accessed as a property of the MyService instance:
+
+Here's an example of using a value provider to supply a string constant as a dependency:
+```javascript
+import { Component } from '@angular/core';
+import { MyService } from './my.service';
+
+@Component({
+  selector: 'app-root',
+  template: `
+    <div>{{ myService.message }}</div>
+  `
+})
+export class AppComponent {
+  constructor(public myService: MyService) {}
+}
+```
+
+In this example, the `AppComponent` class injects an instance of `MyService` using its constructor. The value of the message property can then be accessed using `myService.message`.
+
+Value providers are a simple and straightforward way to provide constant values as dependencies in an Angular application. They can be used to provide configuration values, constants, or any other values that don't change during the lifetime of the application.
+
+#### Example2:
+Let's a more common example such as not importing apiNodes in each module or component.
+
+```javascript
+//environment.ts
+export const environment = {
+    production: false,
+    apiEndpoint: 'http://localhost:8080/api/v1/',
+}
+```
+
+Use the above `apiEndpoint` in `AppConfig`
+
+```javascript
+import { InjectionToken } from "@angular/core";
+import { AppConfig } from "./app.config.interface";
+import {environment} from "../../environments/environment"
+
+export const APP_SERVICE_CONFIG = new InjectionToken<AppConfig> ("app.config")
+export const APP_CONFIG:AppConfig = {
+    apiEndpoint: environment.apiEndpoint
+}
+```
+Now, the service and value is ready. let's register it in the `app.component.ts` file.
+
+```javascript
+@NgModule({
+providers: [
+    {
+        provide: APP_SERVICE_CONFIG,
+        useValue: APP_CONFIG
+    }
+]
+})
+```
+
+Now, let's use the provider, in the room service:
+
+```javascript
+import { AppConfig } from './../../AppConfig/app.config.interface';
+import { APP_SERVICE_CONFIG } from './../../AppConfig/app.config.service';
+import { Inject, Injectable } from '@angular/core';
+import { RoomList } from '../rooms';
+
+@Injectable({
+  providedIn: 'root'
+})
+
+export class RoomsService {
+  constructor(@Inject (APP_SERVICE_CONFIG) private config:AppConfig )  {
+    console.log("room service initialized...")
+    }
+}
+```
+As you can see, we have used @Inject decorator: which is used to specify a dependency to be injected into the constructor of a class. In this case, the token "APP_SERVICE_CONFIG" is used to identify the provider that should be injected. It will be passed as an argument to the constructor. 
+
+
+#### Example3: using localStorage as a value provider
+```javascript
+//localStorage.token.ts
+
+import { InjectionToken } from '@angular/core';
+
+export const  localStorageToken = new InjectionToken<any> ("local storage", {
+    providedIn: "root",
+    factory() { //nothing but return a new instance of localStorage.
+        return localStorage
+    },
+})
+```
+
+now let's inject it using these codes:
+
+```javascript
+//app.component.ts
+
+  constructor(@Inject (localStorageToken) private localStorage: any ){}
+    ngOnInit() {
+    this.localStorage.setItem('name', "Hilton Hotel")
+  }
+```
+
+
+## Dependency Resolution
+Dependency resolution is the process of finding and instantiating dependencies that are required by a component or service. The Angular DI system is responsible for resolving dependencies and providing them to the components and services that need them.
+
+The Angular DI system uses a hierarchical approach to resolve dependencies. When you register a provider, you can specify the scope of the provider by registering it at different levels of your application, such as at the component level, the module level, or the application level.
+
+When a component or service needs a dependency, Angular will first look for a provider at the closest level to the component. If a provider is not found at that level, Angular will look for a provider at the next higher level, and so on, until it reaches the root of the application. If a provider is not found at any level, Angular will throw an error.
+
+The process of resolving dependencies and creating instances of dependencies is done at runtime, which means that the Angular DI system is highly dynamic and flexible. You can add, remove, or change dependencies at any time, and the Angular DI system will automatically adjust to the changes.
+
+
+![](./assets/DIResolver.jpg)
+
+
+Here's an example of how dependency resolution works in Angular:
+
+#### Example:
+Suppose you have a data service that retrieves data from an API, and you have a component that needs to use the data service. You register the data service as a provider in the module that contains the component:
+
+```javascript
+import { NgModule } from '@angular/core';
+import { DataService } from './data.service';
+import { MyComponent } from './my.component';
+
+@NgModule({
+  providers: [DataService],
+  declarations: [MyComponent]
+})
+export class MyModule { }
+```
+
+In the code above, the DataService is registered as a provider in the MyModule, which means that the service will be available to any component declared in the module.
+
+Next, you can use the DataService in the MyComponent:
+
+```javascript
+import { Component } from '@angular/core';
+import { DataService } from './data.service';
+
+@Component({
+  selector: 'app-my-component',
+  template: `
+    <p>{{ data }}</p>
+  `
+})
+export class MyComponent {
+  data: any;
+
+  constructor(private dataService: DataService) {
+    this.data = this.dataService.getData();
+  }
+}
+```
+
+In the code above, the `DataService` is injected into the `MyComponent` using the constructor. When the `MyComponent` is instantiated, Angular will automatically resolve the `DataService` dependency and provide an instance of the service to the component.
+
+This is how the Angular DI system works to resolve dependencies and provide them to the components and services that need them. By using the Angular DI system, you can manage the dependencies used by your components and services in a flexible and scalable way.
+
+
+## Resolution Modifiers
+In Angular, there are three dependency injection (DI) resolution modifiers, which determine how Angular should resolve a dependency when it's requested. These are:
+
+1. **@Optional:** This modifier is used to specify that a dependency is optional and should not cause an error if not found. Angular will return null if the dependency is not found.
+
+2. **@Self:** This modifier is used to specify that Angular should only look for the dependency within the current injector, and not in any parent injectors.
+
+3. **@SkipSelf:** This modifier is used to specify that Angular should skip the current injector and only look for the dependency in parent injectors.
+
+Here's an example of using these DI resolution modifiers:
+
+
+```javascript
+import { Inject, Optional, Self } from '@angular/core';
+
+@Injectable()
+class MyService {
+  constructor(@Optional() @Inject('APP_TITLE') appTitle: string,
+              @Self() @Inject(MyOtherService) myOtherService: MyOtherService) {
+    this.appTitle = appTitle;
+    this.myOtherService = myOtherService;
+  }
+}
+```
+
+In this example, `@Optional() @Inject('APP_TITLE')` specifies that the `appTitle` dependency is optional and should not cause an error if not found. The `@Self() @Inject(MyOtherService)` modifier specifies that Angular should only look for the `MyOtherService` dependency within the current injector and not in any parent injectors.

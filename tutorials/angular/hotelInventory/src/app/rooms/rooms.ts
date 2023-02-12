@@ -14,9 +14,9 @@ export interface RoomList {
     checkOutTime: Date;
 }
 
-export interface hotelList {
+export interface HotelList {
     _id: number;
-    hotelName: string;
+    name: string;
     type: string;
     city: number;
     address: string;

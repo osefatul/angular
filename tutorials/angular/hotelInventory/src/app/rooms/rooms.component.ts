@@ -19,7 +19,7 @@ export class RoomsComponent implements OnInit {
 
   hideRooms:boolean = true;
   roomsTitle:string = "Rooms List"
-  roomsList: RoomList[] = []
+  roomsList: RoomList[] = [];
 
   rooms: Room = 
   { availableRooms: 25,
@@ -32,7 +32,6 @@ export class RoomsComponent implements OnInit {
 
   ngOnInit(){
     this.roomsList = this.roomsService.getRoom()
-    console.log(this.roomsService.getHotels())
   }
 
 

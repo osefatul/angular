@@ -1,0 +1,37 @@
+<div>
+    <h2>{{hotelTitle}}</h2>
+    <table class="table">
+        <tr>
+            <th>Index</th>
+            <th>Hotel Name</th>
+            <th>Address</th>
+            <th>Distance</th>
+            <th>Desc</th>
+            <th>Rooms</th>
+            <th>Cheapest Price</th>
+            <th>Featured</th>
+        </tr>
+    
+        <tr
+        *ngFor="let hotel of hotelsList; let e = even; let o=odd;"
+        [ngClass]="e? 'even' : 'odd'">
+            <td>{{hotel.id | slice:0:10}}</td>
+            <td>{{hotel.name | slice:0:5}}</td>
+            <td>{{hotel.address | slice:0:8}}</td>
+            <td>{{hotel.distance}}</td>
+            <td>{{hotel.desc | slice: 0:30}}</td>
+            <td>{{hotel.rooms | slice:0:1}}</td>
+            <td>{{hotel.cheapestPrice}}</td>
+            <td>{{hotel.featured}}</td>
+            <td>
+                <!-- <button 
+                    type="button" 
+                    class="btn btn-primary"
+                    (click)="selectRoom(hotel)"
+                    >
+                    Select Room
+                </button> -->
+            </td>
+        </tr>
+    </table>
+</div>

@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { AppConfig } from './../../AppConfig/app.config.interface';
 import { APP_SERVICE_CONFIG } from './../../AppConfig/app.config.service';
 import { Inject, Injectable } from '@angular/core';
-import { RoomList } from '../rooms';
+import { HotelList, RoomList } from '../rooms';
 
 @Injectable({
   providedIn: 'root'
@@ -64,7 +64,7 @@ export class RoomsService {
   }
 
   getHotels (){
-    return this.http.get("/v1/hotels")
+    return this.http.get<HotelList[]>("/v1/hotels")
   }
 
 }

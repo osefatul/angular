@@ -65,7 +65,8 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "hotelInventory:build:production"
+              "browserTarget": "hotelInventory:build:production",
+              "proxyConfig": "src/proxy.conf.json"
             },
             "development": {
               "browserTarget": "hotelInventory:build:development",

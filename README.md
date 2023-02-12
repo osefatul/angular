@@ -1767,6 +1767,25 @@ An Observable is essentially a stream of values that can change over time, and y
 Observables are often used in Angular for tasks such as making HTTP requests, handling user interactions, or managing animations. With observables, you can handle data in a declarative way, making it easier to understand and maintain the code, especially in large applications.
 
 
+You can learn more about observables [here](https://rxjs.dev/guide/observable)
+
+### Pull vs Push
+Push and Pull are two different types of architectures used in computer systems.
+
+In a push architecture, data is pushed from a source to its destination(s) as soon as it becomes available. For example, in a push-based email system, an email is sent as soon as it is composed and ready to be sent. In this architecture, the source is responsible for delivering the data to its destinations.
+
+On the other hand, in a pull architecture, the destination requests data from the source as needed. For example, in a pull-based email system, the email client would periodically check the server for new email, and then retrieve any new messages. In this architecture, the destination is responsible for requesting the data it needs from the source.
+
+Both push and pull architectures have their own advantages and disadvantages. Push architectures are simpler and more efficient, but they can result in overwhelming the recipient with too much data. Pull architectures are more flexible and scalable, but they require more coordination between the source and destination.
+
+
+
+Pull: getData() -> addData() -> to get latest data, getData()
+
+**RxJs** works on a push architecture: it says, once you get the data, it is a continuous stream of data. if you add new data to the stream, whoever subscribed to the stream will get the latest data, and you don't have to call the getData() function again.
+
+Push: getData() -> continuous stream of data -> addData().
+
 ## Http methods
 ## RxJs Operators
 ## Http Interceptors

@@ -249,6 +249,8 @@ export class RoomsComponent {
 - Directives can implement all lifecycle hooks.
 - Directives can not have template.
 
+![directives](./assets/directives.jpg)
+
 
 ## Types
 ### 1. Structural Directives
@@ -394,6 +396,7 @@ When the user types into the input field, the value of the name property on the 
 
 Conversely, if the `name` property is updated in the component (for example, as a result of an event handler), the value displayed in the input field will automatically update, since the two-way binding updates the input value whenever the `name` property changes.
 
+<hr style="background-color: gold"/>
 
 # Pipes
 
@@ -444,6 +447,7 @@ This is a list of some built-in pipes:
 - **number**: used to format a number as text with a specified number of digits.
 
 
+<hr style="background-color: gold"/>
 
 # ngx-bootstrap
 we will be using [`ngx-bootstrap`](https://valor-software.com/ngx-bootstrap/#/)
@@ -688,6 +692,7 @@ this.roomsList = [...this.roomsList, room]
 
 Now it will work, why because the we avoid mutating started working. on immutability which is supported by the child component.
 
+<hr style="background-color: gold"/>
 
 
 # Lifecycle Hooks
@@ -1684,15 +1689,93 @@ In this example, `@Optional() @Inject('APP_TITLE')` specifies that the `appTitle
 
 
 
-# Angular HTTP and Observables
-
+# RxJS
 ## Introduction
+
+Before we describe what RxJs is doing, go through a simple introduction of [Reactive Programming](./docs/README.md)
+- RxJS (Reactive Extensions Library for JavaScript) is a useful library for reactive programming. The RxJS documentation uses this definition:
+- Note: RxJS is a library for reactive programming using Observables, to make it easier to compose asynchronous or callback-based code
+- Reactive programming is an event-based paradigm that allows us to run asynchronous sequences of events as soon as data is pushed to a consumer.
+
+
+### Difference between Promise vs Observable
+- A Promise emits a single event when an async activity finishes or fails.
+- Promise emits a single value while Observable emits multiple values. So, while handling a HTTP request, Promise can manage a single response for the same request, but what if there are multiple responses to the same request, then we have to use Observable. Yes, Observable can handle multiple responses for the same request.
+A Promise is always asynchronous, while an Observable can be either synchronous or asynchronous.-
+- A promise is Not Lazy, while Observable is Lazy. The "Observable" is slow. It isn't called until we are subscribed to it.
+- A Promise cannot be cancelled, An Observable can be cancelled by using the unsubscribe() method.
+- An addition Observable provides many powerful operators like map, foreach, filter, reduce, retry, retryWhen etc.
+- Angular uses Observables which is from RxJS instead of promises for dealing with HTTP
+
+For simplicity you can look into this chart:
+
+![observable](./assets/observableVsPromise.jpg)
+
+#### Promise
+```javascript
+const promise = new Promise((data) =>
+{ data(1);
+  data(2);
+  data(3); })
+.then(element => console.log(‘Promise ‘ + element));
+
+//output
+Promise 1
+```
+
+#### Observable
+
+```javascript
+const observable = new Observable((data) => {
+data.next(1);
+data.next(2);
+data.next(3);
+}).subscribe(element => console.log('Observable ' + element));
+
+
+//output
+Observable 1
+Observable 2
+Observable 3
+```
+
+### Why React developers don't tend to use RxJS?
+React developers tend not to use observables for several reasons:
+
+1. Familiarity: React developers are usually familiar with using state and props to manage component state and data flow, and observables are a new concept that requires additional learning and effort to understand and use effectively.
+
+2. Complexity: Observables can be complex and challenging to implement, especially for developers who are new to functional programming concepts.
+
+3. Integration: Observables are not tightly integrated with React and its ecosystem, so developers must use additional libraries to make them work with React.
+
+4. Performance: Observables can lead to performance issues when not used correctly, especially in complex applications with large amounts of data.
+
+5. Alternative solutions: There are alternative solutions such as Redux and the React context API, which are widely used and well-documented in the React community, and can solve many of the same problems that observables are used for.
+
+In short, observables can be a powerful tool for managing data in a React application, but they also come with additional challenges and complexities. Many React developers prefer to stick with the tried and true solutions they are familiar with, rather than experimenting with new and untested technologies.
+
+### Redux vs RxJs
+`Redux` and `RxJS` are both commonly used in Angular for state management and data flow. However, they serve different purposes and have different strengths and weaknesses.
+
+Redux is a state management library that is commonly used with Angular. It provides a centralized store for managing the state of your application, and it uses a strict unidirectional data flow to ensure that the state is updated in a predictable way. Redux also provides a way to easily write and run tests against your state updates, which can be especially useful when working with complex applications.
+
+RxJS, on the other hand, is a library for reactive programming in JavaScript. It provides a powerful set of tools for working with observables, including a large number of operators for transforming and manipulating data. RxJS is commonly used in Angular for managing asynchronous data streams, such as network requests, user interactions, and real-time updates.
+
+So, in general, you might use Redux for centralized state management, and RxJS for managing asynchronous data streams. That being said, the two libraries can be used together, and in some cases, it may make sense to use both to get the best of both worlds.
+
+The choice between Redux and RxJS will depend on your specific use case and the requirements of your application. If you have a complex application with a lot of state to manage, Redux may be a good choice. If you are working with asynchronous data streams, such as user interactions or real-time updates, RxJS may be a better choice.
+
+
+
+## HTTP request in Angular
+
+### Introduction
 - In enterprise applications we need to  interact with APIs.
 - like Ajax and Fetch.
 - HttpClient is service provided by Angular to interact with APIs.
 - HttpClient internally uses RxJs.
 
-## Setting up HttpClient
+### Setting up HttpClient
 - Need to import `HttpClientModule`.
 - Once Module is imported we can inject `HttpClient` service.
 
@@ -1713,7 +1796,7 @@ import {HttpClientModule } from '@angular/common/http'
 export class AppModule { }
 ```
 
-## Using HttpClient Service
+### Using HttpClient Service
 - [Use this link for more details regarding proxy setup.](https://angular.io/guide/build#proxying-to-a-backend-server)
 - setup `proxy.conf.json` file:
 ```javascript
@@ -1758,8 +1841,9 @@ export class AppModule { }
   }
 ```
 
-## RxJs, Observable and Streams
-### What is observables:
+### Observable and Streams
+
+#### What is observables:
 an Observable is a way of handling asynchronous data. It is a powerful and widely used feature of Angular that allows you to manage streams of data in a way that makes it easy to build, test, and maintain complex applications.
 
 An Observable is essentially a stream of values that can change over time, and you can subscribe to this stream of values to receive notifications whenever a new value is emitted. This makes it possible to perform actions, such as updating the user interface, whenever new data is available.
@@ -1807,7 +1891,22 @@ Pull: getData() -> addData() -> to get latest data, getData()
 
 Push: getData() -> continuous stream of data -> addData().
 
-## Http methods
+### Http methods
+
+#### Http request using HttpClient module:
+```javascript
+  constructor(
+    @Inject (APP_SERVICE_CONFIG) private config:AppConfig,
+    private http: HttpClient) 
+    {
+    console.log(this.config.apiEndpoint)
+    console.log("room service initialized...")
+  }
+
+  getHotels (){
+    return this.http.get<HotelList[]>("/v1/hotels")
+  }
+```
 
 let's fetch data:
 ```javascript
@@ -1827,9 +1926,234 @@ export class HotelsComponent implements OnInit {
 }
 ```
 
-### Http Request:
+the above http method will only give use the data we want to fetch.
 
+#### Http request using HttpRequest:
+
+In Angular, the `HttpClient` module provides a way to make HTTP requests. The `HttpRequest` class is a part of this module and represents an HTTP request. It's used to configure the details of an HTTP request, such as the method, headers, and body. In short, the `HttpRequest` will provide us with all http information along with the data we want to fetch.
+
+```javascript
+  constructor(
+    @Inject (APP_SERVICE_CONFIG) private config:AppConfig,
+    private http: HttpClient) 
+    {
+    console.log(this.config.apiEndpoint)
+    console.log("room service initialized...")
+  }
+
+  getHotels (){
+    const request = new HttpRequest (
+      "GET",
+      "/v1/hotels",
+      {reportProgress:true}
+    )
+    return this.http.request(request); 
+  }
+```
+
+let's fetch data:
+```javascript
+export class HotelsComponent implements OnInit {
+
+  hotelsList: HotelList[] = [];
+  hotelTitle: string = "";
+  constructor(private RoomsService: RoomsService){}
+
+  ngOnInit () {
+    this.RoomsService.getHotels().subscribe(place => {
+      console.log(place)
+    })
+  }
+}
+```
+This will give us more details about the request.
+
+#### Case: Show to users how much data is loaded:
+```javascript
+export class HotelsComponent implements OnInit {
+
+  hotelsList: HotelList[] = [];
+  hotelTitle: string = "";
+  totalBytes: number = 0;
+
+  constructor(private RoomsService: RoomsService){}
+
+  ngOnInit () {
+  this.RoomsService.getHotelsLoaded().subscribe(event => {
+      switch (event.type) {
+        case HttpEventType.Sent: {
+          console.log("Request has been sent")
+          break;
+        }
+        case HttpEventType.ResponseHeader: {
+          console.log("request success")
+          break
+        }
+        case HttpEventType.DownloadProgress: {
+          this.totalBytes += event.loaded;
+          break;
+        }
+        case HttpEventType.Response: {
+          console.log(event.body)
+        }
+      }
+    })
+  }
+}
+```
 
 ## RxJs Operators
-## Http Interceptors
-## APP_INITIALIZERS
+why we need RxJs operators? before answer the question, we need to remind ourselves that RxJs uses `observable` which is a stream of data, and that stream of data CANNOT BE MODIFIED. It can be modified only within a stream of before it is subscribed. So, to modify the data, Operators come really handy.
+
+### ShareReply
+Here's an example of how you can use the shareReplay operator in Angular to cache and share the result of an HTTP request:
+
+```javascript
+  getHotels (){
+    // return this.http.get<HotelList[]>("/v1/hotels")
+    return this.http.get<HotelList[]>("/v1/hotels").pipe(shareReplay(1)) // to cache http requests.
+  }
+```
+
+### Async Pipe
+The async pipe is a built-in pipe that can be used to handle asynchronous data in `templates`. The async pipe subscribes to an `Observable` or a `Promise` and returns the latest value it has emitted. The pipe takes care of unsubscribing from the subscription when the component is destroyed to avoid memory leaks.
+
+Here's an example of how to use the async pipe in a template:
+```javascript
+<ng-container *ngIf="data$ | async as data">
+  {{ data }}
+</ng-container>
+```
+In this example, `data$` is an Observable that emits the data to be displayed in the template. The `async pipe` subscribes to `data$` and returns the latest value in the `data` local template variable. The `ngIf` directive is used to conditionally render the contents of the container based on whether data is truthy or falsy.
+
+So basically, when we subscribe to data stream and if we want to leave the component, we need to unsubscribe from the subscription, and that's where we will be using async pipe. It is same as we were subscribing to redux reducers, and if we wanted to leave the page we would unsubscribe.
+
+#### Typically or manual way:  
+we use `subscribe` and `unsubscribe` with observables.
+
+```javascript
+subscription !: Subscription
+
+ngOnInit(){
+  this.subscription = this.RoomsService.getHotels().subscribe(hotels => {
+    this.hotelsList = hotels;
+  })
+}
+
+ngOnDestroy() {
+  if (this.subscription) {
+    this.subscription.unsubscribe();
+  }
+}
+```
+
+but what if we don't want to use subscribe manually, what if there is a better way to subscribe. right!?
+
+#### Async Pipe method:
+Here is the example:
+
+```javascript
+//services.ts
+
+export class HotelsService {
+    constructor(
+        @Inject (APP_SERVICE_CONFIG) private config:AppConfig,
+        private http: HttpClient) 
+        {
+        console.log(this.config.apiEndpoint)
+        console.log("room service initialized...")
+    }
+
+    // -------------- Fetching API ------
+    getHotels (){
+    // return this.http.get<HotelList[]>("/v1/hotels")
+    return this.http.get<HotelList[]>("/v1/hotels").pipe(shareReplay(1)) // to cache http requests.
+    }
+}
+```
+
+**Send data from parent to child**
+
+```javascript
+export class HotelsComponent implements OnInit, OnDestroy  {
+
+  constructor(private HotelsService: HotelsService){}
+  hotelTitle: string = "";
+  totalBytes: number = 0;
+  hotels$ = this.HotelsService.getHotels(); //using async pipe
+}
+```
+
+
+```html
+<div>
+    <h2>{{hotelTitle}}</h2>
+    <h4>Loading data from server: {{totalBytes}}</h4>
+    
+    <div *ngIf="hotels$ | async as hotels">
+        <app-hotels-list
+        [hotels] = "hotels$ |async ">
+        </app-hotels-list>
+    </div>
+</div>
+```
+In the above code snippet, the `ngIf` directive is used to conditionally render the div element based on the value of the `hotels$` Observable. The `async` pipe is used in two places:
+
+1. In the `ngIf` directive, it's used to subscribe to the `hotels$` Observable and assign its latest value to the hotels local template variable (as hotels). The `ngIf` directive then checks if hotels is truthy or falsy to determine whether to render the div element.
+
+2. In the `[hotels]` property binding of the `app-hotels-list` component, it's used to pass the latest value of the `hotels$` Observable to the component. This ensures that the component always has access to the latest data emitted by the Observable.
+
+Note that using the `async` pipe in this manner can lead to multiple subscriptions to the `hotels$` Observable if the component is re-created or if the `ngIf` directive switches between being truthy and falsy multiple times. To avoid this, it's generally recommended to use a mechanism such as `ngOnPush` change detection or a higher-level abstraction such as the async pipe in a service to manage the subscription to the Observable.
+
+
+
+**Child-components:**
+```javascript
+export class HotelsListComponent {
+  @Input () hotels: HotelList [] | null =[]
+}
+```
+
+```html
+<table class="table">
+    <tr>
+        <th>Index</th>
+        <th>Hotel Name</th>
+        <th>Address</th>
+        <th>Distance</th>
+        <th>Desc</th>
+        <th>Rooms</th>
+        <th>Cheapest Price</th>
+        <th>Featured</th>
+    </tr>
+
+    <tr
+    *ngFor="let hotel of hotels; let e = even; let o=odd;"
+    [ngClass]="e? 'even' : 'odd'">
+        <td>{{hotel.id | slice:0:10}}</td>
+        <td>{{hotel.name | slice:0:5}}</td>
+        <td>{{hotel.address | slice:0:8}}</td>
+        <td>{{hotel.distance}}</td>
+        <td>{{hotel.desc | slice: 0:30}}</td>
+        <td>{{hotel.rooms | slice:0:1}}</td>
+        <td>{{hotel.cheapestPrice}}</td>
+        <td>{{hotel.featured}}</td>
+        <td>
+            <!-- <button 
+                type="button" 
+                class="btn btn-primary"
+                (click)="selectRoom(hotel)"
+                >
+                Select Room
+            </button> -->
+        </td>
+    </tr>
+</table>
+```
+
+### Catch Error
+
+
+
+### Http Interceptors
+### APP_INITIALIZERS

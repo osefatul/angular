@@ -1,8 +1,9 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpRequest } from '@angular/common/http';
 import { AppConfig } from '../AppConfig/app.config.interface';
 import { APP_SERVICE_CONFIG } from '../AppConfig/app.config.service';
 import { Inject, Injectable } from '@angular/core';
 import { HotelList, RoomList } from '../../interface';
+import { shareReplay } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -58,13 +59,8 @@ export class RoomsService {
   ]
 
 
-
   getRoom (){
     return this.roomsList
-  }
-
-  getHotels (){
-    return this.http.get<HotelList[]>("/v1/hotels")
   }
 
 }

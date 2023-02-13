@@ -1753,8 +1753,8 @@ export class AppModule { }
     console.log("room service initialized...")
   }
 
-    getHotels (){
-    return this.http.get("/v1/hotels")
+  getHotels (){
+    return this.http.get<HotelList[]>("/v1/hotels")
   }
 ```
 
@@ -1766,8 +1766,29 @@ An Observable is essentially a stream of values that can change over time, and y
 
 Observables are often used in Angular for tasks such as making HTTP requests, handling user interactions, or managing animations. With observables, you can handle data in a declarative way, making it easier to understand and maintain the code, especially in large applications.
 
+[You can learn more about observables here](https://rxjs.dev/guide/observable)
 
-You can learn more about observables [here](https://rxjs.dev/guide/observable)
+
+Example: so whoever subscribes to the stream will receive the stream data.
+
+```javascript
+import { Observable } from 'rxjs';
+
+    stream = new Observable(hotel=>{
+        hotel.next("hotel1");
+        hotel.next("hotel2");
+        hotel.next("hotel3");
+        hotel.complete();
+    })
+
+    ngOnInit () {
+    this.stream.subscribe({
+      next: (value) => console.log(value),
+      complete: ()=> console.log("complete"),
+      error: (err) => console.log(err)
+    })
+  }
+```
 
 ### Pull vs Push
 Push and Pull are two different types of architectures used in computer systems.
@@ -1787,6 +1808,28 @@ Pull: getData() -> addData() -> to get latest data, getData()
 Push: getData() -> continuous stream of data -> addData().
 
 ## Http methods
+
+let's fetch data:
+```javascript
+export class HotelsComponent implements OnInit {
+
+  hotelsList: HotelList[] = [];
+  hotelTitle: string = "";
+  constructor(private RoomsService: RoomsService){}
+
+  ngOnInit () {
+    this.RoomsService.getHotels().subscribe(hotels => {
+      // console.log(hotels)
+      this.hotelsList = hotels;
+    })
+    this.hotelTitle = "Hotels List";
+  }
+}
+```
+
+### Http Request:
+
+
 ## RxJs Operators
 ## Http Interceptors
 ## APP_INITIALIZERS

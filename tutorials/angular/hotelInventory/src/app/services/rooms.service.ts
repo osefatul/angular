@@ -1,8 +1,8 @@
 import { HttpClient } from '@angular/common/http';
-import { AppConfig } from './../../AppConfig/app.config.interface';
-import { APP_SERVICE_CONFIG } from './../../AppConfig/app.config.service';
+import { AppConfig } from '../AppConfig/app.config.interface';
+import { APP_SERVICE_CONFIG } from '../AppConfig/app.config.service';
 import { Inject, Injectable } from '@angular/core';
-import { HotelList, RoomList } from '../rooms';
+import { HotelList, RoomList } from '../../interface';
 
 @Injectable({
   providedIn: 'root'

@@ -1,6 +1,7 @@
-import { RoomsService } from './../rooms/services/rooms.service';
+import { RoomsService } from '../services/rooms.service';
 import { Component, OnInit } from '@angular/core';
-import { HotelList } from '../rooms/rooms';
+import { HotelList } from '../../interface';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-hotels',
@@ -11,18 +12,28 @@ import { HotelList } from '../rooms/rooms';
 
 export class HotelsComponent implements OnInit {
 
-  hotelsList: HotelList[] = [];
-  hotelTitle: string = "";
   constructor(private RoomsService: RoomsService){}
 
+  hotelsList: HotelList[] = [];
+  hotelTitle: string = "";
+
+  stream = new Observable(hotel=>{
+    hotel.next("hotel1");
+    hotel.next("hotel2");
+    hotel.next("hotel3");
+    hotel.complete();
+  })
+
   ngOnInit () {
-    // console.log(this.roomsService.getHotels())
     this.RoomsService.getHotels().subscribe(hotels => {
       // console.log(hotels)
       this.hotelsList = hotels;
     })
     this.hotelTitle = "Hotels List";
-
+    this.stream.subscribe({
+      next: (value) => console.log(value),
+      complete: ()=> console.log("complete"),
+      error: (err) => console.log(err)
+    })
   }
-
 }

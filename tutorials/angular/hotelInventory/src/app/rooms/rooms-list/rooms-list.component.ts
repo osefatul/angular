@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, DoCheck, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, OnDestroy } from '@angular/core';
-import { RoomList } from '../rooms';
+import { RoomList } from '../../../interface';
 
 
 

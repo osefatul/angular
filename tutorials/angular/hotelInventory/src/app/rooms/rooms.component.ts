@@ -1,7 +1,7 @@
 import { Component, ViewChild, OnInit } from '@angular/core';
-import { Room, RoomList } from './rooms';
+import { Room, RoomList } from '../../interface';
 import {HeaderComponent} from "../header/header.component"
-import { RoomsService } from './services/rooms.service';
+import { RoomsService } from '../services/rooms.service';
 
 @Component({
   selector: 'app-rooms',
@@ -10,9 +10,7 @@ import { RoomsService } from './services/rooms.service';
 })
 
 
-
 export class RoomsComponent implements OnInit {
-
 
   hotelName: string = "Hilton hotel"
   numberOfRooms: number = 50
@@ -33,8 +31,6 @@ export class RoomsComponent implements OnInit {
   ngOnInit(){
     this.roomsList = this.roomsService.getRoom()
   }
-
-
 
 
   toggle(){

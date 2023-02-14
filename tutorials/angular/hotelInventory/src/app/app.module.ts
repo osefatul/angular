@@ -1,7 +1,8 @@
+import { InitService } from './services/init.service';
 import { APP_SERVICE_CONFIG, APP_CONFIG } from './AppConfig/app.config.service';
-import { NgModule } from '@angular/core';
+import { APP_INITIALIZER, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import {HttpClientModule } from '@angular/common/http'
+import {HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http'
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -15,6 +16,16 @@ import { ContainerComponent } from './container/container.component';
 import { EmployeeComponent } from './employee/employee.component';
 import { HotelsComponent } from './hotels/hotels.component';
 import { HotelsListComponent } from './hotels/hotels-list/hotels-list.component';
+import { RequestInterceptor } from './request.interceptor';
+
+
+
+
+function initFactory (initService: InitService){
+  return () => initService.init();
+}
+
+
 
 @NgModule({
   declarations: [
@@ -39,7 +50,19 @@ import { HotelsListComponent } from './hotels/hotels-list/hotels-list.component'
   providers: [{
     provide: APP_SERVICE_CONFIG,
     useValue: APP_CONFIG
-  }],
+  },
+  {
+    provide: HTTP_INTERCEPTORS,
+    useClass: RequestInterceptor,
+    multi: true
+  },
+  {
+    provide: APP_INITIALIZER,
+    useFactory: initFactory,
+    deps: [InitService], //dependencies
+    multi: true
+  }
+],
   bootstrap: [AppComponent]
 })
 

@@ -18,13 +18,11 @@ export class HotelsService {
         console.log(this.config.apiEndpoint)
         console.log("room service initialized...")
     }
-    
-    headers = new HttpHeaders({token: "12341234"});
 
     // -------------- Fetching API ------
     getHotels (){
     // return this.http.get<HotelList[]>("/v1/hotels")
-    return this.http.get<HotelList[]>("/v1/hotels", {headers: this.headers}).pipe(shareReplay(1)) // to cache response after multiple requests.
+    return this.http.get<HotelList[]>("/v1/hotels").pipe(shareReplay(1)) // to cache response after multiple requests.
     }
     
     getHotelsLoaded (){

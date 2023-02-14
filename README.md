@@ -1398,6 +1398,7 @@ There are two types of providers in Angular:
 
 1. Class Providers
 2. Value Providers
+3. Factory Providers
 
 
 You can register providers at different levels of your application, from the component level to the module level. This allows you to control the scope of the dependency and manage its lifetime in a modular and maintainable way.
@@ -1573,10 +1574,32 @@ export class RoomsService {
     }
 }
 ```
-As you can see, we have used @Inject decorator: which is used to specify a dependency to be injected into the constructor of a class. In this case, the token "APP_SERVICE_CONFIG" is used to identify the provider that should be injected. It will be passed as an argument to the constructor. 
+As you can see, we have used `@Inject` decorator: which is used to specify a dependency to be injected into the constructor of a class. In this case, the token "APP_SERVICE_CONFIG" is used to identify the provider that should be injected. It will be passed as an argument to the constructor. 
 
 
 #### Example3: using localStorage as a value provider
+
+Before we go through an example. let's understand what is `InjectionToken`:
+
+##### InjectionToken:
+`InjectionToken` is a class in Angular that allows you to define a unique identifier that can be used to inject dependencies into your application. Unlike using a string token, using an InjectionToken ensures that the dependency injection system can differentiate between different tokens with the same string value.
+
+Example: In this example, we create an InjectionToken called API_BASE_URL and provide it with a string value of `'https://example.com/api'`. We use the provide option to associate this token with a provider, which in this case uses the useValue option to provide a constant value for the token.
+
+```javascript
+import { InjectionToken } from '@angular/core';
+export const API_BASE_URL = new InjectionToken<string>('API_BASE_URL');
+
+@NgModule({
+  providers: [
+    { provide: API_BASE_URL, useValue: 'https://example.com/api' }
+  ]
+})
+export class AppModule { }
+```
+
+##### Example: using useValue Provider:
+
 ```javascript
 //localStorage.token.ts
 
@@ -1600,6 +1623,33 @@ now let's inject it using these codes:
     this.localStorage.setItem('name', "Hilton Hotel")
   }
 ```
+
+
+### 3. Factory Function Providers:
+#### useFactory:
+`useFactory` is an Angular provider configuration option that allows you to define a factory function (a function that returns an object or a value that can be used as a dependency in your application) for creating a provider instance. The `useFactory` option is typically used when you need to perform some additional configuration or setup on a provider before it is injected into your application.
+
+The `useFactory` option can also be used to create a provider instance based on some external configuration or environment variables. Here's an example:
+
+
+```javascript
+import { InjectionToken } from '@angular/core';
+
+export const API_URL = new InjectionToken<string>('API_URL');
+export function apiBaseUrlFactory() {
+  return 'https://example.com/api';
+}
+
+@NgModule({
+  providers: [
+    { provide: API_URL, useFactory: apiBaseUrlFactory }
+  ]
+})
+export class AppModule { }
+```
+
+In this example, we create an `InjectionToken` called `API_URL`, which represents the base URL for our API. We then create a factory function called `apiBaseUrlFactory` that returns the string `'https://example.com/api'`. We use the `useFactory` option to provide the `API_URL` token with this factory function. When the `API_URL` token is injected into a component or service, the factory function will be called to create the provider instance.
+
 
 
 ## Dependency Resolution
@@ -2212,7 +2262,7 @@ In the above code, we use the `of()` function to create an Observable that emits
 ### Http Interceptors
 HTTP interceptors in Angular are used to intercept outgoing HTTP requests and incoming HTTP responses from the server. They can be used to add custom headers, modify the request/response, handle errors, and more. Interceptors can be created by implementing the `HttpInterceptor` interface and registering them in the app module's providers array. They can be applied globally to all HTTP requests or to specific requests using the `HttpClient` options parameter. Interceptors can be useful for implementing authentication, caching, logging, and other cross-cutting concerns in an Angular application.
 
- Add a token into the header.
+ Add a token into the header of a request
 
 ```javascript
     headers = new HttpHeaders({token: "12341234"});
@@ -2226,10 +2276,86 @@ HTTP interceptors in Angular are used to intercept outgoing HTTP requests and in
 
 
 #### Add an authorization header to every outgoing HTTP request:
+If we want to send a token with every request then we need to use interceptor.
+To create an http interceptor component in angular: `ng g interceptor request`
 
-To create an http interceptor: `ng g interceptor request`
+
+Interceptor component:
+```javascript
+import { Injectable } from '@angular/core';
+import {
+  HttpRequest,
+  HttpHandler,
+  HttpEvent,
+  HttpInterceptor
+} from '@angular/common/http';
+import { Observable } from 'rxjs';
+
+@Injectable()
+export class RequestInterceptor implements HttpInterceptor {
+  constructor() {}
+  intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
+    return next.handle(request);
+  }
+}
+```
+
+Now register the request as a provider:
+
+```javascript
+  providers: [
+  {
+    provide: HTTP_INTERCEPTORS,
+    useClass: RequestInterceptor,
+    multi: true
+  }
+],
+```
+`HTTP_INTERCEPTORS` is nothing but an injectToken.
+
+So we cannot modify our original request, we need to clone it first.
+
+```javascript
+//hotel.service.ts
+  // -------------- Fetching API ------
+  getHotels (){
+  // return this.http.get<HotelList[]>("/v1/hotels")
+  return this.http.get<HotelList[]>("/v1/hotels").pipe(shareReplay(1)) // to cache response after multiple requests.
+  }
 
 
+//request.interceptor.ts
+import { Injectable } from '@angular/core';
+import {
+  HttpRequest,
+  HttpHandler,
+  HttpEvent,
+  HttpInterceptor,
+  HttpHeaders
+} from '@angular/common/http';
+import { Observable } from 'rxjs';
+
+@Injectable()
+export class RequestInterceptor implements HttpInterceptor {
+  constructor() {}
+
+  intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
+
+    if(request.method === 'GET') {
+      // Clone the request and add the authorization header
+      const newRequest = request.clone({
+        headers: new HttpHeaders({token: "12341234"})
+      });
+      return next.handle(newRequest);
+    }
+    return next.handle(request);
+  }
+}
+```
+The interceptor will check if the request method is `GET` it will add token to header, if the method is otherwise it will return a normal request with no interceptor.
+
+
+#### Example: Add authorization token in the interceptor request
 ```javascript
 import { Injectable } from '@angular/core';
 import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/common/http';
@@ -2255,4 +2381,162 @@ In this example, the `AuthInterceptor` class implements the `HttpInterceptor` in
 
 
 ### APP_INITIALIZERS
+`APP_INITIALIZERS` is an Angular feature that allows you to run some code before your application starts. You can use it to initialize external services, load data from an API, or perform any other task that needs to be completed before your application is fully operational. `APP_INITIALIZERS` is a function that returns a Promise that is resolved when the initialization is complete. You can define multiple `APP_INITIALIZERS`, and they will be executed in the order they are defined.
+
+here is a simple example:
+
+```javascript
+import { APP_INITIALIZER, NgModule } from '@angular/core';
+import { HttpClientModule } from '@angular/common/http';
+
+import { DataService } from './data.service';
+
+function initializeData(dataService: DataService) {
+  return () => dataService.loadData();
+}
+
+@NgModule({
+  imports: [HttpClientModule],
+  providers: [
+    DataService,
+    {
+      provide: APP_INITIALIZER,
+      useFactory: initializeData,
+      deps: [DataService],
+      multi: true
+    }
+  ]
+})
+export class AppModule { }
+```
+
+In this example, we define an `APP_INITIALIZER` that will load data from an external API using a `DataService`. The initializeData function takes a DataService as a parameter and returns a function that will call the `loadData` method on the `DataService`. We then add this initializer to the providers array in our `NgModule`, along with the DataService itself. When our application starts, Angular will run the initializeData function before the application is fully operational, ensuring that our data is loaded and ready to use.
+
+
+#### Load config before our application loads:
+- First create a service using: `ng g s init`.
+- Create a json file named `config.json` and store it in the `/assets/config.json` directory.
+- In the init service add method:
+```javascript
+import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { tap } from 'rxjs';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class InitService {
+
+  config: any
+  constructor( private http:HttpClient) { }
+
+  init() {
+    return this.http.get("/assets/config.json")
+    .pipe(tap((config) => (this.config = config)))
+  }
+}
+```
+- So, now we want this service to be called before our app initialization. In order to do that, let's create a `factory function` inside the `app.modules.ts` which will return `init()` method.
+- After that, let's register the factory function as a provider.
+
+```javascript
+ providers: [{
+    provide: APP_SERVICE_CONFIG,
+    useValue: APP_CONFIG
+  },
+  {
+    provide: HTTP_INTERCEPTORS,
+    useClass: RequestInterceptor,
+    multi: true
+  },
+  {
+    provide: APP_INITIALIZER,
+    useFactory: initFactory,
+    deps: [InitService], //dependencies
+    multi: true
+  }
+],
+```
+
+The "`multi`" property in this code indicates that the `APP_INITIALIZER` token can have multiple providers. When set to true, it means that if there are multiple providers for the same token, they will all be used, instead of only the last one registered being used.
+
+Now to verify if the above configuration worked: Go to the `Network` and check `Fetch/XHR` tab in the browser and check the data loaded first, you could see this kind of example:
+
+```javascript
+config.json
+hotels
+```
+
+or, you can inject it into a component, for example:
+
+```javascript
+//app.component.ts
+
+export class AppComponent implements AfterViewInit {
+  constructor(private initService: InitService){
+    console.log(initService.config)
+  }
+}
+
+//Output:
+{
+  apiVersion: "v1",
+  repo: "Pods"
+}
+```
+
+
+
+#### Example of a multi-provider of the same token:
+Suppose we have a token called "Logger" which is used to provide a logging service. Multiple providers may want to provide their own logging implementation for this token. We can define them as follows:
+
+```javascript
+providers: [
+  { provide: Logger, useClass: ConsoleLogger, multi: true },
+  { provide: Logger, useClass: FileLogger, multi: true },
+  { provide: Logger, useClass: RemoteLogger, multi: true }
+]
+```
+
+In this example, we have three different providers that implement the `Logger` token. By setting the `multi` property to true for each provider, all three of them will be registered and can be used throughout the application.
+
+Later, when we inject the Logger token into a component or service, we can use Angular's `@Inject` decorator to specify which provider we want to use. For example:
+
+```javascript
+constructor(@Inject(Logger) private logger: Logger) { ... }
+```
+
+
+<hr />
+
+
+
+# Angular Router
+
+## Intro
+- Provides functionalities to add routes.
+- Developers can configure all routes at Frontend.
+- Provides SPA functionality.
+- Features to add nested routes.
+
+
+
+## Setup Router
+- Import `RouterModule`
+- `forRoot` method allows us to add multiple routes config.
+- Default route.
+- Dynamic route.
+- Wild Card route.
+
+## Using ActivatedRoute Service
+
+## Using Router Service
+
+## Feature Module and Routing
+
+## Nested Routing and Child Routes
+
+## Lazy Loading
+
+## Route Guards
 

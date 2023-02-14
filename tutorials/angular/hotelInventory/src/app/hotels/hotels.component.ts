@@ -36,16 +36,16 @@ export class HotelsComponent implements OnInit, OnDestroy  {
   lengthOfHotels$ = this.HotelsService.getHotels().pipe(
     map(hotels => hotels.length)
   )
+  
 
   ngOnInit () {
     this.hotelTitle = "Hotels List";
-    this.lengthOfHotels$.subscribe(x=> console.log(x)) //check this:
 
     //manually subscribe to data stream
     // this.subscription = this.HotelsService.getHotels().subscribe(hotels => {
     //   this.hotelsList = hotels;
     // })
-
+    
     //Using HttpRequest method to fetch data...
     this.HotelsService.getHotelsLoaded().subscribe(event => {
       switch (event.type) {
@@ -62,7 +62,7 @@ export class HotelsComponent implements OnInit, OnDestroy  {
           break;
         }
         case HttpEventType.Response: {
-          console.log(event.body)
+          // console.log(event.body)
         }
       }
     })

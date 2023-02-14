@@ -2183,6 +2183,7 @@ So, this is the first operator that we will discuss about which can modify the d
 #### Example
 suppose we have an Observable that emits a list of numbers and we want to create a new Observable where each element is the square of the corresponding element in the original. We can do it as follows:
 
+
 ```javascript
 import { map } from 'rxjs/operators';
 import { of } from 'rxjs';
@@ -2201,7 +2202,57 @@ In the above code, we use the `of()` function to create an Observable that emits
   lengthOfHotels$ = this.HotelsService.getHotels().pipe(
     map(hotels => hotels.length)
   )
+
+  ngOnInit () {
+  this.lengthOfHotels$.subscribe(x=> console.log(x))
+  }
+
 ```
 
 ### Http Interceptors
+HTTP interceptors in Angular are used to intercept outgoing HTTP requests and incoming HTTP responses from the server. They can be used to add custom headers, modify the request/response, handle errors, and more. Interceptors can be created by implementing the `HttpInterceptor` interface and registering them in the app module's providers array. They can be applied globally to all HTTP requests or to specific requests using the `HttpClient` options parameter. Interceptors can be useful for implementing authentication, caching, logging, and other cross-cutting concerns in an Angular application.
+
+ Add a token into the header.
+
+```javascript
+    headers = new HttpHeaders({token: "12341234"});
+    // -------------- Fetching API ------
+    getHotels (){
+    return this.http.get<HotelList[]>("/v1/hotels", 
+    {headers: this.headers}).pipe(shareReplay(1))
+
+    }
+```
+
+
+#### Add an authorization header to every outgoing HTTP request:
+
+To create an http interceptor: `ng g interceptor request`
+
+
+```javascript
+import { Injectable } from '@angular/core';
+import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/common/http';
+import { Observable } from 'rxjs';
+
+@Injectable()
+export class AuthInterceptor implements HttpInterceptor {
+  intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+    // Get the auth token from local storage
+    const authToken = localStorage.getItem('authToken');
+
+    // Clone the request and add the authorization header
+    const authReq = req.clone({
+      headers: req.headers.set('Authorization', `Bearer ${authToken}`)
+    });
+
+    // Pass the new request to the next interceptor in the chain
+    return next.handle(authReq);
+  }
+}
+```
+In this example, the `AuthInterceptor` class implements the `HttpInterceptor` interface and overrides the `intercept` method. The method receives the original HTTP request (`req`) and a reference to the next `HttpHandler` in the chain (`next`). The interceptor first retrieves the auth token from local storage, then clones the original request and adds an Authorization header with the token. Finally, it passes the new request to the next interceptor or the `HttpClient` if there are no more interceptors. To use this interceptor, you would need to register it in the app module's providers array.
+
+
 ### APP_INITIALIZERS
+

@@ -1,10 +1,22 @@
 <div>
     <h2>{{hotelTitle}}</h2>
     <h4>Loading data from server: {{totalBytes}}</h4>
-    
-    <div *ngIf="hotels$ | async as hotels">
+    <h5>{{getError$ | async}}</h5>
+
+    <h5>
+        Length of Hotels: {{lengthOfHotels$ | async}}
+    </h5>
+
+    <div *ngIf="hotels$ | async as hotels; else loading">
         <app-hotels-list
         [hotels] = "hotels$ |async ">
         </app-hotels-list>
     </div>
+
+    <ng-template #loading>
+        <div>Loading...</div>
+    </ng-template>
+
+
+
 </div>

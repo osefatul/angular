@@ -1,9 +1,8 @@
 import { HotelsService } from './../services/hotels.service';
-import { RoomsService } from '../services/rooms.service';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { HotelList } from '../../interface';
-import { Observable, Subscription } from 'rxjs';
-import { HttpEventType } from '@angular/common/http';
+import { catchError, Observable, of, Subject, Subscription, map } from 'rxjs';
+import { HttpErrorResponse, HttpEventType } from '@angular/common/http';
 
 @Component({
   selector: 'app-hotels',
@@ -20,33 +19,32 @@ export class HotelsComponent implements OnInit, OnDestroy  {
   hotelTitle: string = "";
   totalBytes: number = 0;
   subscription !: Subscription // for subscription data stream.
-  hotels$ = this.HotelsService.getHotels(); //using async pipe
 
-  //observable example
-  stream = new Observable(hotel=>{
-    hotel.next("hotel1");
-    hotel.next("hotel2");
-    hotel.next("hotel3");
-    hotel.complete();
-  })
+  // for catch and error.
+  error$  = new Subject<string>(); 
+  getError$ = this.error$.asObservable(); 
+  
+   //using fetch data from hotelService and then async pipe to render data.
+  hotels$ = this.HotelsService.getHotels().pipe(
+    catchError( error => {
+      this.error$.next(error.message);
+      return of ([])
+    })
+  )
 
+  //usage of map
+  lengthOfHotels$ = this.HotelsService.getHotels().pipe(
+    map(hotels => hotels.length)
+  )
 
   ngOnInit () {
     this.hotelTitle = "Hotels List";
-
-    //subscribing to example of stream.
-    this.stream.subscribe({
-      next: (value) => console.log(value),
-      complete: ()=> console.log("complete"),
-      error: (err) => console.log(err)
-    })
-
+    this.lengthOfHotels$.subscribe(x=> console.log(x)) //check this:
 
     //manually subscribe to data stream
-    // this.subscription = this.RoomsService.getHotels().subscribe(hotels => {
+    // this.subscription = this.HotelsService.getHotels().subscribe(hotels => {
     //   this.hotelsList = hotels;
     // })
-
 
     //Using HttpRequest method to fetch data...
     this.HotelsService.getHotelsLoaded().subscribe(event => {
@@ -69,7 +67,6 @@ export class HotelsComponent implements OnInit, OnDestroy  {
       }
     })
   }
-
 
 
   ngOnDestroy() {

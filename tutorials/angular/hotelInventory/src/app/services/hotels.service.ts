@@ -9,7 +9,6 @@ import { shareReplay } from 'rxjs';
     providedIn: 'root'
 })
 
-
 export class HotelsService {
 
     constructor(
@@ -20,13 +19,11 @@ export class HotelsService {
         console.log("room service initialized...")
     }
 
-
     // -------------- Fetching API ------
     getHotels (){
     // return this.http.get<HotelList[]>("/v1/hotels")
-    return this.http.get<HotelList[]>("/v1/hotels").pipe(shareReplay(1)) // to cache http requests.
+    return this.http.get<HotelList[]>("/v1/hotels").pipe(shareReplay(1)) // to cache response after multiple requests.
     }
-
 
     getHotelsLoaded (){
     const request = new HttpRequest (

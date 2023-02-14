@@ -2015,19 +2015,6 @@ Here's an example of how you can use the shareReplay operator in Angular to cach
   }
 ```
 
-### Async Pipe
-The async pipe is a built-in pipe that can be used to handle asynchronous data in `templates`. The async pipe subscribes to an `Observable` or a `Promise` and returns the latest value it has emitted. The pipe takes care of unsubscribing from the subscription when the component is destroyed to avoid memory leaks.
-
-Here's an example of how to use the async pipe in a template:
-```html
-<ng-container *ngIf="data$ | async as data">
-  {{ data }}
-</ng-container>
-```
-In this example, `data$` is an Observable that emits the data to be displayed in the template. The `async pipe` subscribes to `data$` and returns the latest value in the `data` local template variable. The `ngIf` directive is used to conditionally render the contents of the container based on whether data is truthy or falsy.
-
-So basically, when we subscribe to data stream and if we want to leave the component, we need to unsubscribe from the subscription, and that's where we will be using async pipe. It is same as we were subscribing to redux reducers, and if we wanted to leave the page we would unsubscribe.
-
 #### Typically or manual way:  
 we use `subscribe` and `unsubscribe` with observables.
 
@@ -2050,6 +2037,18 @@ ngOnDestroy() {
 but what if we don't want to use subscribe manually, what if there is a better way to subscribe. right!?
 
 #### Async Pipe method:
+The async pipe is a built-in pipe that can be used to handle asynchronous data in `templates`. The async pipe subscribes to an `Observable` or a `Promise` and returns the latest value it has emitted. The pipe takes care of unsubscribing from the subscription when the component is destroyed to avoid memory leaks.
+
+Here's an example of how to use the async pipe in a template:
+```html
+<ng-container *ngIf="data$ | async as data">
+  {{ data }}
+</ng-container>
+```
+In this example, `data$` is an Observable that emits the data to be displayed in the template. The `async pipe` subscribes to `data$` and returns the latest value in the `data` local template variable. The `ngIf` directive is used to conditionally render the contents of the container based on whether data is truthy or falsy.
+
+So basically, when we subscribe to data stream and if we want to leave the component, we need to unsubscribe from the subscription, and that's where we will be using async pipe. It is same as we were subscribing to redux reducers, and if we wanted to leave the page we would unsubscribe.
+
 Here is the example:
 
 ```javascript
@@ -2153,7 +2152,56 @@ export class HotelsListComponent {
 
 ### Catch Error
 
+`hotels.component.ts`
+```javascript
 
+  error$  = new Subject<string>(); 
+  getError$ = this.error$.asObservable(); //
+  
+  hotels$ = this.HotelsService.getHotels().pipe(
+    catchError( error => {
+      this.error$.next(error.message);
+      return of ([])
+    })
+  )
+```
+Here's how it works:
+
+1. `error$` is a Subject from the RxJS library. A subject is both an observable and an observer, which means it can emit values and subscribe to values. This subject is used to emit error messages that occur during the HTTP request.
+
+2. `getError$` is a read-only observable created from the `error$` subject using the `asObservable()` method. This allows external components to subscribe to error messages without being able to emit new values.
+3. `hotels$` is an observable that fetches hotel data from a HotelsService using the getHotels() method. If an error occurs during the HTTP request, the catchError operator catches the error and calls a callback function.
+4. The callback function emits the error message using the `error$` subject and returns an empty array using the `of()` function. 
+5. The `of()` function creates an observable that emits the specified values immediately, in this case an empty array. This ensures that the observable returned by `hotels$` always emits a value, even if the HTTP request fails.
+
+To use this service in a component, you can subscribe to the hotels$ and getError$ observables in the template using the async pipe, like this:
+
+
+### Map
+So, this is the first operator that we will discuss about which can modify the data. Or in other words, we use the `map()` operator provided by the `RxJS` library to transform the values emitted by an `Observable`.
+
+#### Example
+suppose we have an Observable that emits a list of numbers and we want to create a new Observable where each element is the square of the corresponding element in the original. We can do it as follows:
+
+```javascript
+import { map } from 'rxjs/operators';
+import { of } from 'rxjs';
+
+const numbers$ = of([1, 2, 3, 4, 5]);
+const squaredNumbers$ = numbers$.pipe(map(numbers => numbers.map(n=> n* n)))
+```
+
+In the above code, we use the `of()` function to create an Observable that emits the list of numbers. Then we use the `map()` operator to transform the emitted values by applying a function that squares each number. Finally, we subscribe to the transformed Observable and log the emitted values.
+
+
+#### Example in our case:
+
+```javascript
+  //usage of map
+  lengthOfHotels$ = this.HotelsService.getHotels().pipe(
+    map(hotels => hotels.length)
+  )
+```
 
 ### Http Interceptors
 ### APP_INITIALIZERS

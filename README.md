@@ -2019,7 +2019,7 @@ Here's an example of how you can use the shareReplay operator in Angular to cach
 The async pipe is a built-in pipe that can be used to handle asynchronous data in `templates`. The async pipe subscribes to an `Observable` or a `Promise` and returns the latest value it has emitted. The pipe takes care of unsubscribing from the subscription when the component is destroyed to avoid memory leaks.
 
 Here's an example of how to use the async pipe in a template:
-```javascript
+```html
 <ng-container *ngIf="data$ | async as data">
   {{ data }}
 </ng-container>

@@ -2596,6 +2596,18 @@ style="display: flex ; font-size: 16px; gap: 20px; border: 1px solid black; font
 ```
 
 ## Using ActivatedRoute Service
+The ActivatedRoute service is a key part of the Angular framework that provides information about the current route in an Angular application. It is used to extract information from the current route, such as route parameters, query parameters, and the URL path.
+
+Here are some of the key features of the ActivatedRoute service:
+
+- Route parameters: The ActivatedRoute service provides access to the route parameters, which are values extracted from the URL path. For example, if a route is defined as /product/:id, the id parameter can be accessed using the ActivatedRoute service.
+
+- Query parameters: The ActivatedRoute service also provides access to query parameters, which are values passed in the URL query string. Query parameters are useful for filtering or sorting data.
+
+- Route data: The ActivatedRoute service can also provide data associated with a route. This data can be used to configure a component or provide additional information to the user.
+
+- Route snapshots: The ActivatedRoute service also provides a snapshot of the current route, which can be used to access the current URL or route parameters without subscribing to changes.
+
 
 ## Using Router Service
 

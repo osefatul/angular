@@ -2524,9 +2524,76 @@ constructor(@Inject(Logger) private logger: Logger) { ... }
 ## Setup Router
 - Import `RouterModule`
 - `forRoot` method allows us to add multiple routes config.
-- Default route.
-- Dynamic route.
-- Wild Card route.
+- Make sure you add: `<router-outlet></router-outlet>` in `app.component.html`
+- Routes types:
+  - Basic Routing or Default route - In this type of routing, a single path is defined for a component. For example, the route path '/home' could be defined for the HomeComponent.
+  - Dynamic Routing - In this type of routing, the route path includes parameters that are used to dynamically generate the component. For example, the route path '/users/:id' could be defined to display the user details based on the user ID.
+  - Child Routing - In this type of routing, multiple routes are defined for a single component. For example, the route path '/products' could be defined to display a list of products, and the child route path '/:id' could be defined to display the details of a specific product.
+  - Lazy Loading - In this type of routing, the components are loaded only when they are needed, which helps to improve the performance of the application. For example, a separate module could be created for the admin section of the application, and the components for this section could be lazily loaded when the user navigates to the admin route.
+  - Redirects - In this type of routing, a route can be configured to redirect to another route. For example, the route path '/' could be configured to redirect to '/home'.
+  - Wildcard Routing - In this type of routing, a route is defined to match any URL that does not match any of the defined routes. This is typically used to display a 404 error page. For example, the route path '**' could be defined to match any URL.
+
+- In Angular, when using anchor tag `<a></a>`, use `[routerLink]` instead of `[href]`
+
+```html
+
+<!-- a simple navigation bar -->
+<div 
+style="display: flex ; font-size: 16px; gap: 20px; border: 1px solid black; font-weight: bold; ">
+    <a [routerLink]="'rooms'" 
+    style="text-decoration: none;margin-left: 1rem;">
+        Rooms
+    </a>
+    <a [href]= "'hotels'" style="text-decoration: none;">Hotels</a>
+</div>
+
+
+<router-outlet></router-outlet>
+```
+
+## Adding Angular Material and Navigation
+- Go to [Angular Material](https://material.angular.io/guide/getting-started) and install AM.
+- For Navigation bar go to [Schematics](https://material.angular.io/guide/schematics) and install **Navigation schematic**.
+- Now you can find the navigation components in the  `app-nav` directory.
+- Add navbar component in the app template.
+
+```html
+<!-- app.component.html -->
+
+<app-app-nav></app-app-nav>
+```
+
+- Add anchor tag for navigation purpose and `<router-outlet></router-outlet>` for seeing respective component's contents.
+```html
+<mat-sidenav-container class="sidenav-container">
+  <mat-sidenav #drawer class="sidenav" fixedInViewport
+      [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'"
+      [mode]="(isHandset$ | async) ? 'over' : 'side'"
+      [opened]="(isHandset$ | async) === false">
+    <mat-toolbar>Menu</mat-toolbar>
+    <mat-nav-list>
+    <!-- navigation -->
+      <a mat-list-item routerLink="room">Rooms</a>
+      <a mat-list-item routerLink="hotels">Hotels</a>
+    </mat-nav-list>
+  </mat-sidenav>
+  <mat-sidenav-content>
+    <mat-toolbar color="primary">
+      <button
+        type="button"
+        aria-label="Toggle sidenav"
+        mat-icon-button
+        (click)="drawer.toggle()"
+        *ngIf="isHandset$ | async">
+        <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
+      </button>
+      <span>hotelInventory</span>
+    </mat-toolbar>
+    <!-- router outlet -->
+    <router-outlet></router-outlet>
+  </mat-sidenav-content>
+</mat-sidenav-container>
+```
 
 ## Using ActivatedRoute Service
 

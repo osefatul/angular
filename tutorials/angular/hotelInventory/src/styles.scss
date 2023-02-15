@@ -7,12 +7,7 @@
 @import "node_modules/ngx-bootstrap/datepicker/bs-datepicker";
 
 
-body {
-    padding-top: 20px;
-    margin: 0 auto;
-    display: flex;
-    justify-content: center;
-}
+
 
 .even {
     background-color: steelblue;
@@ -24,3 +19,5 @@ body {
 
     color: white;
 }
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }

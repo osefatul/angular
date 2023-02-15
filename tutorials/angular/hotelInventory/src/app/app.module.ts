@@ -17,6 +17,13 @@ import { EmployeeComponent } from './employee/employee.component';
 import { HotelsComponent } from './hotels/hotels.component';
 import { HotelsListComponent } from './hotels/hotels-list/hotels-list.component';
 import { RequestInterceptor } from './request.interceptor';
+import { AppNavComponent } from './app-nav/app-nav.component';
+import { LayoutModule } from '@angular/cdk/layout';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatButtonModule } from '@angular/material/button';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatIconModule } from '@angular/material/icon';
+import { MatListModule } from '@angular/material/list';
 
 
 
@@ -37,7 +44,8 @@ function initFactory (initService: InitService){
     ContainerComponent,
     EmployeeComponent,
     HotelsComponent,
-    HotelsListComponent
+    HotelsListComponent,
+    AppNavComponent
   ],
   imports: [
     BrowserModule,
@@ -45,7 +53,13 @@ function initFactory (initService: InitService){
     BrowserAnimationsModule,
     TooltipModule.forRoot(),
     BsDatepickerModule.forRoot(),
-    HttpClientModule
+    HttpClientModule,
+    LayoutModule,
+    MatToolbarModule,
+    MatButtonModule,
+    MatSidenavModule,
+    MatIconModule,
+    MatListModule
   ],
   providers: [{
     provide: APP_SERVICE_CONFIG,

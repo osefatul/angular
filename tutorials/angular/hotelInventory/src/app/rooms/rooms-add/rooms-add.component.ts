@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { FormBuilder, FormGroup, NgForm, Validators } from '@angular/forms';
 import { RoomsService } from 'src/app/services/rooms.service';
 import { RoomList } from 'src/interface';
 
@@ -26,7 +26,6 @@ export class RoomsAddComponent implements OnInit {
     checkOutTime: new Date()
   }
 
-
   constructor(private roomService: RoomsService, private fb: FormBuilder){
 
   }
@@ -35,11 +34,16 @@ export class RoomsAddComponent implements OnInit {
     this.roomsList = this.roomService.getRoom()
   }
 
+  //get form instance
+  @ViewChild ("roomForm") roomForm!: NgForm;
 
   //Real time change data demonstrated in the console.log
   onDataChanged (){
     this.isDirty = true;
-    console.log('Form data changed:', this.room);
+    // console.log('Form data changed:', this.room);
+
+    console.log(this.roomForm?.form.pristine)
+    console.log(this.roomForm?.form.dirty)
   }
 
   onSubmit (){

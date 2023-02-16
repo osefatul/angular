@@ -1,7 +1,5 @@
 
-
 <div *ngIf="!isDirty;else successMessage"></div>
-
 <ng-template #successMessage>
     <p class="alert alert-success">
         Successfully added
@@ -13,7 +11,16 @@
 <div>{{room | json}}</div>
 
 
-<form (ngSubmit)="onSubmit()">
+<!-- Checking form validation's properties -->
+{{roomForm.pristine| json}}
+{{roomForm.dirty| json}}
+{{roomForm.valid| json}}
+{{roomForm.invalid| json}}
+{{roomForm.value| json}}
+
+
+
+<form #roomForm="ngForm" (ngSubmit)="onSubmit()">
     <div class="form-group">
         <input 
         class="form-control"

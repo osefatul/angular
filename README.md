@@ -2908,17 +2908,221 @@ export class RoomsAddComponent implements OnInit {
 ```
 
 ## Validation
-To validate that all the required fields in a form are filled, you can use the built-in Validators provided by Angular. You can use the `Validators.required` method to check if a field is empty.
+### Validation States
 
-Here's an example of how to use it:
+we will cover some of the most used validation states in our form:
+
+- `pristine`: property is a boolean that indicates whether the form has been modified or not, means form is still clean, and no one has interacted with your form. Once someone interacts with the form, then it would get dirty and cannot become pristine again unless you reset the form.
+- `dirty`: property is a boolean that indicates whether the form has been modified or not. means form is dirty
+- `valid` property is a boolean that indicates whether the form is currently valid or not, based on the validation rules you have defined.
+- `invalid` property is a boolean that indicates whether the form is currently invalid or not, based on the validation rules you have defined.
+-  `value` property is an object that contains the current values of all the form controls.
+
+
+### Display Validation state of entire form
+
+You can use the `ngForm` directive to access the validation status of the entire form:
 
 ```html
+{{roomForm.pristine| json}}
+{{roomForm.dirty| json}}
+{{roomForm.valid| json}}
+{{roomForm.invalid| json}}
+{{roomForm.value| json}}
 
+<form #roomForm="ngForm">
+  </form>
+```
+  You can also get form instance on the component side and then add logics using validation rules.
+
+```javascript
+export class RoomsAddComponent implements OnInit {
+  constructor(private roomService: RoomsService, private fb: FormBuilder){}
+
+  //get form instance
+  @ViewChild ("roomForm") roomForm!: NgForm;
+
+  //Real time change data demonstrated in the console.log
+  onDataChanged (){
+    this.isDirty = true;
+    // console.log('Form data changed:', this.room);
+    console.log(this.roomForm?.form.pristine)
+    console.log(this.roomForm?.form.dirty)
+  }
+}
+```
+
+### Displaying validation errors in the Template
+
+```html
+<form #myForm="ngForm" (ngSubmit)="onSubmit()">
+  <div>
+    <label for="name">Name:</label>
+    <input 
+    #name="ngModel"
+    type="text" 
+    id="name" 
+    name="name" 
+    [(ngModel)]="formData.name" 
+    required >
+
+    <div *ngIf="name.invalid && (name.dirty || name.touched)">
+      <div *ngIf="name.errors.required">Name is required.</div>
+    </div>
+  </div>
+
+  <div>
+    <label for="email">Email:</label>
+    <input 
+    #email="ngModel"
+    type="email" 
+    id="email" 
+    name="email" 
+    [(ngModel)]="formData.email" 
+    required 
+    >
+    <div *ngIf="email.invalid && (email.dirty || email.touched)">
+      <div *ngIf="email.errors.required">Email is required.</div>
+      <div *ngIf="email.errors.email">Invalid email format.</div>
+    </div>
+  </div>
+
+  <button type="submit">Submit</button>
+</form>
+```
+
+In this example, we're using the `#name="ngModel"` and `#email="ngModel"` syntax to give each input field a local reference that we can use to access its validation status. We're also using `*ngIf` to conditionally display error messages if the field is invalid and has been touched or changed.
+
+The `name.errors` and` email.errors` objects contain the validation errors for each input field. In this example, we're checking for the required and email validation errors and displaying a message for each.
+
+You can also use the `ngForm` directive to access the validation status of the entire form:
+
+
+### Submit and Reset Forms
+In Angular, you can use the `reset` method of the `FormGroup` or `NgForm` instance to reset the form to its initial state. Here's an example of how to do that:
+
+- In your template file, add a "`Reset`" button to the form:
+
+```html
+<form #myForm="ngForm" (ngSubmit)="onSubmit()">
+  <!-- Form fields here -->
+  <button type="submit">Submit</button>
+  <button type="button" (click)="onReset()">Reset</button>
+</form>
+```
+In this example, we're adding a "Reset" button with a click event that calls a `onReset` method in the component.
+
+- In the component class, define the `onReset` method to reset the form:
+
+```javascript
+import { Component, ViewChild } from '@angular/core';
+import { NgForm } from '@angular/forms';
+
+@Component({
+  selector: 'app-my-component',
+  templateUrl: './my-component.component.html',
+})
+export class MyComponent {
+  @ViewChild('myForm') myForm!: NgForm;
+
+  formData = { name: '', email: '' };
+
+  onSubmit() {
+    console.log(this.formData);
+  }
+
+  onReset() {
+    this.myForm.resetForm();
+  }
+}
+```
+
+We are defining the `onReset` method to call the resetForm method of the `NgForm` instance to reset the form.
+
+- Note that the `resetForm` method will reset the form to its initial state, including clearing any input fields and resetting their validation status.
+
+- If you want to reset the form to a specific value instead of the initial value, you can pass an object with new values to the `resetForm` method:
+
+```javascript
+onReset() {
+  this.myForm.resetForm({ name: 'John', email: 'john@example.com' });
+}
 ```
 
 
-## Pristine, Dirty State and Reset
-## Custom Directives and Custom Validation
+### Custom Directives with Forms
+- Directives are similar to component but they will never have template and you can still use all the lifecycle hooks
+- To create a new directive you can use this:
+```javascript
+ng g d directive-name
+```
+
+for example we have this:
+
+```javascript
+import { Directive, OnInit, ElementRef } from '@angular/core';
+
+@Directive({
+  selector: '[appHover]'
+})
+export class HoverDirective implements OnInit{
+  constructor(private element: ElementRef){}
+  
+  color: string = "red" 
+  ngOnInit(){
+    console.log(this.element)
+  }
+}
+```
+
+Now, to apply the directive we just add the selector to element tag attributes.
+
+```html
+  <input
+  appHover
+  class="form-control"
+  placeholder="Please enter your email"
+  type="email" 
+  name="email" 
+  required
+  [(ngModel)]="email"
+  (ngModelChange)="onDataChanged()"
+  >
+```
+- in the directive we can apply stuff on elements;
+```javascript
+export class HoverDirective implements OnInit{
+
+  constructor(
+    private element: ElementRef,
+    private renderer: Renderer2
+    ){}
+  
+  color: string = "white"
+  bckColor: string = "black"
+  ngOnInit(){
+    this.element.nativeElement.style.color = this.color
+
+    //or we can use render2, same result.
+    this.renderer.setStyle(this.element.nativeElement, "background-color", this.bckColor)
+  }
+}
+```
+- We can either use `Renderer2` or `elementRef`.
+- To listen to events we can use: `HostListener`
+```javascript
+  @HostListener ("mouseover") onMouseover () {
+    this.element.nativeElement.style.fontSize = "35px"
+  }
+
+  @HostListener ("mouseout") onMouseout () {
+    this.element.nativeElement.style.fontSize = "13px"
+  }
+```
+When mouse is over the element, the font size will get "35px" and "13px" when mouse is out.
+
+### Custom Validation with Forms
+
 
 # Advanced Routing
 ## Using Router Service

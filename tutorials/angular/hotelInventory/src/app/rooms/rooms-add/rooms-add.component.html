@@ -1,3 +1,14 @@
+
+
+<div *ngIf="!isDirty;else successMessage"></div>
+
+<ng-template #successMessage>
+    <p class="alert alert-success">
+        Successfully added
+    </p>
+</ng-template>  
+
+
 <form (ngSubmit)="onSubmit()">
     <div class="form-group">
         <input 
@@ -6,6 +17,7 @@
         name="roomNumber" 
         type="number" 
         [(ngModel)]="room.roomNumber"
+        (ngModelChange)="onDataChanged()"
         >
     </div>
     <div class="form-group">
@@ -15,6 +27,7 @@
         type="text" 
         class="form-control"
         [(ngModel)]="room.roomType"
+        (ngModelChange)="onDataChanged()"
         >
     </div>
     <div class="form-group">
@@ -24,6 +37,7 @@
         name="amenities" 
         type="text" 
         [(ngModel)]="room.amenities"
+        (ngModelChange)="onDataChanged()"
         >
     </div>
     <div class="form-group">
@@ -33,6 +47,7 @@
         name="price" 
         type="number" 
         [(ngModel)]="room.price"
+        (ngModelChange)="onDataChanged()"
         >
     </div>
     <div class="form-group">
@@ -42,15 +57,18 @@
         name="photos" 
         type="text" 
         [(ngModel)]="room.photos"
+        (ngModelChange)="onDataChanged()"
         >
     </div>
     <div class="form-group">
         <input 
+        class="form-control"
         placeholder="Enter check-in time" 
         name="checkInTime" 
         type="date" 
         [(ngModel)]="room.checkInTime"
-        class="form-control">
+        (ngModelChange)="onDataChanged()"
+        >
     </div>
     <div class="form-group">
         <input 
@@ -58,7 +76,9 @@
         name="checkOutTime" 
         type="date" 
         [(ngModel)]="room.checkOutTime"
-        class="form-control">
+        class="form-control"
+        (ngModelChange)="onDataChanged()"
+        >
     </div>
 
     <div>

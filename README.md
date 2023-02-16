@@ -2779,6 +2779,15 @@ In summary, Angular provides various types of forms that cater to different use 
 We created a component `rooms-add` where we set up our template form.
 
 ```html
+
+<div *ngIf="!isDirty;else successMessage"></div>
+<ng-template #successMessage>
+    <p class="alert alert-success">
+        Successfully added
+    </p>
+</ng-template>  
+
+
 <form (ngSubmit)="onSubmit()">
     <div class="form-group">
         <input 
@@ -2787,6 +2796,7 @@ We created a component `rooms-add` where we set up our template form.
         name="roomNumber" 
         type="number" 
         [(ngModel)]="room.roomNumber"
+        (ngModelChange)="onDataChanged()"
         >
     </div>
     <div class="form-group">
@@ -2796,6 +2806,7 @@ We created a component `rooms-add` where we set up our template form.
         type="text" 
         class="form-control"
         [(ngModel)]="room.roomType"
+        (ngModelChange)="onDataChanged()"
         >
     </div>
     <div class="form-group">
@@ -2805,6 +2816,7 @@ We created a component `rooms-add` where we set up our template form.
         name="amenities" 
         type="text" 
         [(ngModel)]="room.amenities"
+        (ngModelChange)="onDataChanged()"
         >
     </div>
     <div class="form-group">
@@ -2814,6 +2826,7 @@ We created a component `rooms-add` where we set up our template form.
         name="price" 
         type="number" 
         [(ngModel)]="room.price"
+        (ngModelChange)="onDataChanged()"
         >
     </div>
     <div class="form-group">
@@ -2823,15 +2836,18 @@ We created a component `rooms-add` where we set up our template form.
         name="photos" 
         type="text" 
         [(ngModel)]="room.photos"
+        (ngModelChange)="onDataChanged()"
         >
     </div>
     <div class="form-group">
         <input 
+        class="form-control"
         placeholder="Enter check-in time" 
         name="checkInTime" 
         type="date" 
         [(ngModel)]="room.checkInTime"
-        class="form-control">
+        (ngModelChange)="onDataChanged()"
+        >
     </div>
     <div class="form-group">
         <input 
@@ -2839,14 +2855,15 @@ We created a component `rooms-add` where we set up our template form.
         name="checkOutTime" 
         type="date" 
         [(ngModel)]="room.checkOutTime"
-        class="form-control">
+        class="form-control"
+        (ngModelChange)="onDataChanged()"
+        >
     </div>
 
     <div>
         <button 
         class="btn btn-primary" 
-        type="submit"
-        >
+        type="submit">
             Submit
         </button>
     </div>
@@ -2855,21 +2872,36 @@ We created a component `rooms-add` where we set up our template form.
 
 ```javascript
 export class RoomsAddComponent implements OnInit {
-  constructor(private roomService: RoomsService){}
+  //Default values
+  roomsList: RoomList[] = [];
+  isDirty:boolean = false;
+  room: RoomList ={
+    roomNumber: null,
+    roomType: "",
+    amenities: "",
+    price: null,
+    photos: "",
+    checkInTime: new Date(),
+    checkOutTime: new Date()
+  }
 
   ngOnInit(): void {
     this.roomsList = this.roomService.getRoom()
   }
 
-  roomsList: RoomList[] = [];
+  //Real time data change to show in the template:
+  room$: Observable<RoomList> ;
+  constructor(private roomService: RoomsService){
+    this.room$ = new Observable(Observer => {
+      Observer.next(this.room);
+      Observer.complete();
+    })
+  }
 
-  //Default values for room
-  room: RoomList ={
-    roomType: "",
-    amenities: "",
-    photos: "",
-    checkInTime: new Date(),
-    checkOutTime: new Date()
+  //Real time change data demonstrated in the console.log
+  onDataChanged (){
+    this.isDirty = true;
+    console.log('Form data changed:', this.room);
   }
 
   onSubmit (){

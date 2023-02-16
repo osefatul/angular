@@ -27,7 +27,7 @@ import { MatListModule } from '@angular/material/list';
 import { NotFoundComponent } from './not-found/not-found.component';
 import { RoomBookingComponent } from './rooms/room-booking/room-booking.component';
 import { RoomsAddComponent } from './rooms/rooms-add/rooms-add.component';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 
 
@@ -68,6 +68,7 @@ function initFactory (initService: InitService){
     MatIconModule,
     MatListModule,
     FormsModule,
+    ReactiveFormsModule
   ],
   providers: [{
     provide: APP_SERVICE_CONFIG,

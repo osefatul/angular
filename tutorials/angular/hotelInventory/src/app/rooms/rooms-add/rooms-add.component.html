@@ -6,7 +6,11 @@
     <p class="alert alert-success">
         Successfully added
     </p>
-</ng-template>  
+</ng-template>
+
+
+<!-- Check form change in realtime -->
+<div>{{room | json}}</div>
 
 
 <form (ngSubmit)="onSubmit()">

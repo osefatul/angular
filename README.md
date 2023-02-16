@@ -2788,6 +2788,9 @@ We created a component `rooms-add` where we set up our template form.
 </ng-template>  
 
 
+<!-- Check form change in realtime -->
+<div>{{room | json}}</div>
+
 <form (ngSubmit)="onSubmit()">
     <div class="form-group">
         <input 
@@ -2889,18 +2892,10 @@ export class RoomsAddComponent implements OnInit {
     this.roomsList = this.roomService.getRoom()
   }
 
-  //Real time data change to show in the template:
-  room$: Observable<RoomList> ;
-  constructor(private roomService: RoomsService){
-    this.room$ = new Observable(Observer => {
-      Observer.next(this.room);
-      Observer.complete();
-    })
-  }
+  constructor(private roomService: RoomsService){}
 
   //Real time change data demonstrated in the console.log
   onDataChanged (){
-    this.isDirty = true;
     console.log('Form data changed:', this.room);
   }
 
@@ -2913,6 +2908,15 @@ export class RoomsAddComponent implements OnInit {
 ```
 
 ## Validation
+To validate that all the required fields in a form are filled, you can use the built-in Validators provided by Angular. You can use the `Validators.required` method to check if a field is empty.
+
+Here's an example of how to use it:
+
+```html
+
+```
+
+
 ## Pristine, Dirty State and Reset
 ## Custom Directives and Custom Validation
 

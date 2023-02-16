@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Observable } from 'rxjs';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { RoomsService } from 'src/app/services/rooms.service';
 import { RoomList } from 'src/interface';
 
@@ -15,6 +15,7 @@ export class RoomsAddComponent implements OnInit {
   //Default values
   roomsList: RoomList[] = [];
   isDirty:boolean = false;
+
   room: RoomList ={
     roomNumber: null,
     roomType: "",
@@ -25,17 +26,13 @@ export class RoomsAddComponent implements OnInit {
     checkOutTime: new Date()
   }
 
-  ngOnInit(): void {
-    this.roomsList = this.roomService.getRoom()
+
+  constructor(private roomService: RoomsService, private fb: FormBuilder){
+
   }
 
-  //Real time data change to show in the template:
-  room$: Observable<RoomList> ;
-  constructor(private roomService: RoomsService){
-    this.room$ = new Observable(Observer => {
-      Observer.next(this.room);
-      Observer.complete();
-    })
+  ngOnInit(): void {
+    this.roomsList = this.roomService.getRoom()
   }
 
 

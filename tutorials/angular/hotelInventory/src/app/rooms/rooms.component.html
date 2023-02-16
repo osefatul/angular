@@ -7,9 +7,6 @@
 
 
 
-
-
-
 <!-- Using trinary operation in Angular -->
 <!-- {{rooms.availableRooms && "rooms are available" }} -->
 
@@ -41,14 +38,23 @@
 </button>
 
 
-
-<div>
+<!-- adding room -->
+<!-- <div>
     <button
     (click)="addRoom()">
         add new room
     </button>
-</div>
+</div> -->
 
+
+<!-- Let's direct user to adding form -->
+
+<div>
+    <button
+    routerLink="/rooms/add">
+        add new room
+    </button>
+</div>
 
 
 <div *ngIf="rooms.availableRooms >0 && hideRooms ">

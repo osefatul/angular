@@ -2506,19 +2506,16 @@ Later, when we inject the Logger token into a component or service, we can use A
 constructor(@Inject(Logger) private logger: Logger) { ... }
 ```
 
-
 <hr />
 
 
-
-# Angular Router
+# Angular Router Basics
 
 ## Intro
 - Provides functionalities to add routes.
 - Developers can configure all routes at Frontend.
 - Provides SPA functionality.
 - Features to add nested routes.
-
 
 
 ## Setup Router
@@ -2600,22 +2597,297 @@ The ActivatedRoute service is a key part of the Angular framework that provides 
 
 Here are some of the key features of the ActivatedRoute service:
 
-- Route parameters: The ActivatedRoute service provides access to the route parameters, which are values extracted from the URL path. For example, if a route is defined as /product/:id, the id parameter can be accessed using the ActivatedRoute service.
+1. Route parameters: The ActivatedRoute service provides access to the route parameters, which are values extracted from the URL path. For example, if a route is defined as /product/:id, the id parameter can be accessed using the ActivatedRoute service.
+```javascript
+export class RoomBookingComponent implements OnInit {
 
-- Query parameters: The ActivatedRoute service also provides access to query parameters, which are values passed in the URL query string. Query parameters are useful for filtering or sorting data.
+  constructor(private router: ActivatedRoute) {}
+  id!: number;
+  ngOnInit(): void {
+    this.router.params.subscribe(params => {
+      this.id = params['roomId'];
+      console.log(this.id)
+    })
+  }
+```
+And that's how you get params form router link. If you notice that we subscribed to the router.params:
+
+- `this.router.params` - This accesses the params property of the `Router` service, which is an `Observable` that emits a new value whenever the route parameters change.
+
+- `.subscribe(params => { ... })` - This `subscribes` to the Observable and executes a callback function when a new value is emitted. The params argument of the function represents the route parameters as a key-value pair object.
+
+- `this.id = params['roomId']` - This assigns the value of the roomId parameter to a property of the component called id. The ['roomId'] syntax accesses the roomId property of the params object.,
+
+As we have discussed before that whenever you `subscribe` to observable, then you need to call unsubscribe method as well, when destroying the component. So to avoid that, we will be using `async` which means we are not subscribing any longer.
+
+```javascript
+//room-booking.component.ts
+id$ = this.router.params.pipe(map( params => params["roomId"]));
+
+//room-booking.component.html
+{{id$ | async }}
+```
+
+2. Query parameters: The ActivatedRoute service also provides access to query parameters, which are values passed in the URL query string. Query parameters are useful for filtering or sorting data.
+
+
 
 - Route data: The ActivatedRoute service can also provide data associated with a route. This data can be used to configure a component or provide additional information to the user.
 
 - Route snapshots: The ActivatedRoute service also provides a snapshot of the current route, which can be used to access the current URL or route parameters without subscribing to changes.
 
 
+
+# Template Driven Forms
+## Intro
+In Angular, there are several types of forms that can be used to capture and validate user input:
+
+### 1. Template-driven forms: 
+These forms are based on Angular's template syntax and are primarily used for simple forms with basic validation requirements. In template-driven forms, Angular automatically generates and manages form controls based on the form's HTML template.
+
+Here is an example of a simple login form created using the template-driven approach:
+
+```html
+<form #loginForm="ngForm" (ngSubmit)="onSubmit()">
+  <div class="form-group">
+    <label for="email">Email address</label>
+    <input type="email" class="form-control" id="email" name="email" [(ngModel)]="user.email" required>
+  </div>
+  <div class="form-group">
+    <label for="password">Password</label>
+    <input type="password" class="form-control" id="password" name="password" [(ngModel)]="user.password" required>
+  </div>
+  <button type="submit" class="btn btn-primary" [disabled]="!loginForm.valid">Login</button>
+</form>
+```
+
+In the example above, we define a form using the `<form> tag`, and we give it a reference name (`#loginForm`) that we can use later to access the form's data and validation state. We also bind the form's submission event to the `onSubmit()` method using the (`ngSubmit`) directive.
+
+Then, we define two form inputs, one for the email and one for the password. We use the `ngModel` directive to bind the input value to a data model (`user.email` and `user.password`). We also set the `required` attribute to make these inputs mandatory.
+
+Finally, we define a submit button that is disabled when the form is invalid (`[disabled]="!loginForm.valid"`).
+
+In the component class, we define the user object used to store the form data, and the `onSubmit()` method used to handle the form submission:
+
+
+```javascript
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-login',
+  templateUrl: './login.component.html',
+  styleUrls: ['./login.component.css']
+})
+export class LoginComponent {
+  user = {
+    email: '',
+    password: ''
+  };
+
+  onSubmit() {
+    console.log(this.user);
+  }
+}
+```
+
+When the form is submitted, the `onSubmit()` method is called and the user object is printed to the console.
+
+This is just a simple example, but you can use template-driven forms to create more complex forms with validation, custom validation messages, and more.
+
+### 2. Reactive forms: 
+These forms are built using the ReactiveForms module, which provides a more flexible and powerful approach to form validation. In reactive forms, developers manually define the form controls and their behaviors, and then use them to build the form.
+
+Sure, here's an example of a reactive form in Angular:
+
+```javascript
+import { Component } from '@angular/core';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
+
+@Component({
+  selector: 'app-registration',
+  templateUrl: './registration.component.html',
+  styleUrls: ['./registration.component.css']
+})
+export class RegistrationComponent {
+  registrationForm: FormGroup;
+
+  constructor() {
+    this.registrationForm = new FormGroup({
+      name: new FormControl('', Validators.required),
+      email: new FormControl('', [Validators.required, Validators.email]),
+      password: new FormControl('', [Validators.required, Validators.minLength(6)]),
+      confirmPassword: new FormControl('', Validators.required)
+    });
+  }
+
+  onSubmit() {
+    console.log(this.registrationForm.value);
+  }
+}
+```
+
+In the example above, we define a reactive form using the `FormGroup` and FormControl classes from the `@angular/forms module`. We create a registrationForm instance of `FormGroup` in the constructor, and we define four FormControl instances for the form fields: `name`, `email`, `password`, and `confirmPassword`.
+
+We use the Validators class to set up validation rules for each form control. The `name` and `confirmPassword` fields are required, and the email field must be a valid email address. The password field must be at least 6 characters long.
+
+In the template, we can bind the form controls to form inputs using the `formControlName` directive:
+
+```html
+<form [formGroup]="registrationForm" (ngSubmit)="onSubmit()">
+  <div class="form-group">
+    <label for="name">Name</label>
+    <input type="text" class="form-control" id="name" formControlName="name">
+  </div>
+  <div class="form-group">
+    <label for="email">Email address</label>
+    <input type="email" class="form-control" id="email" formControlName="email">
+  </div>
+  <div class="form-group">
+    <label for="password">Password</label>
+    <input type="password" class="form-control" id="password" formControlName="password">
+  </div>
+  <div class="form-group">
+    <label for="confirmPassword">Confirm Password</label>
+    <input type="password" class="form-control" id="confirmPassword" formControlName="confirmPassword">
+  </div>
+  <button type="submit" class="btn btn-primary" [disabled]="!registrationForm.valid">Register</button>
+</form>
+```
+In the template above, we use the `formGroup` directive to bind the form to the `registrationForm` instance, and we use the `formControlName` directive to bind each form input to the corresponding form control.
+
+Finally, we define a submit button that is disabled when the form is invalid (`[disabled]="!registrationForm.valid"`).
+
+When the form is submitted, the onSubmit() method is called, and we can access the form data using the value property of the `registrationForm` instance (`this.registrationForm.value`).
+
+
+
+### 3. Model-driven forms: 
+This is a less commonly used type of form that is built using the Model-Driven Forms library. This library allows developers to define form controls using a declarative syntax, and then use them to build the form.
+
+### 4. Dynamic forms:
+These are forms that are built dynamically at runtime, based on data from a server or user input. Dynamic forms can be implemented using either template-driven or reactive forms.
+
+In summary, Angular provides various types of forms that cater to different use cases and requirements, including template-driven forms, reactive forms, model-driven forms, and dynamic forms.
+
+
+## Setting up Template Form
+- Import `FormsModule` to `app.module.ts`.
+- In template driven forms we create forms using HTML tag.
+- Good for developers who likes to have more control using HTML.
+- use `ngModel` for 2 way data-binding.
+
+We created a component `rooms-add` where we set up our template form.
+
+```html
+<form (ngSubmit)="onSubmit()">
+    <div class="form-group">
+        <input 
+        class="form-control"
+        placeholder="Enter room number" 
+        name="roomNumber" 
+        type="number" 
+        [(ngModel)]="room.roomNumber"
+        >
+    </div>
+    <div class="form-group">
+        <input 
+        placeholder="Enter room type" 
+        name="roomType" 
+        type="text" 
+        class="form-control"
+        [(ngModel)]="room.roomType"
+        >
+    </div>
+    <div class="form-group">
+        <input 
+        class="form-control"
+        placeholder="Enter amenities" 
+        name="amenities" 
+        type="text" 
+        [(ngModel)]="room.amenities"
+        >
+    </div>
+    <div class="form-group">
+        <input 
+        class="form-control"
+        placeholder="Enter price" 
+        name="price" 
+        type="number" 
+        [(ngModel)]="room.price"
+        >
+    </div>
+    <div class="form-group">
+        <input 
+        class="form-control"
+        placeholder="Enter photos link" 
+        name="photos" 
+        type="text" 
+        [(ngModel)]="room.photos"
+        >
+    </div>
+    <div class="form-group">
+        <input 
+        placeholder="Enter check-in time" 
+        name="checkInTime" 
+        type="date" 
+        [(ngModel)]="room.checkInTime"
+        class="form-control">
+    </div>
+    <div class="form-group">
+        <input 
+        placeholder="Enter check-out time" 
+        name="checkOutTime" 
+        type="date" 
+        [(ngModel)]="room.checkOutTime"
+        class="form-control">
+    </div>
+
+    <div>
+        <button 
+        class="btn btn-primary" 
+        type="submit"
+        >
+            Submit
+        </button>
+    </div>
+</form>
+```
+
+```javascript
+export class RoomsAddComponent implements OnInit {
+  constructor(private roomService: RoomsService){}
+
+  ngOnInit(): void {
+    this.roomsList = this.roomService.getRoom()
+  }
+
+  roomsList: RoomList[] = [];
+
+  //Default values for room
+  room: RoomList ={
+    roomType: "",
+    amenities: "",
+    photos: "",
+    checkInTime: new Date(),
+    checkOutTime: new Date()
+  }
+
+  onSubmit (){
+    this.roomsList = [...this.roomsList, this.room ]
+    console.log("room updated")
+    console.log("Here is the updated rooms list", this.roomsList)
+  }
+}
+```
+
+## Validation
+## Pristine, Dirty State and Reset
+## Custom Directives and Custom Validation
+
+# Advanced Routing
 ## Using Router Service
-
 ## Feature Module and Routing
-
 ## Nested Routing and Child Routes
-
 ## Lazy Loading
-
 ## Route Guards
 

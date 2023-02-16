@@ -1,0 +1,72 @@
+<form (ngSubmit)="onSubmit()">
+    <div class="form-group">
+        <input 
+        class="form-control"
+        placeholder="Enter room number" 
+        name="roomNumber" 
+        type="number" 
+        [(ngModel)]="room.roomNumber"
+        >
+    </div>
+    <div class="form-group">
+        <input 
+        placeholder="Enter room type" 
+        name="roomType" 
+        type="text" 
+        class="form-control"
+        [(ngModel)]="room.roomType"
+        >
+    </div>
+    <div class="form-group">
+        <input 
+        class="form-control"
+        placeholder="Enter amenities" 
+        name="amenities" 
+        type="text" 
+        [(ngModel)]="room.amenities"
+        >
+    </div>
+    <div class="form-group">
+        <input 
+        class="form-control"
+        placeholder="Enter price" 
+        name="price" 
+        type="number" 
+        [(ngModel)]="room.price"
+        >
+    </div>
+    <div class="form-group">
+        <input 
+        class="form-control"
+        placeholder="Enter photos link" 
+        name="photos" 
+        type="text" 
+        [(ngModel)]="room.photos"
+        >
+    </div>
+    <div class="form-group">
+        <input 
+        placeholder="Enter check-in time" 
+        name="checkInTime" 
+        type="date" 
+        [(ngModel)]="room.checkInTime"
+        class="form-control">
+    </div>
+    <div class="form-group">
+        <input 
+        placeholder="Enter check-out time" 
+        name="checkOutTime" 
+        type="date" 
+        [(ngModel)]="room.checkOutTime"
+        class="form-control">
+    </div>
+
+    <div>
+        <button 
+        class="btn btn-primary" 
+        type="submit"
+        >
+            Submit
+        </button>
+    </div>
+</form>

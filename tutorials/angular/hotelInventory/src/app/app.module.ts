@@ -6,11 +6,10 @@ import {HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http'
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { RoomsComponent } from './rooms/rooms.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { DemoPickerComponent } from './demo-picker/demo-picker.component';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
-import { RoomsListComponent } from './rooms/rooms-list/rooms-list.component';
+
 import { HeaderComponent } from './header/header.component';
 import { ContainerComponent } from './container/container.component';
 import { EmployeeComponent } from './employee/employee.component';
@@ -25,11 +24,12 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { NotFoundComponent } from './not-found/not-found.component';
-import { RoomBookingComponent } from './rooms/room-booking/room-booking.component';
-import { RoomsAddComponent } from './rooms/rooms-add/rooms-add.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { LoginComponent } from './login/login.component';
 import { HoverDirective } from './hover.directive';
+import { RoomsModule } from './rooms/rooms.module';
+import { HeaderModule } from './header/header.module';
+
 
 
 
@@ -43,18 +43,13 @@ function initFactory (initService: InitService){
 @NgModule({
   declarations: [
     AppComponent,
-    RoomsComponent,
     DemoPickerComponent,
-    RoomsListComponent,
-    HeaderComponent,
     ContainerComponent,
     EmployeeComponent,
     HotelsComponent,
     HotelsListComponent,
     AppNavComponent,
     NotFoundComponent,
-    RoomBookingComponent,
-    RoomsAddComponent,
     LoginComponent,
     HoverDirective
   ],
@@ -72,7 +67,10 @@ function initFactory (initService: InitService){
     MatIconModule,
     MatListModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    RoomsModule,
+    HeaderModule
+
   ],
   providers: [{
     provide: APP_SERVICE_CONFIG,

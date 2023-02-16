@@ -3123,10 +3123,66 @@ When mouse is over the element, the font size will get "35px" and "13px" when mo
 
 ### Custom Validation with Forms
 
-
 # Advanced Routing
-## Using Router Service
+## Navigation and Router Service
+To use the Router service to navigate between views, you can inject the Router service into your component and use its navigate method to navigate to a specific URL. For example:
+
+```javascript
+export class LoginComponent {
+  email: string ="";
+  password: string ="";
+
+  constructor(private router: Router){}
+
+  onSubmit = () => {
+    this.email === "admin@example.com" &&
+    this.password === "admin" &&
+    alert("Login success!");
+    this.router.navigate(['/rooms', 'add'])
+  }
+}
+```
+ Once the form is submitted, router navigate to `rooms/add` page.
+
 ## Feature Module and Routing
+
+### Module vs Component
+In Angular, a module is a logical unit of an application that groups related components, directives, services, and other code into a single cohesive unit. A module is defined using the @NgModule decorator and can be used to organize an application into feature areas, each with its own set of components, services, and other code.
+
+A component, on the other hand, is a building block of an Angular application that defines a portion of the user interface. A component is defined using the @Component decorator and is responsible for rendering a template and responding to user events.
+
+The main difference between modules and components is that modules are used to organize an application into logical units, while components define the user interface and provide the functionality of a specific feature or part of the application.
+
+Here are some additional differences between modules and components in Angular:
+
+- Scope: A module is a broader scope of code, while a component is a smaller scope. A module can contain multiple components, services, and other code, while a component is typically responsible for rendering a specific part of the user interface.
+
+- Declarations: A module declares the components, directives, and pipes that are used in the application, while a component declares the HTML template, CSS styles, and TypeScript code that make up a specific part of the user interface.
+
+- Imports: A module can import other modules, as well as Angular core and third-party modules, to extend its functionality. A component does not import other components, but it may import services and other code to support its functionality.
+
+- Exports: A module can export components, directives, and pipes that other modules can use. A component is not typically exported, but it may be used by other components within the same module.
+
+Overall, modules and components are both important building blocks of an Angular application, but they serve different purposes and have different scopes and responsibilities. Modules provide a way to organize and structure an application, while components define the user interface and provide the functionality of specific parts of the application.
+
+### Setting up modules
+- `ng g m rooms --routing --flat=true --force`: this will create module and routing.
+- Register new modules in the `AppModule`.
+- Always move components to the related module. for example:Move everything related to rooms from `app.module` to `rooms.module`.
+- If a component is being used in another component outside of the module, then you can must `export` that component first: for example, we are using `HeaderComponent` in the `RoomComponent` which is belong to `room.module.ts`.
+
+```javascript
+@NgModule({
+  declarations: [
+    HeaderComponent,
+  ],
+  imports: [
+    CommonModule
+  ],
+  exports: [HeaderComponent],
+})
+```
+
 ## Nested Routing and Child Routes
 ## Lazy Loading
 ## Route Guards

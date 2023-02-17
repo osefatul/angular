@@ -3215,5 +3215,234 @@ showing one route under another route: We can achieve this using `children` prop
 ```
 and then add `router-outlet` in the parent component
 ## Lazy Loading
-## Route Guards
+- Allows us to split code at **MOdule level**.
+- Load code when user need it.
+- Reduce main bundle size.
 
+
+```javascript
+//app-routing...
+
+{
+  path: "rooms", loadChildren: ()=> import("./rooms/rooms.module").then(m => m.RoomsModule)
+},
+```
+- That's how should the `rooms-routing` should look like.
+
+```javascript
+const routes: Routes = [
+  // {path:"add", component: RoomsAddComponent},
+  {path: "rooms", 
+  component: RoomsComponent,
+  children: [
+    {path:"add", component: RoomsAddComponent},
+    {path:":roomId", component: RoomBookingComponent}]},
+  
+  // {path:"rooms/:roomId", component: RoomBookingComponent},
+];
+```
+
+Example:
+let us create a booking module which will be registered in the `AppModule`
+
+```javascript
+ng g m booking --route=booking --routing --module=app  
+```
+
+
+## Routing Event
+Let us understand what happens when you call route, the sequence of events that occur during the routing process.
+
+```javascript
+
+export class AppComponent implements OnInit {
+  constructor(private router: Router){}
+
+  ngOnInit() {
+    this.router.events.subscribe( event => {
+      console.log(event)
+    })
+  }
+}
+```
+The above code will be executed if you a user visits each route. different stages of route process will be executed, such as `NavigationStart`, `RoutesRecognized`, `GuardCheckStart` and etc. we can filter routes and get specific routes events for our purpose.
+
+Example: Filter specific events of routes:
+
+Filter routes events when `Navigation starts` and when `Navigation ends`.
+
+```javascript
+export class AppComponent implements OnInit {
+  constructor(private router: Router){}
+
+  ngOnInit() {
+    this.router.events.
+    pipe(filter((event) => event instanceof NavigationStart
+    )).subscribe( event => {
+      console.log("Navigation Started")
+    })
+
+    this.router.events.
+    pipe(filter((event) => event instanceof NavigationEnd)).
+    subscribe( event => {
+      console.log("Navigation End")
+    })
+  }
+}
+```
+
+## Route Guards
+Route guards are used to control access to a particular route in your application. Route guards can be used to implement security and protect certain routes from unauthorized access. There are four types of route guards available in Angular:
+
+### CanActivate: 
+This guard is used to allow or block access to a particular route based on some condition. It is used to prevent unauthorized access to a particular route.
+
+#### Example: Create CanActive guards.
+- `ng g g login`: This will create a login guard.
+- This will be the initial state of the guard:
+```javascript
+export class LoginGuard implements CanActivate, CanLoad {
+  canActivate(
+    route: ActivatedRouteSnapshot,
+    state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
+    return true;
+  }
+  canLoad(
+    route: Route,
+    segments: UrlSegment[]): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
+    return true;
+  }
+}
+```
+- Add `canActivate` property in the `app-routing.module.ts` to the paths that you want to guard them.
+
+```javascript
+  {path: 'hotels', 
+  component: HotelsComponent,
+  canActivate: [LoginGuard]},
+```
+
+- Now, create a login service.
+```javascript
+export class LoginService {
+
+  isLoggedIn: boolean = false;
+  constructor() { }
+
+  login (email: string, password: string) {
+    if (email === "admin@example.com" && password === "admin"){
+      this.isLoggedIn = true;
+    }
+    return this.isLoggedIn;
+  }
+}
+```
+
+- Add loginService into `LoginComponent` and flip `isLoggedIn` accordingly.
+
+```javascript
+  constructor(private router: Router, private loginService: LoginService){}
+
+  onSubmit = () => {
+    if(this.loginService.login(this.email, this.password)){
+      this.router.navigateByUrl("/rooms")
+    }
+  }
+```
+
+- In the `LoginGuard` page add loginService.
+
+```javascript
+export class LoginGuard implements CanActivate, CanLoad {
+  constructor(private loginService: LoginService){}
+
+  canActivate(
+    route: ActivatedRouteSnapshot,
+    state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
+    return this.loginService.isLoggedIn ? true : this.router.navigate(['/login'])
+  }
+}
+```
+
+### CanActivateChild: 
+This guard is similar to CanActivate, but it is used to control access to child routes of a particular route.
+
+
+#### Example: Use CanActivateChild to guard bookingRooms component.
+- Create a folder `/rooms/guard` and create a guard `ng g g rooms`.
+- In `rooms-routing.module.ts` add `RoomsGuard` for `BookingRooms`.
+```javascript
+const routes: Routes = [
+  {path: '', 
+  component: RoomsComponent,
+  canActivateChild: [RoomsGuard],
+  children: [
+    {path:"add", component: RoomsAddComponent},
+    {path:":roomId", component: RoomBookingComponent}]},
+  ];
+```
+- In the `loginComponent` add `isAdmin` functionality and flip it true if admin gets logged in.
+
+```javascript
+export class LoginService {
+  isLoggedIn: boolean = false;
+  isAdmin: boolean = false;
+
+  login (email: string, password: string) {
+    if (email === "admin@example.com" && password === "admin"){
+      this.isLoggedIn = true;
+      this.isAdmin = true;
+    }
+    if(email === "user@example.com" && password === "user"){
+      this.isLoggedIn = true;
+      this.isAdmin = false;
+    }
+    return this.isLoggedIn;
+  }
+}
+```
+
+- Now, in the `RoomsGuard` return `canActivateChild` true if admin logs in.
+
+```javascript
+export class RoomsGuard implements CanActivateChild {
+  constructor(private loginService: LoginService){}
+  
+  canActivateChild(
+    childRoute: ActivatedRouteSnapshot,
+    state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
+    return this.loginService.isAdmin;
+  }
+}
+```
+
+### CanLoad
+The `CanLoad` guard in Angular is used to prevent the loading of feature modules (also known as lazy-loaded modules) until a certain condition is met. The `CanLoad` guard runs before the feature module is loaded, and it is used to protect the lazy-loaded routes from being loaded by unauthorized users.
+
+The `CanLoad` guard is useful in scenarios where you want to optimize the performance of your application by loading feature modules on demand, only when they are needed. By using the CanLoad guard, you can prevent the loading of a feature module until a certain condition is met, such as user authentication or role-based authorization.
+
+To implement the CanLoad guard in your Angular application, you need to follow these steps:
+
+```javascript
+//login.guards.ts
+canLoad(
+  route: Route,
+  segments: UrlSegment[]): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
+  return this.loginService.isLoggedIn;
+}
+```
+add loginGuard in the `app-routing`
+
+```javascript
+{path: "rooms", 
+loadChildren: ()=> import("./rooms/rooms.module").then(m => m.RoomsModule),
+canActivate: [LoginGuard],
+canLoad: [LoginGuard]
+},
+```
+
+### CanDeactivate: 
+This guard is used to prevent a user from navigating away from a particular route based on some condition. It is used to confirm that the user wants to navigate away from a form or a page with unsaved changes.
+
+### Resolve: 
+This guard is used to resolve data for a particular route before the route is activated. It is used to ensure that the required data is available before the component is loaded.

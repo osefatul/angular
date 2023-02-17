@@ -1,3 +1,4 @@
+import { LoginService } from './login.service';
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 
@@ -10,15 +11,18 @@ export class LoginComponent {
   email: string ="";
   password: string ="";
 
-  constructor(private router: Router){}
+  constructor(private router: Router, private loginService: LoginService){}
 
   onSubmit = () => {
-    this.email === "admin@example.com" &&
-    this.password === "admin" &&
-    alert("Login success!");
+    // this.email === "admin@example.com" &&
+    // this.password === "admin" &&
+    // alert("Login success!");
 
-    //this.router.navigate(['/rooms', 'add'])
-    this.router.navigateByUrl("/rooms/add")
+
+    if(this.loginService.login(this.email, this.password)){
+      //this.router.navigate(['/rooms', 'add'])
+      this.router.navigateByUrl("/rooms")
+    }
   }
 
   onDataChanged(){

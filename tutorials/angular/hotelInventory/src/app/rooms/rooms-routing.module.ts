@@ -1,16 +1,19 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { RoomsGuard } from './guards/rooms.guard';
 import { RoomBookingComponent } from './room-booking/room-booking.component';
 import { RoomsAddComponent } from './rooms-add/rooms-add.component';
 import { RoomsComponent } from './rooms.component';
 
 const routes: Routes = [
-  {path: "rooms", 
+  // {path:"add", component: RoomsAddComponent},
+  {path: '', 
   component: RoomsComponent,
-  children: [{path:":roomId", component: RoomBookingComponent}]},
-  {path:"rooms/add", component: RoomsAddComponent},
-  // {path:"rooms/:roomId", component: RoomBookingComponent},
-];
+  canActivateChild: [RoomsGuard],
+  children: [
+    {path:"add", component: RoomsAddComponent},
+    {path:":roomId", component: RoomBookingComponent}]},
+  ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],

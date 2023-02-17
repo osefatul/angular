@@ -55,7 +55,6 @@ function initFactory (initService: InitService){
   ],
   imports: [
     BrowserModule,
-    RoomsModule,
     AppRoutingModule,
     BrowserAnimationsModule,
     TooltipModule.forRoot(),
@@ -69,8 +68,8 @@ function initFactory (initService: InitService){
     MatListModule,
     FormsModule,
     ReactiveFormsModule,
-    HeaderModule
-
+    HeaderModule,
+    // RoomsModule,
   ],
   providers: [{
     provide: APP_SERVICE_CONFIG,

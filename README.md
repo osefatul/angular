@@ -71,17 +71,17 @@ What is SPA?
     ```
 
 ## Introduction to mono-repo
-- create and maintain multiple apps in the same repo.
+- Create and maintain multiple apps in the same repo.
 - Use libraries within the project.
 - Deploy multiple apps/libs from same repo
 - Easy to share code within project.
 
-## app repository introduction.
-- In angular everything is class and `app.module.ts` is the root module, which will have all the information that we create.
+## App Repository Introduction.
+- In angular everything is `class` and `app.module.ts` is the root module, which will have all the information that we create.
 
-- @NgModule: In Angular, decorators are used to add metadata to classes, properties, and methods. They provide a way to add additional behavior or modify the behavior of a class, property, or method without having to change its code. and it starts with @
+- `@NgModule`: In Angular, decorators are used to add metadata to classes, properties, and methods. They provide a way to add additional behavior or modify the behavior of a class, property, or method without having to change its code. and it starts with @
 
-- so, in app/app.module.ts file, @NgModule is a decorator
+- so, in app/app.module.ts file, `@NgModule` is a decorator
 
 ```javascript
 @NgModule({
@@ -97,7 +97,7 @@ What is SPA?
 })
 
 ```
-- This @NgModule will have all the information about different components and different angular modules which is being used or any module which we have created by your own. and give all these info to compilers.
+- This `@NgModule` will have all the information about different components and different angular modules which is being used or any module which we have created by your own. and give all these info to compilers.
 
 - Any component, directive and pipe needs to be registered by declarations.
 
@@ -132,9 +132,9 @@ export class AppComponent {
 }
 ```
 
-- In the above example, we're using the @Component decorator to define the behavior of our component. The @Component decorator takes an object literal with properties that describe the component, such as the selector and template.
+- In the above example, we're using the `@Component` decorator to define the behavior of our component. The `@Component` decorator takes an object literal with properties that describe the component, such as the selector and template.
 
-The AppComponent class is decorated with the @Component decorator, which adds metadata to the class that Angular uses to create and render the component. In this example, the component has a title property and displays its value in the template.
+The AppComponent class is decorated with the `@Component` decorator, which adds metadata to the class that Angular uses to create and render the component. In this example, the component has a title property and displays its value in the template.
 
 
 
@@ -145,13 +145,12 @@ Create a component: ng generate/g component/c component-name
 ng g c rooms
 ```
 
-
 ## Binding Syntax
 First, what is binding?
 
 In programming, "binding" refers to the process of connecting a value to a variable or a reference to an object, so that the variable or reference can be used to access and manipulate the value or object. This is typically done through assignment statements, where a value or reference is assigned to a variable or reference. Once a value or reference is bound to a variable or reference, the binding is said to be "fixed" or "established".
 
-- ## Interpolation
+## 1. Interpolation
 ```javascript
 
 //rooms.components.ts
@@ -171,7 +170,7 @@ export class RoomsComponent {
     hello world, welcome to {{hotelName}}
 </h1>
 ```
-- ## Property binding
+## 2. Property binding
 Assignment to a property of html element.
 ```javascript
 export class RoomsComponent {
@@ -192,7 +191,7 @@ Number of Rooms
 >
 </div>
 ```
-- ## Event binding
+## 3. Event binding
 
 Hide div
 
@@ -256,7 +255,7 @@ export class RoomsComponent {
 ### 1. Structural Directives
 Structural directives are directives that shape or reshape the DOM's structure by adding, removing, and manipulating elements. They are prefixed with an asterisk (*) in the template. Examples of structural directives are `*ngIf`, `*ngFor`and `*ngSwitch`. These directives allow you to conditionally render elements or repeat them based on some conditions, making the DOM dynamic and adaptable to changing data.
 
-#### Example: *ngFor
+#### Example: `*ngFor`
 
 Imagine you have a list of books in your component class like this:
 ```javascript
@@ -283,7 +282,7 @@ The result will be an unordered list with three list items, each displaying the 
 ```
 In this example, the ngFor directive is modifying the structure of the DOM by adding a list item for each book in the books array.
 
-#### Example2: *ngIf
+#### Example2: `*ngIf`
 Imagine you have a boolean property `isLoggedIn` in your component class that determines whether the user is logged in or not:
 
 ```javascript
@@ -304,7 +303,7 @@ Welcome back!
 ```
 
 
-#### Example3: *ngSwitch
+#### Example3: `*ngSwitch`
 
 Imagine you have a string property color in your component class that holds one of several colors:
 
@@ -333,7 +332,7 @@ Here's an example of how you could use the ternary operator in Angular to displa
 ```javascript
 <p>{{ isLoggedIn ? 'Welcome back!' : 'Please log in' }}</p>
 ```
-### Difference between ternary operator and *ngIf Directive
+### Difference between ternary operator and `*ngIf` Directive
 The *ngIf directive and the ternary operator are both used to conditionally render elements in an Angular template, but they serve different purposes and have different syntax and behavior.
 
 *ngIf is a structural directive, which means it modifies the structure of the DOM by adding or removing elements based on a condition.
@@ -3166,7 +3165,7 @@ Here are some additional differences between modules and components in Angular:
 Overall, modules and components are both important building blocks of an Angular application, but they serve different purposes and have different scopes and responsibilities. Modules provide a way to organize and structure an application, while components define the user interface and provide the functionality of specific parts of the application.
 
 ### Setting up modules
-- `ng g m rooms --routing --flat=true --force`: this will create module and routing.
+- `ng g m rooms --routing --flat=true `: this will create module and routing.
 - Register new modules in the `AppModule`.
 - Always move components to the related module. for example:Move everything related to rooms from `app.module` to `rooms.module`.
 - If a component is being used in another component outside of the module, then you can must `export` that component first: for example, we are using `HeaderComponent` in the `RoomComponent` which is belong to `room.module.ts`.

@@ -3165,9 +3165,9 @@ Here are some additional differences between modules and components in Angular:
 Overall, modules and components are both important building blocks of an Angular application, but they serve different purposes and have different scopes and responsibilities. Modules provide a way to organize and structure an application, while components define the user interface and provide the functionality of specific parts of the application.
 
 ### Setting up modules
-- `ng g m rooms --routing --flat=true `: this will create module and routing.
+- `ng g m rooms --routing --flat=true `: this will create `module.ts` and `routing.ts`.
 - Register new modules in the `AppModule`.
-- Always move components to the related module. for example:Move everything related to rooms from `app.module` to `rooms.module`.
+- Always move components from `AppModule` to the related module. for example: Move everything related to rooms from `app.module` to `rooms.module`.
 - If a component is being used in another component outside of the module, then you can must `export` that component first: for example, we are using `HeaderComponent` in the `RoomComponent` which is belong to `room.module.ts`.
 
 ```javascript
@@ -3182,7 +3182,38 @@ Overall, modules and components are both important building blocks of an Angular
 })
 ```
 
+- Also, move all all the routing paths from `app-routing.module.ts` to the related module routing path. For example, in our case, I will be moving, all routes related to `rooms.module` from `app-routing.module.ts` to `rooms-routing.module.ts`.
+
+```javascript
+//rooms-routing.module.ts
+
+const routes: Routes = [
+  {path: "rooms", component: RoomsComponent},
+  {path:"rooms/add", component: RoomsAddComponent},
+  {path:"rooms/:roomId", component: RoomBookingComponent},
+];
+export class RoomsRoutingModule { }
+```
+
+- Then, import `rooms-routing.module.ts` in to the `app-routing.module.ts`.
+
+```javascript
+@NgModule({
+  imports: [RouterModule.forRoot(routes), RoomsRoutingModule],
+  exports: [RouterModule]
+})
+```
+
 ## Nested Routing and Child Routes
+showing one route under another route: We can achieve this using `children` property.
+
+```javascript
+  {path: "rooms", 
+  component: RoomsComponent,
+  children:[{path: ":id", component: RoomsComponent}]
+  },
+```
+and then add `router-outlet` in the parent component
 ## Lazy Loading
 ## Route Guards
 

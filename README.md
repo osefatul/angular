@@ -3446,3 +3446,8 @@ This guard is used to prevent a user from navigating away from a particular rout
 
 ### Resolve: 
 This guard is used to resolve data for a particular route before the route is activated. It is used to ensure that the required data is available before the component is loaded.
+
+
+
+## Reactive Forms
+These forms are built using the ReactiveForms module, which provides a more flexible and powerful approach to form validation. In reactive forms, developers manually define the form controls and their behaviors, and then use them to build the form.

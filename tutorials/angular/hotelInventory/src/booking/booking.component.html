@@ -167,6 +167,46 @@ class="example-form"
         </mat-expansion-panel>
     </div>
 
+    
+    <div>
+        <button class="btn btn-primary" type="button" (click)="addGuest()">
+            Add Guest
+        </button>
+    </div>
+    
+    <div formArrayName="guests">
+        <mat-expansion-panel hideToggle>
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                Guest
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+
+            <div *ngFor="let guest of guests.controls; let i=index">
+                <div [formGroupName]="i">
+                    <mat-form-field class="example-full-width">
+                        <mat-label>Guest Name</mat-label>
+                        <input 
+                        matInput
+                        type="text"
+                        formControlName="guestName"
+                        placeholder="Guest Name" 
+                        >
+                    </mat-form-field>
+                    <mat-form-field class="example-full-width">
+                        <mat-label>Age</mat-label>
+                        <input 
+                        matInput
+                        type="number"
+                        formControlName="age"
+                        placeholder="Age" 
+                        >
+                    </mat-form-field>
+                </div>
+            </div>
+        </mat-expansion-panel>
+    </div>
+
     <button class="btn btn-primary" type="submit">
         Submit
     </button>

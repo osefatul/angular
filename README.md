@@ -3622,7 +3622,7 @@ Let us render the nested forms:
 </div>
 ```
 
-- In the componenet:
+- In the component:
 
 ```javascript
   ngOnInit(): void {
@@ -3648,5 +3648,85 @@ Let us render the nested forms:
   }
 ```
 
-
 ## Adding Controls Dynamically
+- Using `addControl` to add control.
+- Using `removeControl` to remove control
+
+
+### Example: Add Guest dynamically
+- Add `guest` control.
+
+```javascript
+this.bookingForm = this.fb.group({
+    roomId: new FormControl({value:"R12312", disabled:true}),
+    guestEmail: [""],
+    checkingDate: [""],
+    checkoutDate: [""],
+    bookingStatus: [""],
+    bookingAmount: [""],
+    bookingDate: [""],
+    mobileNumber: [""],
+    guestName: [""],
+    address: this.fb.group({
+      addressLin1: [""],
+      addressLin2: [""],
+      city: [""],
+      state: [""],
+      country: [""],
+      zipCode: [""],
+    }),
+    guest: this.fb.array([this.fb.group({
+      guestName: [""],
+      age: new FormControl("")
+    })])
+});
+```
+
+
+- You can dynamically add form controls to reactive forms by using the `FormArray` class. The `FormArray` class provides a way to manage a collection of form controls.
+
+```javascript
+get guests() {  
+  return this.bookingForm.get("guests") as FormArray;
+}
+```
+
+- Add guest dynamically:
+```javascript
+addGuest (){
+  this.guests.push(
+    this.fb.group({
+      guestName: [""],
+      age: new FormControl("")
+  }))
+}
+```
+
+- Render it on template
+
+```html
+<div formArrayName="guests">
+  <div *ngFor="let guest of guests.controls; let i=index">
+    <div [formGroupName]="i">
+      <mat-form-field class="example-full-width">
+        <mat-label>Guest Name</mat-label>
+            <input 
+            matInput
+            type="text"
+            formControlName="guestName"
+            placeholder="Guest Name" 
+            >
+        </mat-form-field>
+        <mat-form-field class="example-full-width">
+          <mat-label>Age</mat-label>
+            <input 
+            matInput
+            type="number"
+            formControlName="age"
+            placeholder="Age" 
+            >
+        </mat-form-field>
+    </div>
+  </div>
+</div>
+```

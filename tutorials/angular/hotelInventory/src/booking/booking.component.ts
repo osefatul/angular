@@ -1,5 +1,5 @@
 import { Component,OnInit } from '@angular/core';
-import { FormGroup, FormBuilder, FormControl } from '@angular/forms';
+import { FormGroup, FormBuilder, FormControl, FormArray } from '@angular/forms';
 
 @Component({
   selector: 'app-booking',
@@ -29,8 +29,24 @@ export class BookingComponent implements OnInit {
         state: [""],
         country: [""],
         zipCode: [""],
-      })
+      }),
+      guests: this.fb.array([this.fb.group({
+        guestName: [""],
+        age: new FormControl("")
+      })])
     });
+  }
+
+  get guests() {  
+    return this.bookingForm.get("guests") as FormArray;
+  }
+
+  addGuest (){
+    this.guests.push(
+      this.fb.group({
+        guestName: [""],
+        age: new FormControl("")
+    }))
   }
 
   onSubmit() {

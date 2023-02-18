@@ -3457,3 +3457,196 @@ These forms are built using the ReactiveForms module, which provides a more flex
 - In Reactive Forms we create forms using Typescript.
 - Good for developers who likes to have more control in TS file.
 - Uses forms API like `FormGroup`, `FormControl` and Form directives.
+
+## Creating Forms
+- Use `FormControl` class to create Form Controls.
+- Use `FormGroup` to group multiple controls.
+- Use `FormBuilder` to build complex Forms.
+
+
+```javascript
+export class BookingComponent implements OnInit {
+
+  bookingForm!: FormGroup;
+  constructor( private fb: FormBuilder){}
+  
+  ngOnInit(): void {
+    this.bookingForm = this.fb.group({
+      bookingId: [""],
+      roomId: [""],
+      guestEmail: [""],
+      checkingDate: [""],
+      checkoutDate: [""],
+      bookingStatus: [""],
+      bookingAmount: [""],
+      bookingDate: [""],
+      mobileNumber: [""],
+      guestName: [""],
+      guestAddress: [""],
+      guestCity: [""],
+      guestState: [""],
+      guestCountry: [""],
+      guestZipCode: [""],
+      guestCount: [""],
+    });
+  }
+}
+```
+Let's verify if the form has value:
+
+```html
+<p>This is booking list:</p>
+{{bookingForm.value | json}}
+```
+
+## Using Material Control:
+
+```html
+<form 
+class="example-form" 
+[formGroup]="bookingForm" 
+(ngSubmit)="onSubmit()">
+    <mat-form-field class="example-full-width">
+        <mat-label>Room Id</mat-label>
+        <input 
+        matInput
+        type="text"
+        formControlName="roomId"
+        placeholder="Room Id" 
+        >
+    </mat-form-field>
+    <mat-form-field class="example-full-width">
+        <mat-label>Guest Email</mat-label>
+        <input 
+        matInput
+        type="email"
+        formControlName="guestEmail"
+        placeholder="Guest Email" 
+        >
+    </mat-form-field>
+
+    <mat-form-field class="example-full-width">
+        <mat-label>Checking Date</mat-label>
+        <input 
+        matInput 
+        [matDatepicker]="checkingDate"
+        formControlName="checkingDate">
+        <mat-datepicker-toggle matIconSuffix [for]="checkingDate">
+        </mat-datepicker-toggle>
+        <mat-datepicker #checkingDate></mat-datepicker>
+    </mat-form-field>
+  </form>
+```
+
+```javascript
+export class BookingComponent implements OnInit {
+
+  bookingForm!: FormGroup;
+  constructor( private fb: FormBuilder){}
+  
+  ngOnInit(): void {
+    this.bookingForm = this.fb.group({
+      roomId: new FormControl({value:"R12312", disabled:true}),
+      guestEmail: [""],
+      checkingDate: [""],
+    });
+  }
+
+  onSubmit() {
+    console.log(this.bookingForm.getRawValue())
+  }
+}
+```
+
+## Nested Form Controls:
+Creating form withing form:
+
+```javascript
+    this.bookingForm = this.fb.group({
+      roomId: new FormControl({value:"R12312", disabled:true}),
+      guestEmail: [""],
+      checkingDate: [""],
+      checkoutDate: [""],
+      bookingStatus: [""],
+      bookingAmount: [""],
+      bookingDate: [""],
+      mobileNumber: [""],
+      guestName: [""],
+      guestAddress: this.fb.group({
+        addressLin1: [""],
+        addressLin2: [""],
+        city: [""],
+        state: [""],
+        country: [""],
+        zipCode: [""],
+      })
+    });
+  }
+```
+
+Let us render the nested forms:
+- use expansion panel: 
+`import {MatExpansionModule} from '@angular/material/expansion'; `
+- Add all related formControls in one div.
+- In the nested form you have to use `formGroupName`.
+
+```html
+<div formGroupName="address">
+  <mat-expansion-panel hideToggle>
+      <mat-expansion-panel-header>
+          <mat-panel-title>
+          Address
+          </mat-panel-title>
+      </mat-expansion-panel-header>
+
+      <mat-form-field class="example-full-width">
+          <mat-label>Address Lin1</mat-label>
+          <input 
+          matInput
+          type="text"
+          formControlName="addressLin1"
+          placeholder="Address Lin1" 
+          >
+      </mat-form-field>
+
+      <mat-form-field class="example-full-width">
+          <mat-label>Address Lin1</mat-label>
+          <input 
+          matInput
+          type="text"
+          formControlName="addressLin2"
+          placeholder="Address Lin2" 
+          >
+      </mat-form-field>
+  </mat-expansion-panel>
+</div>
+```
+
+- In the componenet:
+
+```javascript
+  ngOnInit(): void {
+    this.bookingForm = this.fb.group({
+      roomId: new FormControl({value:"R12312", disabled:true}),
+      guestEmail: [""],
+      checkingDate: [""],
+      checkoutDate: [""],
+      bookingStatus: [""],
+      bookingAmount: [""],
+      bookingDate: [""],
+      mobileNumber: [""],
+      guestName: [""],
+      address: this.fb.group({
+        addressLin1: [""],
+        addressLin2: [""],
+        city: [""],
+        state: [""],
+        country: [""],
+        zipCode: [""],
+      })
+    });
+  }
+```
+
+
+## Adding Controls Dynamically

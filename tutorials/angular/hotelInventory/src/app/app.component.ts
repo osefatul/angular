@@ -46,14 +46,14 @@ export class AppComponent implements AfterViewInit, OnInit {
       console.log("Navigation End")
     })
 
-    this.date.nativeElement.innerText = "Choose booking dates"
-    this.localStorage.setItem('name', "Hilton Hotel")
+    // this.date.nativeElement.innerText = "Choose booking dates"
+    // this.localStorage.setItem('name', "Hilton Hotel")
 
   }
 
   ngAfterViewInit(){
-    console.log("rendering rooms")
-    const componentRef = this.vcr.createComponent(RoomsComponent);
+    // console.log("rendering rooms")
+    // const componentRef = this.vcr.createComponent(RoomsComponent);
   }
 }
 

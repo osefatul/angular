@@ -3447,9 +3447,9 @@ This guard is used to prevent a user from navigating away from a particular rout
 ### Resolve: 
 This guard is used to resolve data for a particular route before the route is activated. It is used to ensure that the required data is available before the component is loaded.
 
+<hr/>
 
-
-## Reactive Forms
+# Reactive Forms
 These forms are built using the ReactiveForms module, which provides a more flexible and powerful approach to form validation. In reactive forms, developers manually define the form controls and their behaviors, and then use them to build the form.
 
 ## Setting up ReactiveForms
@@ -3649,12 +3649,9 @@ Let us render the nested forms:
 ```
 
 ## Adding Controls Dynamically
-- Using `addControl` to add control.
-- Using `removeControl` to remove control
 
-
-### Example: Add Guest dynamically
-- Add `guest` control.
+### Add List of Guests dynamically
+- Add `guests` control in to the `bookingForm`.
 
 ```javascript
 this.bookingForm = this.fb.group({
@@ -3675,15 +3672,13 @@ this.bookingForm = this.fb.group({
       country: [""],
       zipCode: [""],
     }),
-    guest: this.fb.array([this.fb.group({
+    guests: this.fb.array([this.fb.group({
       guestName: [""],
       age: new FormControl("")
     })])
 });
 ```
-
-
-- You can dynamically add form controls to reactive forms by using the `FormArray` class. The `FormArray` class provides a way to manage a collection of form controls.
+- To dynamically add form controls to reactive forms, we use `FormArray` class. The `FormArray` class provides a way to manage a collection of form controls.
 
 ```javascript
 get guests() {  
@@ -3691,7 +3686,8 @@ get guests() {
 }
 ```
 
-- Add guest dynamically:
+- Add `addGuest` method to add new group into guests array dynamically:
+
 ```javascript
 addGuest (){
   this.guests.push(
@@ -3729,4 +3725,154 @@ addGuest (){
     </div>
   </div>
 </div>
+```
+
+### Remove a guest from a list of guests dynamically
+```html
+<div *ngFor="let guest of guests.controls; let i=index">
+    <div>
+        <button class="btn btn-primary" type="button" (click)="removeGuest(i)">
+            Remove Guest
+        </button>
+    </div>
+
+    <div [formGroupName]="i">
+        <mat-form-field class="example-full-width">
+            <mat-label>Guest Name</mat-label>
+            <input 
+            matInput
+            type="text"
+            formControlName="guestName"
+            placeholder="Guest Name" 
+            >
+        </mat-form-field>
+        <mat-form-field class="example-full-width">
+            <mat-label>Age</mat-label>
+            <input 
+            matInput
+            type="number"
+            formControlName="age"
+            placeholder="Age" 
+            >
+        </mat-form-field>
+    </div>
+</div>
+```
+
+```javascript
+  removeGuest (guestIndex: number) {
+    this.guests.removeAt(guestIndex)
+  }
+```
+
+### Using Form Api to add external fields/Controls
+
+- Using `addControl` to add control.
+- Using `removeControl` to remove control
+
+### Example: Add Passport Control
+
+- use `addControl` api to add FormControl.
+```javascript
+  addPassport (){
+    this.bookingForm.addControl("passport", new FormControl(""));
+  }
+```
+
+- Clicking on the `Passport` button should add `passport` control into form. and check if `passport` field exist then.
+
+```html
+    <div>
+        <button class="btn btn-primary" type="button" (click)="addPassport()">
+            Add Passport
+        </button>
+    </div>
+    <mat-form-field *ngIf="bookingForm.get('passport')" class="example-full-width">
+        <mat-label>Passport</mat-label>
+        <input 
+        matInput
+        type="text"
+        formControlName="passport"
+        placeholder="Passport" 
+        >
+    </mat-form-field>
+```
+
+- We can also remove control from the form.
+```javascript
+  removePassport (){
+    this.bookingForm.get("passport") && this.bookingForm.removeControl("passport");
+  }
+```
+
+
+## Built-in Validation
+
+- min
+- max
+- required
+- requiredTrue
+- email
+- minLength
+- maxLength
+- pattern
+
+```javascript
+this.bookingForm = this.fb.group({
+    roomId: new FormControl({value:"R12312", disabled:true}, {validators: [Validators.required]}),
+    guestEmail: ["", [Validators.required, Validators.email]],
+    checkingDate: ["", Validators.required],
+    checkoutDate: [""],
+    bookingStatus: [""],
+    bookingAmount: [""],
+    bookingDate: [""],
+    mobileNumber: [""],
+    guestName: ["", [Validators.required, Validators.maxLength(20)]],
+    address: this.fb.group({
+      addressLin1: [""],
+      addressLin2: [""],
+      city: [""],
+      state: [""],
+      country: [""],
+      zipCode: [""],
+    }),
+    guests: this.fb.array([this.fb.group({
+      guestName: [""],
+      age: new FormControl("")
+    })]),
+    tnc: new FormControl(false, {validators: [Validators.requiredTrue]}),
+  });
+```
+
+
+## Reset Form
+
+- using `reset` method:
+
+Example: On the submit it will reset the form.
+```javascript
+  onSubmit() {
+    console.log(this.bookingForm.getRawValue())
+    this.bookingForm.reset({
+      roomId: "",
+      guestEmail: "",
+      checkingDate: "",
+      checkoutDate: "",
+      bookingStatus: "",
+      bookingAmount: "",
+      bookingDate: "",
+      mobileNumber: "",
+      guestName: "",
+      address:{
+        addressLin1: "",
+        addressLin2: "",
+        city: "",
+        state: "",
+        country: "",
+        zipCode: "",
+      },
+      guests: [],
+      tnc: false,
+    });
+  }
 ```

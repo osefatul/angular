@@ -1,5 +1,5 @@
 import { Component,OnInit } from '@angular/core';
-import { FormGroup, FormBuilder, FormControl, FormArray } from '@angular/forms';
+import { FormGroup, FormBuilder, FormControl, FormArray, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-booking',
@@ -13,15 +13,15 @@ export class BookingComponent implements OnInit {
   
   ngOnInit(): void {
     this.bookingForm = this.fb.group({
-      roomId: new FormControl({value:"R12312", disabled:true}),
-      guestEmail: [""],
-      checkingDate: [""],
+      roomId: new FormControl({value:"R12312", disabled:true}, {validators: [Validators.required]}),
+      guestEmail: ["", [Validators.required, Validators.email]],
+      checkingDate: ["", Validators.required],
       checkoutDate: [""],
       bookingStatus: [""],
       bookingAmount: [""],
       bookingDate: [""],
       mobileNumber: [""],
-      guestName: [""],
+      guestName: ["", [Validators.required, Validators.maxLength(20)]],
       address: this.fb.group({
         addressLin1: [""],
         addressLin2: [""],
@@ -33,7 +33,8 @@ export class BookingComponent implements OnInit {
       guests: this.fb.array([this.fb.group({
         guestName: [""],
         age: new FormControl("")
-      })])
+      })]),
+      tnc: new FormControl(false, {validators: [Validators.requiredTrue]}),
     });
   }
 
@@ -49,8 +50,42 @@ export class BookingComponent implements OnInit {
     }))
   }
 
+  removeGuest (guestIndex: number) {
+    this.guests.removeAt(guestIndex)
+  }
+
+
+  addPassport (){
+    this.bookingForm.addControl("passport", new FormControl(""));
+  }
+
+  removePassport (){
+    this.bookingForm.get("passport") && this.bookingForm.removeControl("passport");
+  }
+
   onSubmit() {
     console.log(this.bookingForm.getRawValue())
+    this.bookingForm.reset({
+      roomId: "",
+      guestEmail: "",
+      checkingDate: "",
+      checkoutDate: "",
+      bookingStatus: "",
+      bookingAmount: "",
+      bookingDate: "",
+      mobileNumber: "",
+      guestName: "",
+      address:{
+        addressLin1: "",
+        addressLin2: "",
+        city: "",
+        state: "",
+        country: "",
+        zipCode: "",
+      },
+      guests: [],
+      tnc: false,
+    });
   }
 }
 

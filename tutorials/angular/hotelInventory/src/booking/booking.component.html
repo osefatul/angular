@@ -6,6 +6,27 @@
 class="example-form" 
 [formGroup]="bookingForm" 
 (ngSubmit)="onSubmit()">
+
+    <div>
+        <button class="btn btn-primary" type="button" (click)="addPassport()">
+            Add Passport
+        </button>
+
+        <button class="btn btn-primary" type="button" (click)="removePassport()">
+            Delete Passport
+        </button>
+    </div>
+
+    <mat-form-field *ngIf="bookingForm.get('passport')" class="example-full-width">
+        <mat-label>Passport</mat-label>
+        <input 
+        matInput
+        type="text"
+        formControlName="passport"
+        placeholder="Passport" 
+        >
+    </mat-form-field>
+
     <mat-form-field class="example-full-width">
         <mat-label>Room Id</mat-label>
         <input 
@@ -15,6 +36,7 @@ class="example-form"
         placeholder="Room Id" 
         >
     </mat-form-field>
+
     <mat-form-field class="example-full-width">
         <mat-label>Guest Email</mat-label>
         <input 
@@ -97,7 +119,6 @@ class="example-form"
         >
     </mat-form-field>
 
-
     <div formGroupName="address">
         <mat-expansion-panel hideToggle>
             <mat-expansion-panel-header>
@@ -167,7 +188,6 @@ class="example-form"
         </mat-expansion-panel>
     </div>
 
-    
     <div>
         <button class="btn btn-primary" type="button" (click)="addGuest()">
             Add Guest
@@ -183,6 +203,11 @@ class="example-form"
             </mat-expansion-panel-header>
 
             <div *ngFor="let guest of guests.controls; let i=index">
+                <div>
+                    <button class="btn btn-primary" type="button" (click)="removeGuest(i)">
+                        Remove Guest
+                    </button>
+                </div>
                 <div [formGroupName]="i">
                     <mat-form-field class="example-full-width">
                         <mat-label>Guest Name</mat-label>
@@ -207,7 +232,17 @@ class="example-form"
         </mat-expansion-panel>
     </div>
 
-    <button class="btn btn-primary" type="submit">
+    <div>
+        <mat-checkbox class="example-margin" formControlName="tnc">
+            Agree
+        </mat-checkbox>
+    </div>
+
+    <button 
+    class="btn btn-primary" 
+    type="submit"
+    [disabled]="bookingForm.invalid"
+    >
         Submit
     </button>
 </form>

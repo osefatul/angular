@@ -117,6 +117,10 @@ class="example-form"
         formControlName="guestName"
         placeholder="Guest Name" 
         >
+        <!-- {{bookingForm.get("guestName")?.errors | json}} -->
+        <mat-error *ngIf="bookingForm.get('guestName')?.hasError('minlength')">
+            Guest Name should be min 5 Char
+        </mat-error>
     </mat-form-field>
 
     <div formGroupName="address">
@@ -135,6 +139,10 @@ class="example-form"
                 formControlName="addressLin1"
                 placeholder="Address Lin1" 
                 >
+                <mat-error 
+                *ngIf="bookingForm.get('address.addressLin1')?.hasError('required')">
+                    Address Lin1 is required
+                </mat-error>
             </mat-form-field>
             <mat-form-field class="example-full-width">
                 <mat-label>Address Lin1</mat-label>
@@ -154,6 +162,11 @@ class="example-form"
                 formControlName="city"
                 placeholder="City" 
                 >
+                <mat-error
+                *ngIf="bookingForm.get('address.city')?.hasError('required')"
+                >
+                City is required
+                </mat-error>
             </mat-form-field>
         
             <mat-form-field class="example-full-width">
@@ -164,6 +177,10 @@ class="example-form"
                 formControlName="state"
                 placeholder="State" 
                 >
+                <mat-error
+                *ngIf="bookingForm.get('address.state')?.hasError('required')">
+                State is required
+                </mat-error>
             </mat-form-field>
         
             <mat-form-field class="example-full-width">
@@ -217,7 +234,13 @@ class="example-form"
                         formControlName="guestName"
                         placeholder="Guest Name" 
                         >
+                        <mat-error
+                        *ngIf="bookingForm.get(['guests', i, 'guestName'])?.hasError('required')"
+                        >
+                        guestName is required
+                        </mat-error>
                     </mat-form-field>
+                    
                     <mat-form-field class="example-full-width">
                         <mat-label>Age</mat-label>
                         <input 
@@ -226,6 +249,11 @@ class="example-form"
                         formControlName="age"
                         placeholder="Age" 
                         >
+                        <mat-error
+                        *ngIf="bookingForm.get(['guests', i, 'age'])?.hasError('required')"
+                        >
+                        Age is required
+                        </mat-error>
                     </mat-form-field>
                 </div>
             </div>

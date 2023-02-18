@@ -20,23 +20,32 @@ export class BookingComponent implements OnInit {
       bookingStatus: [""],
       bookingAmount: [""],
       bookingDate: [""],
-      mobileNumber: [""],
-      guestName: ["", [Validators.required, Validators.maxLength(20)]],
+      mobileNumber: ["", {updateOn: 'blur'}],
+      guestName: ["", [Validators.required, Validators.minLength(5)]],
       address: this.fb.group({
-        addressLin1: [""],
+        addressLin1: ["", Validators.required],
         addressLin2: [""],
-        city: [""],
-        state: [""],
+        city: ["", Validators.required],
+        state: ["", Validators.required],
         country: [""],
         zipCode: [""],
       }),
       guests: this.fb.array([this.fb.group({
-        guestName: [""],
-        age: new FormControl("")
+        guestName: ["", [Validators.required, Validators.minLength(5)]],
+        age: new FormControl("", [Validators.required])
       })]),
       tnc: new FormControl(false, {validators: [Validators.requiredTrue]}),
+    },
+    // {updateOn: 'blur'}
+    );
+
+    this.bookingForm.valueChanges.subscribe(data => {
+      console.log(data)
     });
   }
+
+
+
 
   get guests() {  
     return this.bookingForm.get("guests") as FormArray;

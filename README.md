@@ -3876,3 +3876,147 @@ Example: On the submit it will reset the form.
     });
   }
 ```
+
+## Control Level Validation
+
+### For top level form Controller:
+
+```javascript
+<mat-form-field class="example-full-width">
+  <mat-label>Guest Name</mat-label>
+  <input 
+  matInput
+  type="text"
+  formControlName="guestName"
+  placeholder="Guest Name">
+
+  <!-- {{bookingForm.get("guestName")?.errors | json}} -->
+  
+  <mat-error *ngIf="bookingForm.get('guestName')?.hasError('minlength')">
+      Guest Name should be min 5 Char
+  </mat-error>
+</mat-form-field>
+```
+
+### For Nested form Controllers such as `city` and `state` in address:
+
+```javascript
+this.bookingForm = this.fb.group({
+  guestName: ["", [Validators.required, Validators.minLength(5)]],
+  address: this.fb.group({
+    addressLin1: ["", Validators.required],
+    addressLin2: ["", Validators.required],
+    city: ["", Validators.required],
+    state: ["", Validators.required],
+    country: [""],
+    zipCode: [""],
+  }),
+});
+```
+- Rendering Error:
+
+```html
+<mat-form-field class="example-full-width">
+    <mat-label>Address Lin1</mat-label>
+    <input 
+    matInput
+    type="text"
+    formControlName="addressLin1"
+    placeholder="Address Lin1">
+    
+    <mat-error 
+    *ngIf="bookingForm.get('address.addressLin1')?.hasError('required')">
+        Address Lin1 is required
+    </mat-error>
+
+</mat-form-field>
+```
+
+### For Array Controllers.
+`guests` is an array controller.
+```javascript
+this.bookingForm = this.fb.group({
+  mobileNumber: [""],
+
+  guests: this.fb.array([this.fb.group({
+    guestName: ["", [Validators.required, Validators.minLength(5)]],
+    age: new FormControl("", [Validators.required])
+  })]),
+
+});
+```
+
+Render Error:
+
+```html
+ <mat-form-field class="example-full-width">
+    <mat-label>Guest Name</mat-label>
+    <input 
+    matInput
+    type="text"
+    formControlName="guestName"
+    placeholder="Guest Name" >
+
+    <mat-error
+    *ngIf="bookingForm.get(['guests', i, 'guestName'])?.hasError('required')">
+      guestName is required
+    </mat-error>
+</mat-form-field>
+```
+
+## patchValue vs setValue
+
+ `patchValue` and `setValue` are methods used to update the values of a form control or a form group.
+
+`setValue` method is used to set the value of an entire form control or form group, and it requires you to provide values for all of the controls in the group. For example, if you have a form group with two controls, you would need to pass in an object containing values for both of those controls. If you don't provide a value for every control, you'll get an error.
+
+Here's an example of using `setValue` method:
+
+```javascript
+this.myForm.setValue({
+  firstName: 'John',
+  lastName: 'Doe',
+  age: 30
+});
+```
+
+`patchValue` method, on the other hand, allows you to set the value of only the specified form control or form group, without affecting the values of the other controls. This method is useful when you want to update just one or a few fields of the form.
+
+Here's an example of using `patchValue` method:
+
+```javascript
+this.myForm.patchValue({
+  firstName: 'Jane',
+  lastName: 'Doe'
+});
+```
+
+In summary, `setValue` is used when you want to set the entire value of a form group or control, whereas `patchValue` is used when you want to set the value of only some fields of the form group or control.
+
+### Summary:
+- If we have data coming from API and we want to bind the values to the form, that's where we will be using setValue and patchValue.
+- While using `setValue` we need to pass all properties in Form.
+- `patchValue` allows to skip the values for Form controls.
+
+
+## Listening to Form Value Changes:
+- `valueChanges` events allow us to listen to all value changes.
+- Useful to capture changes happening in real-time.
+
+```javascript
+ngOnInit(): void {
+  this.bookingForm = this.fb.group({
+    mobileNumber: ["", {updateOn: 'blur'}],
+    guestName: ["", [Validators.required, Validators.minLength(5)]],
+    tnc: new FormControl(false, {validators: [Validators.requiredTrue]}),
+  },
+  );
+
+  this.bookingForm.valueChanges.subscribe(data => {
+    console.log(data)
+  });
+}
+```
+
+
+## Using RxJs Map Operators

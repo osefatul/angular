@@ -3454,4 +3454,6 @@ These forms are built using the ReactiveForms module, which provides a more flex
 
 ## Setting up ReactiveForms
 - Import ReactiveFormsModule to module. In our case we are importing it in the `BookingModule`.
-
+- In Reactive Forms we create forms using Typescript.
+- Good for developers who likes to have more control in TS file.
+- Uses forms API like `FormGroup`, `FormControl` and Form directives.

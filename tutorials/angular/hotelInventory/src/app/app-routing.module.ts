@@ -10,26 +10,30 @@ import { NotFoundComponent } from './not-found/not-found.component';
 const routes: Routes = [
   {path: 'hotels', 
   component: HotelsComponent,
-  canActivate: [LoginGuard]},
+  // canActivate: [LoginGuard]
+  },
 
   {path: "login", component: LoginComponent},
   {path: "employee", 
   component: EmployeeComponent,
-  canActivate: [LoginGuard]},
+  // canActivate: [LoginGuard]
+  },
 
   {path:"hotels/:hotelId", 
   component: HotelsListComponent,
-  canActivate: [LoginGuard]},
+  // canActivate: [LoginGuard]
+  },
 
   {path: "rooms", 
   loadChildren: ()=> import("./rooms/rooms.module").then(m => m.RoomsModule),
-  canActivate: [LoginGuard],
-  canLoad: [LoginGuard]
+  // canActivate: [LoginGuard],
+  // canLoad: [LoginGuard]
   },
 
   { path: 'bookings', 
-  loadChildren: () => import('./rooms/booking/booking.module').then(m => m.BookingModule),
-  canActivate: [LoginGuard]},
+  loadChildren: () => import('../booking/booking.module').then(m => m.BookingModule),
+  // canActivate: [LoginGuard]
+  },
   
   {path: "", redirectTo:"login", pathMatch: "full"},
   {path:"**",  component: NotFoundComponent},

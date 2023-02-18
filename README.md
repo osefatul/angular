@@ -3451,3 +3451,7 @@ This guard is used to resolve data for a particular route before the route is ac
 
 ## Reactive Forms
 These forms are built using the ReactiveForms module, which provides a more flexible and powerful approach to form validation. In reactive forms, developers manually define the form controls and their behaviors, and then use them to build the form.
+
+## Setting up ReactiveForms
+- Import ReactiveFormsModule to module. In our case we are importing it in the `BookingModule`.
+

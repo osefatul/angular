@@ -1743,9 +1743,16 @@ In this example, `@Optional() @Inject('APP_TITLE')` specifies that the `appTitle
 
 Before we describe what RxJs is doing, go through a simple introduction of [Reactive Programming](./docs/README.md)
 - RxJS (Reactive Extensions Library for JavaScript) is a useful library for reactive programming. The RxJS documentation uses this definition:
-- Note: RxJS is a library for reactive programming using Observables, to make it easier to compose asynchronous or callback-based code
 - Reactive programming is an event-based paradigm that allows us to run asynchronous sequences of events as soon as data is pushed to a consumer.
+- Note: RxJS is a library for reactive programming using Observables, to make it easier to compose asynchronous or callback-based code.
+- RxJs provides us single API to deal with the data that are coming from multiple sources over time. The data that is continuously coming to your application is often called data streams.
 
+### Stream of Data:
+- Synchronous data.
+- Asynchronous data.
+- Getting data from the server as HTTP calls.
+- DOM events.
+- Functions with return value.
 
 ### Difference between Promise vs Observable
 - A Promise emits a single event when an async activity finishes or fails.
@@ -1789,6 +1796,8 @@ Observable 3
 ```
 
 ### Why React developers don't tend to use RxJS?
+React architecture focus more on the state than the streams of data but for asynchronous data we can use RxJs.
+
 React developers tend not to use observables for several reasons:
 
 1. Familiarity: React developers are usually familiar with using state and props to manage component state and data flow, and observables are a new concept that requires additional learning and effort to understand and use effectively.
@@ -1804,6 +1813,8 @@ React developers tend not to use observables for several reasons:
 In short, observables can be a powerful tool for managing data in a React application, but they also come with additional challenges and complexities. Many React developers prefer to stick with the tried and true solutions they are familiar with, rather than experimenting with new and untested technologies.
 
 ### Redux vs RxJs
+
+
 `Redux` and `RxJS` are both commonly used in Angular for state management and data flow. However, they serve different purposes and have different strengths and weaknesses.
 
 Redux is a state management library that is commonly used with Angular. It provides a centralized store for managing the state of your application, and it uses a strict unidirectional data flow to ensure that the state is updated in a predictable way. Redux also provides a way to easily write and run tests against your state updates, which can be especially useful when working with complex applications.
@@ -1815,6 +1826,57 @@ So, in general, you might use Redux for centralized state management, and RxJS f
 The choice between Redux and RxJS will depend on your specific use case and the requirements of your application. If you have a complex application with a lot of state to manage, Redux may be a good choice. If you are working with asynchronous data streams, such as user interactions or real-time updates, RxJS may be a better choice.
 
 
+### Observable and Streams
+
+#### What is observables:
+an Observable is a way of handling asynchronous data. It is a powerful and widely used feature of Angular that allows you to manage streams of data in a way that makes it easy to build, test, and maintain complex applications.
+
+An Observable is essentially a stream of values that can change over time, and you can subscribe to this stream of values to receive notifications whenever a new value is emitted. This makes it possible to perform actions, such as updating the user interface, whenever new data is available.
+
+Observables are often used in Angular for tasks such as making HTTP requests, handling user interactions, or managing animations. With observables, you can handle data in a declarative way, making it easier to understand and maintain the code, especially in large applications.
+
+[You can learn more about observables here](https://rxjs.dev/guide/observable)
+
+
+Example: so whoever subscribes to the stream will receive the stream data.
+
+```javascript
+import { Observable } from 'rxjs';
+
+    stream = new Observable(hotel=>{
+        hotel.next("hotel1");
+        hotel.next("hotel2");
+        hotel.next("hotel3");
+        hotel.complete();
+    })
+
+    ngOnInit () {
+    this.stream.subscribe({
+      next: (value) => console.log(value),
+      complete: ()=> console.log("complete"),
+      error: (err) => console.log(err)
+    })
+  }
+```
+
+### Pull vs Push
+Push and Pull are two different types of architectures used in computer systems.
+
+In a push architecture, data is pushed from a source to its destination(s) as soon as it becomes available. For example, in a push-based email system, an email is sent as soon as it is composed and ready to be sent. In this architecture, the source is responsible for delivering the data to its destinations.
+
+On the other hand, in a pull architecture, the destination requests data from the source as needed. For example, in a pull-based email system, the email client would periodically check the server for new email, and then retrieve any new messages. In this architecture, the destination is responsible for requesting the data it needs from the source.
+
+Both push and pull architectures have their own advantages and disadvantages. Push architectures are simpler and more efficient, but they can result in overwhelming the recipient with too much data. Pull architectures are more flexible and scalable, but they require more coordination between the source and destination.
+
+
+
+Pull: getData() -> addData() -> to get latest data, getData()
+
+**RxJs** works on a push architecture: it says, once you get the data, it is a continuous stream of data. if you add new data to the stream, whoever subscribed to the stream will get the latest data, and you don't have to call the getData() function again.
+
+Push: getData() -> continuous stream of data -> addData().
+
+## [Click Here for RxJs Docs](./docs/RxJs.md)
 
 ## HTTP request in Angular
 
@@ -1890,55 +1952,7 @@ export class AppModule { }
   }
 ```
 
-### Observable and Streams
 
-#### What is observables:
-an Observable is a way of handling asynchronous data. It is a powerful and widely used feature of Angular that allows you to manage streams of data in a way that makes it easy to build, test, and maintain complex applications.
-
-An Observable is essentially a stream of values that can change over time, and you can subscribe to this stream of values to receive notifications whenever a new value is emitted. This makes it possible to perform actions, such as updating the user interface, whenever new data is available.
-
-Observables are often used in Angular for tasks such as making HTTP requests, handling user interactions, or managing animations. With observables, you can handle data in a declarative way, making it easier to understand and maintain the code, especially in large applications.
-
-[You can learn more about observables here](https://rxjs.dev/guide/observable)
-
-
-Example: so whoever subscribes to the stream will receive the stream data.
-
-```javascript
-import { Observable } from 'rxjs';
-
-    stream = new Observable(hotel=>{
-        hotel.next("hotel1");
-        hotel.next("hotel2");
-        hotel.next("hotel3");
-        hotel.complete();
-    })
-
-    ngOnInit () {
-    this.stream.subscribe({
-      next: (value) => console.log(value),
-      complete: ()=> console.log("complete"),
-      error: (err) => console.log(err)
-    })
-  }
-```
-
-### Pull vs Push
-Push and Pull are two different types of architectures used in computer systems.
-
-In a push architecture, data is pushed from a source to its destination(s) as soon as it becomes available. For example, in a push-based email system, an email is sent as soon as it is composed and ready to be sent. In this architecture, the source is responsible for delivering the data to its destinations.
-
-On the other hand, in a pull architecture, the destination requests data from the source as needed. For example, in a pull-based email system, the email client would periodically check the server for new email, and then retrieve any new messages. In this architecture, the destination is responsible for requesting the data it needs from the source.
-
-Both push and pull architectures have their own advantages and disadvantages. Push architectures are simpler and more efficient, but they can result in overwhelming the recipient with too much data. Pull architectures are more flexible and scalable, but they require more coordination between the source and destination.
-
-
-
-Pull: getData() -> addData() -> to get latest data, getData()
-
-**RxJs** works on a push architecture: it says, once you get the data, it is a continuous stream of data. if you add new data to the stream, whoever subscribed to the stream will get the latest data, and you don't have to call the getData() function again.
-
-Push: getData() -> continuous stream of data -> addData().
 
 ### Http methods
 

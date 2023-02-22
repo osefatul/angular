@@ -3063,7 +3063,10 @@ onReset() {
 ```
 
 
-### Custom Directives with Forms
+# Custom Directives
+
+## Custom Directives with Forms
+- Let's create a custom directive with forms.
 - Directives are similar to component but they will never have template and you can still use all the lifecycle hooks
 - To create a new directive you can use this:
 ```javascript
@@ -3134,7 +3137,92 @@ export class HoverDirective implements OnInit{
 ```
 When mouse is over the element, the font size will get "35px" and "13px" when mouse is out.
 
-### Custom Validation with Forms
+## Custom directives that dynamically add/remove classes:
+
+- Create a directive where it gets data from the template component and process that to add/remove classes.
+- Getting data from a template component is the same as sending data from parent component to child component. We need to use `@input` decorator.
+```javascript
+import { Directive, ElementRef, Input } from '@angular/core';
+
+@Directive({
+    selector: '[appClass]'
+})
+export class ClassDirective {
+    constructor(private element: ElementRef) {}
+
+    @Input('appClass') set classNames(classObj: any) {
+    for (let key in classObj) {
+        if (classObj[key]) {
+            this.element.nativeElement.classList.add(key);
+        } else {
+            this.element.nativeElement.classList.remove(key);
+        }
+    }
+    }
+}
+```
+- Add directive where it will iterate `images.length` times, and for each iteration, it should create a new template context with the index `i`.
+
+```javascript 
+import { Directive, TemplateRef, ViewContainerRef, Input } from '@angular/core';
+
+@Directive({
+    selector: '[appTimes]'
+})
+
+export class TimesDirective {
+    constructor(
+        private viewContainer: ViewContainerRef,
+        private templateRef: TemplateRef<any>
+    ) {}
+    @Input('appTimes') set render(times: number) {
+        this.viewContainer.clear();
+
+        for (let i = 0; i < times; i++) {
+        this.viewContainer.createEmbeddedView(this.templateRef, {
+            index: i
+        });
+    }
+    }
+}
+```
+
+You might have seen that we used `setter function`. and you also might ask why? It is because if the `setter function` is not used, then the `@Input` property `classNames` will be treated as a regular property, and its value will be set only once when the directive is instantiated. **This means that the class names on the element will not be updated if the value of the property changes later.**
+
+In the code provided, the set accessor of the classNames property is used as a hook to execute code whenever the property changes. The code inside the setter loops through the keys of the `classObj` object and adds or removes the corresponding class name based on the boolean value of the property. This ensures that the class names on the element are always up to date based on the value of the `classObj` object.
+
+If the setter function is removed, the class names on the element will not be updated when the value of the classObj object changes. As a result, the visual appearance of the element may not reflect the actual state of the component, and may cause bugs in the application.
+
+So, it is important to use the setter function in this case to ensure that the class names are updated dynamically based on changes in the component state.
+
+Now let's apply the directives to classes and loop:
+
+```html
+    <ul class="pagination">
+        <li class="page-item" [appClass]="{ disabled: currentPage === 0 }">
+            <a class="page-link" (click)="currentPage = currentPage - 1">
+                Prev
+            </a>
+        </li>
+        <ng-container *appTimes="images.length; let i = index">
+            <li
+                class="page-item"
+                [appClass]="{ active: i === currentPage }"
+                *ngIf="checkWindowIndex(i)"
+            >
+            <a (click)="currentPage = i" class="page-link">{{ i + 1 }}</a>
+            </li>
+        </ng-container>
+        <li
+        class="page-item"
+        [appClass]="{ disabled: currentPage === images.length - 1 }"
+        >
+        <a class="page-link" (click)="currentPage = currentPage + 1">Next</a>
+        </li>
+    </ul>
+```
+
+Within the `ng-container` element, there is an `li` element that is conditionally rendered using the `*ngIf` directive. The `*ngIf` directive specifies that the element should only be displayed if the `checkWindowIndex(i)` function returns a truthy value.
 
 # Advanced Routing
 ## Navigation and Router Service

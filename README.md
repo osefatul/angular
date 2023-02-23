@@ -3137,10 +3137,11 @@ export class HoverDirective implements OnInit{
 ```
 When mouse is over the element, the font size will get "35px" and "13px" when mouse is out.
 
-## Custom directives that dynamically add/remove classes:
+## Add Custom Directives Dynamically:
 
 - Create a directive where it gets data from the template component and process that to add/remove classes.
 - Getting data from a template component is the same as sending data from parent component to child component. We need to use `@input` decorator.
+
 ```javascript
 import { Directive, ElementRef, Input } from '@angular/core';
 
@@ -3149,6 +3150,9 @@ import { Directive, ElementRef, Input } from '@angular/core';
 })
 export class ClassDirective {
     constructor(private element: ElementRef) {}
+
+
+// The input property is named classNames and is aliased to the appClass attribute using the @Input('appClass') syntax.
 
     @Input('appClass') set classNames(classObj: any) {
     for (let key in classObj) {
@@ -3161,7 +3165,7 @@ export class ClassDirective {
     }
 }
 ```
-- Add directive where it will iterate `images.length` times, and for each iteration, it should create a new template context with the index `i`.
+- Add `structural directive which starts with *` where it will iterate `images.length` times, and for each iteration, it should create a new template context with the index `i`.
 
 ```javascript 
 import { Directive, TemplateRef, ViewContainerRef, Input } from '@angular/core';

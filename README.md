@@ -1,22 +1,8 @@
-n
-<style>
-.heading1 {
-    font-weight:700;
-    font-size: 70px!important;
-    margin: 0 auto;
-    display: flex;
-    justify-content: center;
-    border-bottom: 1px solid green !important;}
-.logo{
-    width: 90px;
-}
 
 
-</style>
 
-
-<h1 id="identifier" class="heading1">
-    <img class="logo" src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/cf/Angular_full_color_logo.svg/2048px-Angular_full_color_logo.svg.png">
+<h1 id="identifier" style="display:flex; align-items:center; justify-content:center" class="heading1">
+    <img style="width:90px" class="logo" src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/cf/Angular_full_color_logo.svg/2048px-Angular_full_color_logo.svg.png">
     Angular
 </h1>
 
@@ -3270,6 +3256,9 @@ Here are some additional differences between modules and components in Angular:
 
 Overall, modules and components are both important building blocks of an Angular application, but they serve different purposes and have different scopes and responsibilities. Modules provide a way to organize and structure an application, while components define the user interface and provide the functionality of specific parts of the application.
 
+
+![Module Types](./assets//moduleTYpes.jpg)
+
 ### Setting up modules
 - `ng g m rooms --routing --flat=true `: this will create `module.ts` and `routing.ts`.
 - Register new modules in the `AppModule`.
@@ -3309,6 +3298,11 @@ export class RoomsRoutingModule { }
   exports: [RouterModule]
 })
 ```
+
+### Modules Property
+
+![](./assets/modulesProperty.jpg)
+
 
 ## Nested Routing and Child Routes
 showing one route under another route: We can achieve this using `children` property.

@@ -1,13 +1,36 @@
 
-
-
-<h1 id="identifier" style="display:flex; align-items:center; justify-content:center" class="heading1">
-    <img style="width:90px" class="logo" src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/cf/Angular_full_color_logo.svg/2048px-Angular_full_color_logo.svg.png">
-    Angular
+<h1 align="center">
+    <img width="370" height="120"src="./assets/logo.jpg">
 </h1>
 
+# Table of Contents
+- [Introduction](#introduction)
+- [Typescript](#typescript)
+- [Template Syntax](#template)
+- [Directives](#directives)
+- [Pipes](#pipes)
+- [Bootstrap in Angular](#ngx-bootstrap)
+- [Communication Between Parents and Children Components](#communication-between-parents-and-child-components)
+- [Change Detection](#change-detection)
+- [Lifecycle Hooks](#lifecycle-hooks)
+- [Dependency Injection](#dependency-injection)
+- [RxJs](#rxjs)
+- [Angular Router Basics](#angular-router-basics)
+- [Template Driven Forms](#template-driven-forms)
+- [Custom Directives](#custom-directives)
+- [Advanced Routing](#advanced-routing)
+- [Reactive Forms](#reactive-forms)
+
+
+# Introduction
 - A UI component-based framework for building scalable applications.
 - Provided collection of libraries to cover features like Routing and forms.
+- Angular main purpose is to build SPA(single page applications) and PWA(progressive web applications).
+
+- What is SPA?
+  - SPA doesn't make request to server for every URL request.
+  - Angular has routing functionalities to create SPA.
+  - Angular also offers SSR(server side rendering) which supports SPA.
 
 ## Features of Angular
 - Template
@@ -16,27 +39,6 @@
 - Routing
 - Observable
 - PWA
-
-
-
-# Typescript
-Angular uses typescript, which is javascript with types.
-- Install node
-- `npm init` to create a package.json
-- install typescript `npm i typescript`
-- initialize typescript
-- `tsc --init` to create tsconfig.file.
-- `tsc` to compile ts files int js.
-- In the `tsconfig.ts` file uncomment the `outDir` property. it will enable to compile all ts files into the `outDir` directory.
-- after enabling `outDir` property now if you compile all ts files. all those files will be stored in the `outDir` directory.
-
-# SPA
-Angular main purpose is to build SPA(single page applications) and PWA(progressive web applications).
-
-What is SPA?
-- SPA doesn't make request to server for every URL request.
-- Angular has routing functionalities to create SPA.
-- Angular also offers SSR(server side rendering) which supports SPA.
 
 ## Angular Installation:
 - install angular cli:
@@ -124,7 +126,20 @@ The AppComponent class is decorated with the `@Component` decorator, which adds 
 
 
 
-# Template syntax
+
+
+# Typescript
+Angular uses typescript, which is javascript with types.
+- Install node
+- `npm init` to create a package.json
+- install typescript `npm i typescript`
+- initialize typescript
+- `tsc --init` to create tsconfig.file.
+- `tsc` to compile ts files int js.
+- In the `tsconfig.ts` file uncomment the `outDir` property. it will enable to compile all ts files into the `outDir` directory.
+- after enabling `outDir` property now if you compile all ts files. all those files will be stored in the `outDir` directory.
+
+# Template
 ### Create a Component
 Create a component: ng generate/g component/c component-name
 ```javascript
@@ -440,7 +455,7 @@ for styling purposes.
 
 
 
-# Communication between parents and child components
+# Communication Between Parents and Child components
 
 ```html
 <parent-component>
@@ -4117,6 +4132,5 @@ ngOnInit(): void {
   });
 }
 ```
-
 
 ## Using RxJs Map Operators

@@ -1887,6 +1887,14 @@ Push: getData() -> continuous stream of data -> addData().
 - HttpClient is service provided by Angular to interact with APIs.
 - HttpClient internally uses RxJs.
 
+
+### Services
+- Used to fetch/store/update any kind of data in our application.
+- Almost always where we are going to put network requests.
+- Data flows from a service to a component.
+- Services are implemented as classes.
+- Angular will automatically create a single instance of each service for us.
+
 ### Setting up HttpClient
 - Need to import `HttpClientModule`.
 - Once Module is imported we can inject `HttpClient` service.
@@ -1911,6 +1919,7 @@ export class AppModule { }
 ### Using HttpClient Service
 - [Use this link for more details regarding proxy setup.](https://angular.io/guide/build#proxying-to-a-backend-server)
 - setup `proxy.conf.json` file:
+
 ```javascript
 {
     "/api": {
@@ -3248,12 +3257,12 @@ export class LoginComponent {
   }
 }
 ```
- Once the form is submitted, router navigate to `rooms/add` page.
+Once the form is submitted, router navigate to `rooms/add` page.
 
 ## Feature Module and Routing
 
 ### Module vs Component
-In Angular, a module is a logical unit of an application that groups related components, directives, services, and other code into a single cohesive unit. A module is defined using the @NgModule decorator and can be used to organize an application into feature areas, each with its own set of components, services, and other code.
+In Angular, a module is a logical unit of an application that groups related components, directives, services, and other code into a single cohesive unit. A module is defined using the `@NgModule` decorator and can be used to organize an application into feature areas, each with its own set of components, services, and other code.
 
 A component, on the other hand, is a building block of an Angular application that defines a portion of the user interface. A component is defined using the @Component decorator and is responsible for rendering a template and responding to user events.
 
@@ -3329,11 +3338,30 @@ showing one route under another route: We can achieve this using `children` prop
   },
 ```
 and then add `router-outlet` in the parent component
+
+### Relative RouterLink References:
+![](./assets/relativeRouterLinkReference.jpg)
+
+```javascript
+  <div class="four wide column">
+    <div class="ui vertical fluid tabular menu">
+      <a class="item" routerLinkActive="active" routerLink="./">Biography</a>
+      <a class="item" routerLinkActive="active" routerLink="companies">Companies</a>
+      <a class="item" routerLinkActive="active" routerLink="partners">Partners</a>
+    </div>
+  </div>
+```
+
 ## Lazy Loading
-- Allows us to split code at **MOdule level**.
+- Allows us to split code at **Module level**.
 - Load code when user need it.
 - Reduce main bundle size.
 
+### Implementing Lazy Loading
+- Choose which module should be lazy loaded.
+- For each of those modules, remove any import statements for those modules from anywhere else in your project.
+- In the AppRoutingModule, define a route in the "routes" array to specify when to load up that module.
+- In your lazy loaded module's routing file, edit the "path" of each route to be relative to path you specified in the 'AppRoutingModule'
 
 ```javascript
 //app-routing...
@@ -3369,16 +3397,15 @@ ng g m booking --route=booking --routing --module=app
 Let us understand what happens when you call route, the sequence of events that occur during the routing process.
 
 ```javascript
+  export class AppComponent implements OnInit {
+    constructor(private router: Router){}
 
-export class AppComponent implements OnInit {
-  constructor(private router: Router){}
-
-  ngOnInit() {
-    this.router.events.subscribe( event => {
-      console.log(event)
-    })
+    ngOnInit() {
+      this.router.events.subscribe( event => {
+        console.log(event)
+      })
+    }
   }
-}
 ```
 The above code will be executed if you a user visits each route. different stages of route process will be executed, such as `NavigationStart`, `RoutesRecognized`, `GuardCheckStart` and etc. we can filter routes and get specific routes events for our purpose.
 
@@ -3410,7 +3437,7 @@ export class AppComponent implements OnInit {
 Route guards are used to control access to a particular route in your application. Route guards can be used to implement security and protect certain routes from unauthorized access. There are four types of route guards available in Angular:
 
 ### CanActivate: 
-This guard is used to allow or block access to a particular route based on some condition. It is used to prevent unauthorized access to a particular route.
+This guard is used to allow or block access to a particular route based on some conditions. It is used to prevent unauthorized access to a particular route.
 
 #### Example: Create CanActive guards.
 - `ng g g login`: This will create a login guard.

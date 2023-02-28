@@ -1,8 +1,9 @@
 # RxJs (Reactive Extension API for JavaScript)
+
 ## `from` method:
 `from` method converts data to observable object.
 
-#### Convert Array to Observable:
+### Convert Array to Observable:
 ```javascript
 postArray = [
     {title: "post1", desc: "post1 description"},
@@ -21,7 +22,7 @@ constructor(){
 }
 ```
 
-#### Convert Promise to Observable:
+### Convert Promise to Observable:
 
 ```javascript
 promise = new Promise((resolve, reject) => {
@@ -41,7 +42,7 @@ constructor(){
 }
 ```
 
-#### Convert DOM event to Observable:
+### Convert DOM event to Observable:
 
 `fromEvent` is used to subscribe to DOM events.
 
@@ -61,4 +62,3 @@ ngAfterViewInit(){
 ```
 
 
-##

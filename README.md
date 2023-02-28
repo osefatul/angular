@@ -1322,12 +1322,15 @@ now destroy the `roomsList` component when the above logic is false.
 
 In Angular, Dependency Injection (DI) is a powerful mechanism that enables you to manage and share dependencies across components and services in a modular, maintainable, and testable way. It helps you to decouple components and services from each other, making your application more flexible and scalable.
 
-With DI, you can inject instances of services and other objects into a component's constructor as dependencies, making them available to the component for use. which basically means, you don't have to create a service instance but rather inject them through constructor. Angular has its own DI system that automatically manages the creation and lifetime of these dependencies. This makes it easier to manage the dependencies throughout the application and reduces the coupling between components.
+With DI, you can `inject` instances of services and other objects into a component's `constructor` as dependencies, making them available to the component for use. which basically means, you don't have to create a service instance but rather inject them through constructor. Angular has its own DI system that automatically manages the creation and lifetime of these dependencies. This makes it easier to manage the dependencies throughout the application and reduces the coupling between components.
 
 For example, you might have a service that provides data to multiple components, and you can use DI to make this service available to those components. When a component needs data, it can simply call a method on the injected service, and Angular will handle the creation and lifetime of the service for you.
 
+
+#### Note: DI create one instance of the service and it is used for as long as service is available.
+
 #### Example:
-Suppose you have a data service that retrieves data from an API. You want to use this data service in a component called MyComponent. Here's how you could achieve this using dependency injection in Angular:
+Suppose you have a data service that retrieves data from an API. You want to use this data service in a component called `MyComponent`. Here's how you could achieve this using dependency injection in Angular:
 
 ```javascript
 import { Component } from '@angular/core';
@@ -1349,9 +1352,9 @@ export class MyComponent {
 }
 ```
 
-In the above code, `DataService` is injected into the `MyComponent` using the constructor. Angular will automatically create an instance of `DataService` and provide it to the component when it's instantiated. You can then use the dataService property within the component to retrieve data from the API.
+In the above code, `DataService` is injected into the `MyComponent` using the constructor. Angular will automatically create an instance of `DataService` and provide it to the component when it's instantiated. You can then use the `dataService` property within the component to retrieve data from the API.
 
-By using DI in this way, you can make your components more flexible and testable, as they are decoupled from the dependencies they use. You can easily swap out the Data`Service for a different implementation if necessary, without having to modify the component.
+By using DI in this way, you can make your components more flexible and testable, as they are decoupled from the dependencies they use. You can easily swap out the Data`Service` for a different implementation if necessary, without having to modify the component.
 
 
 #### Example:
@@ -1359,6 +1362,9 @@ By using DI in this way, you can make your components more flexible and testable
 Let's fetch `roomsList` from a roomService. to create a service `ng g s rooms`
 
 ```javascript
+@Injectable({
+  providedIn: 'root'
+})
 export class RoomsService {
   roomsList: RoomList[] = [...]
 
@@ -1369,7 +1375,7 @@ export class RoomsService {
 }
 ```
 
-now let do DI?
+Now let's use DI.
 
 ```javascript
 //rooms.component.ts
@@ -1755,6 +1761,14 @@ Before we describe what RxJs is doing, go through a simple introduction of [Reac
 - DOM events.
 - Functions with return value.
 
+### RxJS in Angular
+- Used extensively by angular for managing data.
+- We used it instead of promises or async/await for handling async stuff.
+- Not strictly required! we can use promises and async/await.
+- Hard, probably the hardest thing in the world of JS, period.
+- If you can get a good grasp of RxJS, all of angular is at your fingertips.
+
+
 ### Difference between Promise vs Observable
 - A Promise emits a single event when an async activity finishes or fails.
 - Promise emits a single value while Observable emits multiple values. So, while handling a HTTP request, Promise can manage a single response for the same request, but what if there are multiple responses to the same request, then we have to use Observable. Yes, Observable can handle multiple responses for the same request.
@@ -1796,35 +1810,8 @@ Observable 2
 Observable 3
 ```
 
-### Why React developers don't tend to use RxJS?
-React architecture focus more on the state than the streams of data but for asynchronous data we can use RxJs.
-
-React developers tend not to use observables for several reasons:
-
-1. Familiarity: React developers are usually familiar with using state and props to manage component state and data flow, and observables are a new concept that requires additional learning and effort to understand and use effectively.
-
-2. Complexity: Observables can be complex and challenging to implement, especially for developers who are new to functional programming concepts.
-
-3. Integration: Observables are not tightly integrated with React and its ecosystem, so developers must use additional libraries to make them work with React.
-
-4. Performance: Observables can lead to performance issues when not used correctly, especially in complex applications with large amounts of data.
-
-5. Alternative solutions: There are alternative solutions such as Redux and the React context API, which are widely used and well-documented in the React community, and can solve many of the same problems that observables are used for.
-
-In short, observables can be a powerful tool for managing data in a React application, but they also come with additional challenges and complexities. Many React developers prefer to stick with the tried and true solutions they are familiar with, rather than experimenting with new and untested technologies.
-
-### Redux vs RxJs
 
 
-`Redux` and `RxJS` are both commonly used in Angular for state management and data flow. However, they serve different purposes and have different strengths and weaknesses.
-
-Redux is a state management library that is commonly used with Angular. It provides a centralized store for managing the state of your application, and it uses a strict unidirectional data flow to ensure that the state is updated in a predictable way. Redux also provides a way to easily write and run tests against your state updates, which can be especially useful when working with complex applications.
-
-RxJS, on the other hand, is a library for reactive programming in JavaScript. It provides a powerful set of tools for working with observables, including a large number of operators for transforming and manipulating data. RxJS is commonly used in Angular for managing asynchronous data streams, such as network requests, user interactions, and real-time updates.
-
-So, in general, you might use Redux for centralized state management, and RxJS for managing asynchronous data streams. That being said, the two libraries can be used together, and in some cases, it may make sense to use both to get the best of both worlds.
-
-The choice between Redux and RxJS will depend on your specific use case and the requirements of your application. If you have a complex application with a lot of state to manage, Redux may be a good choice. If you are working with asynchronous data streams, such as user interactions or real-time updates, RxJS may be a better choice.
 
 
 ### Observable and Streams
@@ -1878,6 +1865,7 @@ Pull: getData() -> addData() -> to get latest data, getData()
 Push: getData() -> continuous stream of data -> addData().
 
 ## [Click Here for RxJs Docs](./docs/RxJs.md)
+
 
 ## HTTP request in Angular
 
@@ -2076,7 +2064,30 @@ export class HotelsComponent implements OnInit {
 ```
 
 ## RxJs Operators
-why we need RxJs operators? before answer the question, we need to remind ourselves that RxJs uses `observable` which is a stream of data, and that stream of data CANNOT BE MODIFIED. It can be modified only within a stream of before it is subscribed. So, to modify the data, Operators come really handy.
+why we need RxJs operators? before answer the question, we need to remind ourselves that RxJs uses `observable` which is a stream of data, and that stream of data CANNOT BE MODIFIED. It can be modified only within a stream before it is `subscribed`. So, to modify the data, Operators come really handy.
+
+- Operators are functions that do some specific processing on the incoming value.
+- We chain together operators to build up a processing pipeline.
+- 75% of RxJs is memorizing the different operators.
+- There are some very generic Operators and  some very specific ones.
+- For any given problem, you will probably decide to use one operator, then later realize you could have more easily used another.
+- Almost all documentation around operators is awful.
+- Recommendation: Take a look at exactly what value is coming out of your observable, then figure out what operators you need to implement your app.
+
+
+
+<h1 align="center">
+    <img src="./assets/majorOperators.jpg">
+</h1>
+
+
+Examples of these operators:
+
+<h1 align="center">
+    <img src="./assets/majorOperators2.jpg">
+</h1>
+
+
 
 ### ShareReply
 Here's an example of how you can use the shareReplay operator in Angular to cache and share the result of an HTTP request:
@@ -2262,10 +2273,20 @@ import { map } from 'rxjs/operators';
 import { of } from 'rxjs';
 
 const numbers$ = of([1, 2, 3, 4, 5]);
-const squaredNumbers$ = numbers$.pipe(map(numbers => numbers.map(n=> n* n)))
+const squaredNumbers$ = numbers$.pipe(
+  map(numbers => numbers.map(n=> n*n)),
+  map(value => "this is a square number" + value)
+)
+
+this.squaredNumbers$.subscribe({
+      next(value) { console.log(value)},
+      error(err) { console.log(err)},
+      complete() { console.log("complete it")}
+})
+
 ```
 
-In the above code, we use the `of()` function to create an Observable that emits the list of numbers. Then we use the `map()` operator to transform the emitted values by applying a function that squares each number. Finally, we subscribe to the transformed Observable and log the emitted values.
+In the above code, we use the `of()` function to create an Observable that emits the list of numbers. Then we use the `map()` operator to transform the emitted values by applying a `map` method that squares each number. Finally, we subscribe to the transformed Observable and log the emitted values.
 
 
 #### Example in our case:

@@ -2156,7 +2156,6 @@ export class HotelsService {
 ```
 
 **Send data from parent to child**
-
 ```javascript
 export class HotelsComponent implements OnInit, OnDestroy  {
 
@@ -2302,6 +2301,83 @@ In the above code, we use the `of()` function to create an Observable that emits
   }
 
 ```
+
+
+
+
+### Pluck:
+The `pluck` operator in RxJS is a transformation operator that retrieves a specific property value from the objects emitted by an Observable sequence and emits just that value as a new sequence.
+
+Here's an example:
+
+```javascript
+import { of } from 'rxjs';
+import { pluck } from 'rxjs/operators';
+
+const source = of(
+  { name: 'Alice', age: 30 },
+  { name: 'Bob', age: 25 },
+  { name: 'Charlie', age: 40 }
+);
+
+const names = source.pipe(pluck('name'));
+names.subscribe(console.log);
+// Output: "Alice", "Bob", "Charlie"
+```
+The pluck operator can also extract nested properties by providing a string that represents the property path. For example, `pluck('person.address.city')` would extract the city property from an object like` { person: { address: { city: 'New York' } } }`.
+
+Example:
+
+```javascript
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { map, pluck } from 'rxjs';
+
+interface WikipediaResponse {
+  query:{
+    search:{
+      title:string;
+      snippet:string;
+      pageid:number;
+    }[]
+  }
+}
+
+
+@Injectable({
+  providedIn: 'root'
+})
+export class WikipediaService {
+  constructor(private http: HttpClient) { }
+
+  search (term: string) {
+    return this.http.get<WikipediaResponse>(`https://en.wikipedia.org/w/api.php`, {
+      params: {
+        action:'query',
+        srsearch:term,
+        utf8:'1',
+        list:'search',
+        format:'json',
+        origin: "*"
+      }
+    }).pipe(
+      pluck("query", "search")
+    )
+  }
+}
+```
+
+In the above example, `search` method is an observable function that returns title, snippet and pageid. hover on `search` method:
+
+```javascript
+(method) WikipediaService.search(term: string): Observable<{
+    title: string;
+    snippet: string;
+    pageid: number;
+}[]>
+```
+
+
 
 ### Http Interceptors
 HTTP interceptors in Angular are used to intercept outgoing HTTP requests and incoming HTTP responses from the server. They can be used to add custom headers, modify the request/response, handle errors, and more. Interceptors can be created by implementing the `HttpInterceptor` interface and registering them in the app module's providers array. They can be applied globally to all HTTP requests or to specific requests using the `HttpClient` options parameter. Interceptors can be useful for implementing authentication, caching, logging, and other cross-cutting concerns in an Angular application.

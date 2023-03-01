@@ -2367,7 +2367,7 @@ export class WikipediaService {
 }
 ```
 
-In the above example, `search` method is an observable function that returns title, snippet and pageid. hover on `search` method:
+In the above example, `search` method is an observable function that returns `title`, `snippet` and `pageid`. Hover on `search` method:
 
 ```javascript
 (method) WikipediaService.search(term: string): Observable<{
@@ -4056,6 +4056,16 @@ addGuest (){
 - maxLength
 - pattern
 
+Some of the `FormControl` properties:
+```javascript
+console.log(this.bookingForm.get("roomId"))
+```
+The properties will be:
+
+<p align="center">
+  <img src="./assets//reactiveFormValidators.jpg"/>
+</p>
+
 ```javascript
 this.bookingForm = this.fb.group({
     roomId: new FormControl({value:"R12312", disabled:true}, {validators: [Validators.required]}),
@@ -4202,6 +4212,222 @@ Render Error:
     </mat-error>
 </mat-form-field>
 ```
+
+
+
+## Credit Card Payment Using Reactive Form.
+
+Card Form Component:
+```javascript
+import { Component, OnInit } from '@angular/core';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { DateFormControl } from '../date-form-control';
+
+
+@Component({
+  selector: 'app-card-form',
+  templateUrl: './card-form.component.html',
+  styleUrls: ['./card-form.component.scss']
+})
+
+export class CardFormComponent implements OnInit {
+
+  cardForm = new FormGroup ({
+    name: new FormControl ("", [
+      Validators.required, 
+      Validators.minLength(3)]),
+    cardNumber: new FormControl ("", [
+      Validators.required, 
+      Validators.minLength(16),
+      Validators.maxLength(16)
+    ]),
+    expiration: new DateFormControl ("", [
+      Validators.required,
+      Validators.pattern(/^(0[1-9]|1[0-2])\/\d{2}$/)
+    ]),
+    securityCode: new FormControl('', [
+      Validators.required,
+      Validators.minLength(3),
+      Validators.maxLength(3)
+    ])
+  })
+
+  constructor() {
+    console.log(this.cardForm.get('name'));
+  }
+
+  ngOnInit(): void {}
+
+  onSubmit() {
+    console.log('Form was submitted')
+    console.log(this.cardForm.value)
+  }
+
+  onResetClick() {
+    this.cardForm.reset();
+  }
+
+}
+```
+
+Form Date Controls:
+
+```javascript
+import { FormControl } from '@angular/forms';
+
+export class DateFormControl extends FormControl {
+  override setValue(value: string | null, options: any) {
+    if (!value) {
+      super.setValue('', { ...options, emitModelToViewChange: true });
+      return;
+    }
+
+    if (value.match(/[^0-9|\/]/gi)) {
+      super.setValue(this.value, { ...options, emitModelToViewChange: true });
+      return;
+    }
+
+    if (value.length > 5) {
+      super.setValue(this.value, { ...options, emitModelToViewChange: true });
+      return;
+    }
+
+    if (value.length === 2 && this.value.length === 3) {
+      super.setValue(value, { ...options, emitModelToViewChange: true });
+      return;
+    }
+
+    if (value.length === 2) {
+      super.setValue(value + '/', { ...options, emitModelToViewChange: true });
+      return;
+    }
+    super.setValue(value, { ...options, emitModelToViewChange: true });
+  }
+}
+
+```
+
+Card Form Template:
+
+```html
+<form [formGroup]="cardForm" (ngSubmit)="onSubmit()">
+  <app-input 
+    label="Name" 
+    [control]="cardForm.get('name')">
+  </app-input>
+  
+  <app-input
+    label="Card Number"
+    [control]="cardForm.get('cardNumber')">
+  </app-input>
+  
+  <div class="columns">
+    <div class="column">
+      <app-input
+        label="Expiration (MM/YY)"
+        [control]="cardForm.get('expiration')"
+      ></app-input>
+    </div>
+    <div class="column">
+      <app-input
+        label="Security Code"
+        [control]="cardForm.get('securityCode')"
+      ></app-input>
+    </div>
+  </div>
+
+  <div class="buttons">
+    <button
+      class="button is-primary"
+      [disabled]="cardForm.invalid"
+      type="submit">
+      Submit
+    </button>
+    
+    <button 
+      class="button is-warning" 
+      type="button" 
+      (click)="onResetClick()">
+      Reset
+    </button>
+  </div>
+</form>
+
+```
+
+Input Component:
+
+```javascript
+import { Component, Input } from '@angular/core';
+import { FormControl } from '@angular/forms';
+
+@Component({
+  selector: 'app-input',
+  templateUrl: './input.component.html',
+  styleUrls: ['./input.component.scss']
+})
+
+export class InputComponent {
+
+  @Input() control: any;
+  @Input() label!: string;
+
+  constructor(){}
+
+  ngOnInit(): void {}
+
+  showErrors() {
+    const { dirty, touched, errors } = this.control;
+    return dirty && touched && errors;
+  }
+}
+```
+
+Input Template:
+
+```html
+<div class="field">
+  <label class="label">{{ label }}</label>
+  <div class="control">
+    <input
+      class="input"
+      [formControl]="control"
+      [ngClass]="{ 'is-danger': showErrors() }"
+    />
+  </div>
+
+  <ng-container *ngIf="showErrors()">
+    <div class="help is-danger" *ngIf="control.errors?.['required']">
+      Value is required.
+    </div>
+    <div class="help is-danger" *ngIf="control.errors?.['minlength']">
+      Value you entered is
+      {{ control.errors?.['minlength'].actualLength }}
+      characters long, but it must be at least
+      {{ control.errors?.['minlength'].requiredLength }}
+      characters
+    </div>
+    <div class="help is-danger" *ngIf="control.errors?.['maxlength']">
+      Value you entered is
+      {{ control.errors?.['maxlength'].actualLength }}
+      characters long, but it cannot be longer than
+      {{ control.errors?.['maxlength'].requiredLength }}
+      characters
+    </div>
+    <div class="help is-danger" *ngIf="control.errors?.['pattern']">
+      Invalid format
+    </div>
+  </ng-container>
+</div>
+
+```
+
+
+
+
+
+
+
 
 ## patchValue vs setValue
 

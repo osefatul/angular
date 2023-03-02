@@ -2982,7 +2982,6 @@ We created a component `rooms-add` where we set up our template form.
         (ngModelChange)="onDataChanged()"
         >
     </div>
-
     <div>
         <button 
         class="btn btn-primary" 
@@ -3051,7 +3050,7 @@ You can use the `ngForm` directive to access the validation status of the entire
 {{roomForm.value| json}}
 
 <form #roomForm="ngForm">
-  </form>
+</form>
 ```
   You can also get form instance on the component side and then add logics using validation rules.
 
@@ -3083,7 +3082,7 @@ export class RoomsAddComponent implements OnInit {
     type="text" 
     id="name" 
     name="name" 
-    [(ngModel)]="formData.name" 
+    [(ngModel)]="myForm.name" 
     required >
 
     <div *ngIf="name.invalid && (name.dirty || name.touched)">
@@ -3098,7 +3097,7 @@ export class RoomsAddComponent implements OnInit {
     type="email" 
     id="email" 
     name="email" 
-    [(ngModel)]="formData.email" 
+    [(ngModel)]="myForm.email" 
     required 
     >
     <div *ngIf="email.invalid && (email.dirty || email.touched)">
@@ -4213,9 +4212,66 @@ Render Error:
 </mat-form-field>
 ```
 
+## patchValue vs setValue
+
+ `patchValue` and `setValue` are methods used to update the values of a form control or a form group.
+
+`setValue` method is used to set the value of an entire form control or form group, and it requires you to provide values for all of the controls in the group. For example, if you have a form group with two controls, you would need to pass in an object containing values for both of those controls. If you don't provide a value for every control, you'll get an error.
+
+Here's an example of using `setValue` method:
+
+```javascript
+this.myForm.setValue({
+  firstName: 'John',
+  lastName: 'Doe',
+  age: 30
+});
+```
+
+`patchValue` method, on the other hand, allows you to set the value of only the specified form control or form group, without affecting the values of the other controls. This method is useful when you want to update just one or a few fields of the form.
+
+Here's an example of using `patchValue` method:
+
+```javascript
+this.myForm.patchValue({
+  firstName: 'Jane',
+  lastName: 'Doe'
+});
+```
+
+In summary, `setValue` is used when you want to set the entire value of a form group or control, whereas `patchValue` is used when you want to set the value of only some fields of the form group or control.
+
+### Summary:
+- If we have data coming from API and we want to bind the values to the form, that's where we will be using setValue and patchValue.
+- While using `setValue` we need to pass all properties in Form.
+- `patchValue` allows to skip the values for Form controls.
 
 
-## Credit Card Payment Using Reactive Form.
+## Listening to Form Value Changes:
+- `valueChanges` events allow us to listen to all value changes.
+- Useful to capture changes happening in real-time.
+
+```javascript
+ngOnInit(): void {
+  this.bookingForm = this.fb.group({
+    mobileNumber: ["", {updateOn: 'blur'}],
+    guestName: ["", [Validators.required, Validators.minLength(5)]],
+    tnc: new FormControl(false, {validators: [Validators.requiredTrue]}),
+  },
+  );
+
+  this.bookingForm.valueChanges.subscribe(data => {
+    console.log(data)
+  });
+}
+```
+
+## Using RxJs Map Operators
+
+
+
+# Projects:
+## 1. Credit Card Payment Using Reactive Form.
 
 Card Form Component:
 ```javascript
@@ -4428,59 +4484,326 @@ Input Template:
 
 
 
+## 2. Automatic Math Operator Using Reactive Form + Custom Validator
+In this project we will build a simple math application where two random numbers are generated and user is expected to enter the sum of the two numbers. Once the sum is written then amount of time spent on the solution will be provided, and as a result new random numbers will be generated for next iteration.
 
-## patchValue vs setValue
 
- `patchValue` and `setValue` are methods used to update the values of a form control or a form group.
-
-`setValue` method is used to set the value of an entire form control or form group, and it requires you to provide values for all of the controls in the group. For example, if you have a form group with two controls, you would need to pass in an object containing values for both of those controls. If you don't provide a value for every control, you'll get an error.
-
-Here's an example of using `setValue` method:
+- create a component named: Equation:
 
 ```javascript
-this.myForm.setValue({
-  firstName: 'John',
-  lastName: 'Doe',
-  age: 30
-});
-```
-
-`patchValue` method, on the other hand, allows you to set the value of only the specified form control or form group, without affecting the values of the other controls. This method is useful when you want to update just one or a few fields of the form.
-
-Here's an example of using `patchValue` method:
-
-```javascript
-this.myForm.patchValue({
-  firstName: 'Jane',
-  lastName: 'Doe'
-});
-```
-
-In summary, `setValue` is used when you want to set the entire value of a form group or control, whereas `patchValue` is used when you want to set the value of only some fields of the form group or control.
-
-### Summary:
-- If we have data coming from API and we want to bind the values to the form, that's where we will be using setValue and patchValue.
-- While using `setValue` we need to pass all properties in Form.
-- `patchValue` allows to skip the values for Form controls.
+import { Component, OnInit } from '@angular/core';
+import {FormGroup, FormControl, AbstractControl} from "@angular/forms"
+import { delay, filter, scan } from "rxjs/operators";
 
 
-## Listening to Form Value Changes:
-- `valueChanges` events allow us to listen to all value changes.
-- Useful to capture changes happening in real-time.
 
-```javascript
-ngOnInit(): void {
-  this.bookingForm = this.fb.group({
-    mobileNumber: ["", {updateOn: 'blur'}],
-    guestName: ["", [Validators.required, Validators.minLength(5)]],
-    tnc: new FormControl(false, {validators: [Validators.requiredTrue]}),
+@Component({
+  selector: 'app-equation',
+  templateUrl: './equation.component.html',
+  styleUrls: ['./equation.component.scss']
+})
+export class EquationComponent implements OnInit{
+  secondsPerSolution = 0;
+
+  //the second parameter is the validator that will be applied on all form controls.
+  mathForm = new FormGroup ({
+    a: new FormControl (this.randomNumber()),
+    b: new FormControl (this.randomNumber()),
+    answer: new FormControl("")
   },
-  );
+  [
+    (form: AbstractControl) => {
 
-  this.bookingForm.valueChanges.subscribe(data => {
-    console.log(data)
-  });
+      // check if a+b = answer then return no error otherwise add error.
+      const {a, b, answer} = form.value;
+      if(a+b === parseInt(answer)){
+        return null;
+      }
+      return {addition: true}
+    }
+  ]
+  )
+
+  ngOnInit(): void {}
+
+  get a () {return this.mathForm.value.a;}
+  get b () {return this.mathForm.value.b;}
+
+  randomNumber (){
+    return Math.floor(Math.random()*10)
+  }
+}
+
+```
+
+- equation.html
+
+```html
+<form [formGroup]="mathForm">
+  <!-- If we don't use get method:
+  {{mathForm.value.a}} + {{mathForm.value.b}}  
+  -->
+
+
+  <!-- We are using the get methods -->
+  {{a}} + {{b}} = 
+  <input 
+  formControlName = "answer"
+  />
+</form>
+<hr>
+
+<div>Form is valid: {{mathForm.valid}}</div>
+<div>Form Values: {{mathForm.value |json }}</div>
+<div>Form Errors: {{mathForm.errors | json}}</div>
+```
+
+- Now, lets create a custom validator called: `math-validator.ts` and add the form Validation into it.
+
+```javascript
+import { AbstractControl } from "@angular/forms";
+
+export class MathValidators {
+  static summation (target: string, sourceOne: string, sourceTwo: string){
+    return (form: AbstractControl) => {
+      const sum = form.value[target];
+      const firstNumber = form.value[sourceOne];
+      const secondNumber = form.value[sourceTwo];
+
+      //Check if a+b = answer then return no error otherwise add error.
+      if(firstNumber + secondNumber === parseInt(sum)){
+        return null;
+      }
+      return {addition: true}
+    }
+  }
 }
 ```
 
-## Using RxJs Map Operators
+- Now to immediately change `sourceOne` and `sourceTwo` data once a user enter the result, **We will be using RxJs** for it.
+```this.mathForm.statusChanges()`
+
+#### StatusChanges
+`statusChanges` is an eventEmitter that emits multi-casting observable (same data for each subscriber).
+
+```javascript
+ngOnInit(): void {
+  this.mathForm.statusChanges.subscribe (value =>{
+    console.log(value)
+  })
+}
+```
+The above code will emits `VALID` and `INVALID` value whenever the form changes.
+
+So, overall, `statusChanges` is an observable that's going to emit a value whether or not the form is valid, and that is going to emit the value every single time that we change a form control inside of our form.
+
+#### Let's use the `statusChanges` method so we can implement our entire application based on that.
+
+- Once `statusChanges` emits `VALID` value, then set new value to the form controls.
+
+```javascript
+ngOnInit(){
+  this.mathForm.statusChanges.subscribe((value)=>{
+    if(value === 'INVALID') return ;
+
+    this.mathForm.setValue({
+      a: this.randomNumber(),
+      b: this.randomNumber(),
+      answer: ""
+    })
+  })
+}
+```
+The above code will immediately change the value of `a` and `b` controllers as soon as the `answer` is equal to their summation. but there is an issue, the user can't seem to see the `answer` on the page because the `setValue` is executed much faster before it is rendered on screen. So, to solve this issue, we will be using some `RxJs Operators` for delay and filtering only valid values (because we don't deal with invalid values).
+
+```javascript
+  ngOnInit(): void {
+    this.mathForm.statusChanges
+    .pipe(
+      filter(value=> value === 'VALID'),
+      delay(100)
+    ).subscribe(() => {
+      this.mathForm.setValue({
+        a: this.randomNumber(),
+        b: this.randomNumber(),
+        answer: ""
+      })
+    })
+  }
+```
+
+
+#### Adding Statistics:
+Let's add the metrics for the time it took a user to solve this issue.
+
+- Add a property that it takes solution to be solved
+```javascript
+  secondsPerSolution: number = 0;
+```
+
+- Add the starting point where the component is rendered and number of solutions have been solved:
+
+```javascript
+  const startTime = new Date();
+  let numberSolved=0;// if user solved problem
+```
+
+- if the value user put is valid then increment the `numberSolved`, and calculate the second it took for the solution before setting new Value in to form Controls:
+
+```javascript
+numberSolved ++
+this.secondsPerSolution = 
+((new Date.getTime() - startTime.getTime() ) / 1000) / numberSolved 
+```
+
+- see the bigger picture
+
+```javascript
+  ngOnInit(): void {
+    const startTime = new Date();
+    let numberSolved=0;// if user solved problem
+
+    this.mathForm.statusChanges
+    .pipe(
+      filter(value=> value === 'VALID'),
+      delay(100)
+    ).subscribe(() => {
+
+      numberSolved++;
+      this.secondsPerSolution = ( (new Date().getTime() - startTime.getTime()) / 1000) / numberSolved
+
+      this.mathForm.setValue({
+        a: this.randomNumber(),
+        b: this.randomNumber(),
+        answer: ""
+      })
+    })
+  }
+```
+
+#### Solve the statistics calculation using RxJs:
+
+- **Scan operator:** scan operator in RxJs acts the same as reduce method doe in vanilla JavaScript.
+
+```javascript
+  ngOnInit(): void {
+    this.mathForm.statusChanges
+    .pipe(
+      filter(value=> value === 'VALID'),
+      delay(100),
+      scan((acc, value) => {
+        return {
+          numberSolved: acc.numberSolved + 1,
+          startTime: acc.startTime
+        }
+      },
+      {numberSolved: 0, startTime: new Date()}
+      ))
+      .subscribe(({numberSolved, startTime}) => {
+      this.secondsPerSolution = ( (new Date().getTime() - startTime.getTime()) / 1000) / numberSolved
+
+      this.mathForm.setValue({
+        a: this.randomNumber(),
+        b: this.randomNumber(),
+        answer: ""
+      })
+    })
+  }
+```
+
+- Updating equation template with the above value:
+
+```html
+<form [formGroup]="mathForm">
+  <!-- If we don't use get method:
+  {{mathForm.value.a}} + {{mathForm.value.b}}  
+  -->
+
+
+  <!-- We are using the get methods -->
+  <div class="equation"> {{ a }} + {{ b }} =</div>
+  <input formControlName="answer" />
+</form>
+<div class="stats"> {{ secondsPerSolution | number: '1.1-3'}} Seconds</div>
+<hr>
+```
+
+- Let us add a custom directive where it hints user that they are very close to real solution:
+
+- Create a new directive named: `AnswerHighlight`
+
+<div align="center">
+  <img src="./assets/CustomDirective.jpg">
+</div>
+
+- Access to input `FormControl` and its parent `FormGroup`
+```javascript
+import { Directive, ElementRef, OnInit } from "@angular/core";
+import { NgControl } from "@angular/forms";
+
+
+@Directive({
+  selector: '[appAnswerHighlight]'
+})
+export class AnswerHighlightDirective implements OnInit{
+
+  constructor(
+    private el: ElementRef,
+    private controlName: NgControl){ 
+    console.log(this.el.nativeElement)
+  }
+
+
+  ngOnInit(): void {
+    //to access the actual FormControl and not FormControlName.
+    // console.log(this.controlName.control)
+
+    //access the parent of FormControl which is the actual FormGroup we wanted to access.
+    console.log(this.controlName.control?.parent)
+  }
+}
+```
+
+```html
+<form [formGroup]="mathForm">
+  <!-- If we don't use get method:
+  {{mathForm.value.a}} + {{mathForm.value.b}}  
+  -->
+
+  <!-- We are using the get methods -->
+  <div class="equation"> {{ a }} + {{ b }} =</div>
+  <input appAnswerHighlight formControlName="answer" />
+</form>
+<div class="stats"> {{ secondsPerSolution | number: '1.1-3'}} Seconds</div>
+<hr>
+
+```
+
+- Lets detect changes and report it on directive and it is similar to `statusChanges`:
+
+```javascript
+  ngOnInit(): void {
+    this.controlName.control?.parent?.valueChanges.subscribe(value =>{
+      console.log(value)
+    })
+  }
+```
+
+- Add RxJs operator where you find the percentage of correct answer:
+
+```javascript
+  ngOnInit(): void {
+    //to access the actual FormControl and not FormControlName.
+    // console.log(this.controlName.control)
+
+    //access the parent of FormControl which is the actual FormGroup we wanted to access.
+    this.controlName.control?.parent?.valueChanges
+    .pipe(
+      map(({a, b, answer}) =>{
+        return Math.abs((a+b - answer)/(a+b))
+    }))
+    .subscribe(value =>{
+      console.log(value)
+    })
+  }
+```

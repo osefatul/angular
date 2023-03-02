@@ -4950,3 +4950,77 @@ export class SignupComponent {
 <div align="center">
   <img src="./assets/passwordMatchingSyncValidator.jpg">
 </div>
+
+- You need to implement `Validator`.
+- You need to create a method called `validate` which takes an argument, now the argument depends on what you want to pass through:
+
+  - If you want to validate form then add:
+  ```javascript
+  validate (formGroup: FormGroup) {
+    return {}
+  }
+  ```
+
+  - If you want to validate input then add:
+  ```javascript
+  validate (fromControl: FormControl) {
+    return {}
+  }
+  ```
+
+  - If you are not sure whether `FormControl` or `FormGroup` then add:
+  ```javascript
+  validate (control: AbstractControl <string | null> ) {
+    return {}
+  }
+  ```
+
+- The return value in `validate` method will be attached to the errors.
+
+```javascript
+authForm.errors === {passwordsDontMatch: true}
+```
+
+Let us create the overall logic:
+
+```javascript
+import {FormGroup, Validator } from "@angular/forms";
+
+export class MatchPassword implements Validator {
+  validate (formGroup: FormGroup) {
+    const {password, passwordConfirmation} = formGroup.value;
+
+    if(password === passwordConfirmation){
+      return null;
+    }
+    else {
+      return {passwordsDonNotMatch: true}
+    }
+  }
+}
+
+```
+
+
+### Connect Custom Validator:
+- To connect a custom validator to entire `form`, pass the validator to second object of the form inside the array:
+```javascript
+  authForm = new FormGroup({
+    (...)
+  }, {validators: []});
+```
+- But, how can we access that validator to instance of `MatchPassword` inside the component? yep, we will be adding `MatchPassword` to the Angular `**Dependency Injection**
+
+```javascript
+import {FormGroup, Validator } from "@angular/forms";
+import {Injectable} from '@angular/core';
+
+@Injectable({providedIn: 'root'})
+export class MatchPassword implements Validator {
+  validate (formGroup: FormGroup) {
+    const {password, passwordConfirmation} = formGroup.value;
+    return password === passwordConfirmation? null: {passwordsDonNotMatch: true}
+  }
+}
+```
+- Now in the signup component import `MatchPassword`

@@ -1,6 +1,6 @@
 
 <h1 align="center">
-    <img width="370" height="120"src="./assets/logo.jpg">
+    <img width="470" height="160"src="./assets/logo.jpg">
 </h1>
 
 # Table of Contents
@@ -20,6 +20,7 @@
 - [Custom Directives](#custom-directives)
 - [Advanced Routing](#advanced-routing)
 - [Reactive Forms](#reactive-forms)
+- [Projects](#projects)
 
 
 # Introduction
@@ -4273,7 +4274,7 @@ ngOnInit(): void {
 # Projects:
 ## 1. Credit Card Payment Using Reactive Form.
 
-Card Form Component:
+- Card Form Component:
 ```javascript
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
@@ -4326,7 +4327,7 @@ export class CardFormComponent implements OnInit {
 }
 ```
 
-Form Date Controls:
+- Form Date Controls:
 
 ```javascript
 import { FormControl } from '@angular/forms';
@@ -4363,7 +4364,7 @@ export class DateFormControl extends FormControl {
 
 ```
 
-Card Form Template:
+- Card Form Template:
 
 ```html
 <form [formGroup]="cardForm" (ngSubmit)="onSubmit()">
@@ -4411,7 +4412,7 @@ Card Form Template:
 
 ```
 
-Input Component:
+- Input Component:
 
 ```javascript
 import { Component, Input } from '@angular/core';
@@ -4439,7 +4440,7 @@ export class InputComponent {
 }
 ```
 
-Input Template:
+- Input Template:
 
 ```html
 <div class="field">
@@ -4479,9 +4480,7 @@ Input Template:
 ```
 
 
-
-
-
+dd
 
 
 ## 2. Automatic Math Operator Using Reactive Form + Custom Validator
@@ -4583,7 +4582,7 @@ export class MathValidators {
 - Now to immediately change `sourceOne` and `sourceTwo` data once a user enter the result, **We will be using RxJs** for it.
 ```this.mathForm.statusChanges()`
 
-#### StatusChanges
+### StatusChanges
 `statusChanges` is an eventEmitter that emits multi-casting observable (same data for each subscriber).
 
 ```javascript
@@ -4633,7 +4632,7 @@ The above code will immediately change the value of `a` and `b` controllers as s
 ```
 
 
-#### Adding Statistics:
+### Adding Statistics:
 Let's add the metrics for the time it took a user to solve this issue.
 
 - Add a property that it takes solution to be solved
@@ -4681,7 +4680,7 @@ this.secondsPerSolution =
   }
 ```
 
-#### Solve the statistics calculation using RxJs:
+### Solve the statistics calculation using RxJs:
 
 - **Scan operator:** scan operator in RxJs acts the same as reduce method doe in vanilla JavaScript.
 
@@ -4728,7 +4727,31 @@ this.secondsPerSolution =
 <hr>
 ```
 
-- Let us add a custom directive where it hints user that they are very close to real solution:
+### Add Hints for Close Answer:
+
+#### Note: The real solution would be this:
+
+```html
+<form [formGroup]="mathForm">
+
+  <div class="equation"> {{ a }} + {{ b }} =</div>
+  <input 
+  [ngClass]="{'close': a && b && answer && (a + b)*0.8 < answer}"
+  formControlName="answer" />
+</form>
+<div class="stats"> {{ secondsPerSolution | number: '1.1-3'}} Seconds</div>
+<hr>
+```
+and also add get method for answer so the return value would be a number:
+
+```javascript
+  get answer (){
+    return this.mathForm?.value?.answer && parseInt(this.mathForm?.value?.answer);
+  }
+
+```
+
+#### Note: But we want to use a custom directive to solve this issue and to do that lets follow these steps:
 
 - Create a new directive named: `AnswerHighlight`
 
@@ -4827,3 +4850,103 @@ export class AnswerHighlightDirective implements OnInit{
     })
   }
 ```
+
+## 3. Email Client + Authentication 
+### Backend API:
+
+- URL: https://api.angular-email.com/
+
+<div align="center">
+  <img src="./assets/backendAPI.jpg">
+</div>
+
+
+### Sign up:
+
+```javascript
+export class SignupComponent {
+
+  constructor ( ){}
+
+  authForm = new FormGroup({
+    username: new FormControl("", [
+      Validators.required, 
+      Validators.maxLength(20), 
+      Validators.minLength(3),
+      Validators.pattern(/^[a-z0-9]+$/) //only numbers and letters
+    ]),
+    password: new FormControl("", [
+      Validators.required, 
+      Validators.maxLength(20), 
+      Validators.minLength(4)
+    ]),
+    confirmPassword: new FormControl("",[
+      Validators.required, 
+      Validators.maxLength(20), 
+      Validators.minLength(4)
+    ]),
+  });
+
+  ngOnInit() {
+    console.log(this.authForm.value)
+  }
+
+  onSubmit() {
+    console.log(this.authForm.value)
+  }
+}
+```
+
+```html
+<div class="signup" >
+  <h1>Create an Account</h1>
+  <form [formGroup]="authForm" (ngSubmit)="onSubmit()"  class="example-form">
+    <mat-form-field class="example-full-width">
+      <mat-label>Username</mat-label>
+      <input 
+      formControlName="username"
+      matInput 
+      placeholder="Ex. John">
+    </mat-form-field>
+    {{authForm.get("username")?.errors | json}}
+
+    <mat-form-field class="example-full-width">
+      <mat-label>password</mat-label>
+      <input
+      formControlName="password"
+      matInput
+      type="password"
+      placeholder="Ex. 1235%3">
+    </mat-form-field>
+
+    <mat-form-field class="example-full-width">
+      <mat-label>Confirm Password</mat-label>
+      <input
+      formControlName="confirmPassword"
+      type="password"
+      matInput
+      placeholder="Ex. 1235%3">
+    </mat-form-field>
+
+    <button 
+    class="button"
+    type="submit"
+    mat-raised-button color="primary">Submit</button>
+
+    <p>
+      Already have an account?
+      <a routerLink="">
+        Sign in
+      </a>
+      instead
+    </p>
+  </form>
+  {{authForm.value | json}}
+</div>
+```
+
+### Custom Sync Validator for Matching Passwords:
+
+<div align="center">
+  <img src="./assets/passwordMatchingSyncValidator.jpg">
+</div>

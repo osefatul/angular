@@ -4807,3 +4807,23 @@ export class AnswerHighlightDirective implements OnInit{
     })
   }
 ```
+
+- Check if the percentage of answer entered by user was less than 20% to actual answer then add class on input.
+
+```javascript
+  ngOnInit(): void {
+    this.controlName.control?.parent?.valueChanges
+    .pipe(
+      map(({a, b, answer}) =>{
+        return Math.abs((a+b - answer)/(a+b))
+    }))
+    .subscribe(value =>{
+      // console.log(value)
+      if(value<0.2){
+        this.el.nativeElement.classList.add("close")
+      }else{
+        this.el.nativeElement.classList.remove("close")
+      }
+    })
+  }
+```

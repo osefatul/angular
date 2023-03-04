@@ -4945,7 +4945,7 @@ export class SignupComponent {
 </div>
 ```
 
-### Custom Sync Validator for Matching Passwords:
+### Custom Synchronized  Validator for Matching Passwords:
 
 <div align="center">
   <img src="./assets/passwordMatchingSyncValidator.jpg">
@@ -5023,4 +5023,36 @@ export class MatchPassword implements Validator {
   }
 }
 ```
-- Now in the signup component import `MatchPassword`
+- Now in the signup component import `MatchPassword` and add it to the `Form` second object.
+
+```javascript
+export class SignupComponent {
+
+  constructor (private matchPassword: MatchPassword){}
+
+  authForm = new FormGroup({
+    username: new FormControl("", [
+      Validators.required, 
+      Validators.maxLength(20), 
+      Validators.minLength(3),
+      Validators.pattern(/^[a-z0-9]+$/) //only numbers and letters
+    ]),
+    password: new FormControl("", [
+      Validators.required, 
+      Validators.maxLength(20), 
+      Validators.minLength(4)
+    ]),
+    passwordConfirmation: new FormControl("",[
+      Validators.required, 
+      Validators.maxLength(20), 
+      Validators.minLength(4)
+    ]),
+  }, {
+    validators: [this.matchPassword.validate]
+  });
+}
+```
+
+### Implementing Async Validator for `username`:
+It is called async validator because, w e will be making a request to `auth/username` api endpoint to check if username exists or not.
+- We will be using `@Injectable` to enable our class for dependency injection, so we can use `httpClient`, why? because DI check and create an instance if doesn't already exist automatically or in angular way.

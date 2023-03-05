@@ -5061,3 +5061,32 @@ It is called async validator because, w e will be making a request to `auth/user
 <div align="center">
   <img src="./assets/asynValidatorCatcherror.jpg">
 </div>
+
+
+
+### Handling Authentication
+
+
+### Handling App Security
+We are using Auth Guard to secure our `/inbox` path: Here are some issues with Auth Guard:
+
+<div align="center">
+  <img src="./assets/authGuardIssues.jpg">
+</div>
+
+
+
+
+### EmailClient:
+Root URL: https://api.angular-email.com
+
+<div align="center">
+  <img src="./assets/emailApi.jpg">
+</div>
+
+### Canceling Previous Email Requests:
+**switchMap Operator**: If we call to see an email, and in the middle of that request we ask for another email, switchMap will cancel the oldest request.
+
+<div align="center">
+  <img src="./assets/switchMap.jpg">
+</div>

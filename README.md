@@ -5084,9 +5084,185 @@ Root URL: https://api.angular-email.com
   <img src="./assets/emailApi.jpg">
 </div>
 
+
+### Information from the current route:
+
+<div align="center">
+  <img src="./assets/CurrentRoute.jpg">
+</div>
+
+SnapShot:
+```javascript
+  console.log(this.route.snapshot.params['id'])
+```
+
+Observable:
+```javascript
+  this.route.data.subscribe((data) => {
+    console.log(data)
+  });
+```
+
+
 ### Canceling Previous Email Requests:
 **switchMap Operator**: If we call to see an email, and in the middle of that request we ask for another email, switchMap will cancel the oldest request.
 
 <div align="center">
   <img src="./assets/switchMap.jpg">
+</div>
+
+
+### Resolver:
+Resolver is a service, that is going to wait for us to return some information out of that resolved method before the component is ever displayed on the screen that we are always guaranteed inside of our constructor, which is the soonest that we could get access to this object.
+
+We had a issue that the template wouldn't render/display the email contents in the activatedRoute:
+
+```javascript
+import { EmailService } from './../email.service';
+import { Component } from '@angular/core';
+import { ActivatedRoute } from "@angular/router";
+import { switchMap } from 'rxjs';
+import { Email } from "../email";
+
+
+@Component({
+  selector: 'app-email-show',
+  templateUrl: './email-show.component.html',
+  styleUrls: ['./email-show.component.scss']
+})
+export class EmailShowComponent {
+  email!: Email;
+
+  constructor(private route: ActivatedRoute, private emailService :EmailService) {}
+
+  ngOnInit(): void {
+
+    this.route.params
+      .pipe(
+        switchMap(({ id }) => {
+          console.log(id)
+          return this.emailService.getEmail(id);
+        })
+      )
+      .subscribe(email => {
+        console.log(email)
+        this.email = email;
+      });
+    console.log(this.route.snapshot.params['id'])
+  }
+}
+```
+
+template: would work only if we use `*ngIF` directive...
+
+```html
+<div class="header" *ngIf="email">
+  <div>
+    <h3>{{email.subject}}</h3>
+    <div>
+      From: <i>{{email.from}}</i>
+    </div>
+    <div>
+      To: <i>{{email.to}}</i>
+    </div>
+  </div>
+  <div>
+    <app-email-reply [email]="email"></app-email-reply>
+  </div>
+</div>
+<div class="ui divider">
+</div>
+<div [innerHTML]="email.html"></div>
+```
+The problem is that template renders before email is assigned data as `getEmail` is asynchronous and it takes time. So to resolve this issue we used `Resolver`. Resolver runs a method and pass data to component before the component is rendered.
+
+
+```javascript
+import { Injectable } from "@angular/core";
+import { EMPTY } from "rxjs";
+import { catchError } from "rxjs/operators";
+import {
+  Resolve,
+  ActivatedRouteSnapshot,
+  RouterStateSnapshot,
+  Router
+} from "@angular/router";
+import { Email } from "./email";
+import { EmailService } from "./email.service";
+
+@Injectable({
+  providedIn: 'root'
+})
+export class EmailResolverService {
+  constructor(private eEmailService: EmailService, private router: Router) {}
+
+  resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
+    const { id } = route.params;
+    return this.eEmailService.getEmail(id).pipe(
+      catchError(() => {
+        this.router.navigateByUrl("/inbox/not-found");
+        return EMPTY;
+      })
+    );
+  }
+}
+```
+
+now we need to use observable in the constructor of the component:
+
+```javascript
+import { EmailService } from './../email.service';
+import { Component } from '@angular/core';
+import { ActivatedRoute } from "@angular/router";
+import { switchMap } from 'rxjs';
+import { Email } from "../email";
+
+
+@Component({
+  selector: 'app-email-show',
+  templateUrl: './email-show.component.html',
+  styleUrls: ['./email-show.component.scss']
+})
+export class EmailShowComponent {
+  email!: Email;
+
+  constructor(private route: ActivatedRoute, private emailService :EmailService) {
+    // this.email = this.route.snapshot.data['email'];
+    this.route.data.subscribe(({ email }) => {
+      this.email = email;
+    });
+  }
+
+  ngOnInit(): void {
+  }
+}
+```
+
+and remove `*ngIf` from the template:
+
+```html
+<div class="header">
+  <div>
+    <h3>{{email.subject}}</h3>
+    <div>
+      From: <i>{{email.from}}</i>
+    </div>
+    <div>
+      To: <i>{{email.to}}</i>
+    </div>
+  </div>
+  <div>
+    <app-email-reply [email]="email"></app-email-reply>
+  </div>
+</div>
+<div class="ui divider">
+</div>
+<div [innerHTML]="email.html"></div>
+```
+
+
+### Email Service
+
+<div align="center">
+  <img src="./assets/emailService.jpg">
 </div>

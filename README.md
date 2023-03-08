@@ -5,6 +5,11 @@
 
 # Table of Contents
 - [Introduction](#introduction)
+  - [Features of Angular](#features-of-angular)
+  - [Angular Installation](#angular-installation)
+  - [Introduction to Monorepo](#introduction-to-monorepo)
+  - [What is NX](#nx)
+  - [App Repository Introduction](#app-repository-introduction)
 - [Typescript](#typescript)
 - [Template Syntax](#template)
 - [Directives](#directives)
@@ -59,11 +64,48 @@
     ng new hotelinventory
     ```
 
-## Introduction to mono-repo
+## Introduction to Monorepo
+<h1 align="center">
+    <img src="./assets/monorepo.jpg">
+</h1>
+
+### Pros of Monorepo:
 - Create and maintain multiple apps in the same repo.
 - Use libraries within the project.
 - Deploy multiple apps/libs from same repo
 - Easy to share code within project.
+- Atomic commits.
+- Single `package.json` policy.
+- Single `node_modules` folder.
+
+
+### Cons  of Monorepo:
+- Maintain configurations.
+- Coordinating a release process.
+- Setting up an entire project.
+
+
+## NX
+- Dev tool.
+- Typescript-based monorepo tool.
+- Built on top of Angular Devkit.
+- NX was created by angular team at Google.
+- Now it is NRWL.
+
+### Why NX?
+- Nx provides tools to give you the benefits of a monorepo without the drawbacks of simple code collocation.
+- Faster command execution.
+- Controlled code sharing.
+- Consistent code generation.
+- Accurate architecture diagram.
+- Great CLI.
+- Rebuilding and retesting what is affected.
+
+### Real World Example of NX
+
+<h1 align="center">
+    <img src="./assets/Project Repository.jpg">
+</h1>
 
 ## App Repository Introduction.
 - In angular everything is `class` and `app.module.ts` is the root module, which will have all the information that we create.
